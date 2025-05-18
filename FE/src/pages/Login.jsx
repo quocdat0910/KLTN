@@ -47,14 +47,14 @@ const Login = () => {
       <div className="login-box">
         {/* Left Side */}
         <div className="login-left">
-          <h1>Learn English Anytime</h1>
-          <p>Join our platform to improve your English skills anytime, anywhere.</p>
-          <button>Get Started</button>
+          <h1>Học tiếng anh mọi lúc mọi nơi</h1>
+          <p>Hãy tham gia vào nền tảng của DA Course để cải thiện khả năng tiếng anh của bạn mọi lúc mọi nơi.</p>
+          <button className="btn-primary" onClick={() => navigateTo("/")}>Trang chủ</button>
         </div>
 
         {/* Right Side */}
         <div className="login-right">
-          <h2>Login to your account</h2>
+          <h2>Đăng nhập</h2>
 
           <form onSubmit={handleLogin} className="login-form">
             <div>
@@ -84,9 +84,9 @@ const Login = () => {
             <div className="login-options">
               <label>
                 <input type="checkbox" />
-                Remember me
+                Nhớ mật khẩu
               </label>
-              <Link to="/forgot-password" className="forgot-password-link">Forgot Password?</Link>
+              <Link to="/forgot-password" className="forgot-password-link">Quên mật khẩu?</Link>
             </div>
 
             <button type="submit" disabled={loading} className="login-button">
@@ -95,7 +95,7 @@ const Login = () => {
           </form>
 
           <div className="login-register-link">
-            Not Registered Yet? <Link to="/register">Create an account</Link>
+            Bạn chưa đăng ký? <Link to="/register">Đăng ký ngay</Link>
           </div>
         </div>
       </div>

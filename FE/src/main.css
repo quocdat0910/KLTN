@@ -1,13 +1,11 @@
 /* === LOGIN STYLE === */
-/* .login-container {
-  width: 100vw;
+.login-container {
   height: 100vh;
-  background-color: #d9d9d9;
   display: flex;
   justify-content: center;
   align-items: center;
-} */
-
+  margin-top: 50px;
+}
 .login-box {
   width: 90%;
   max-width: 900px;
@@ -141,14 +139,13 @@
 }
 
 /* === REGISTER STYLE === */
-/* .register-wrapper {
-  width: vw;
+.register-wrapper {
   height: 100vh;
-  background-color: #D9D9D9;
   display: flex;
   justify-content: center;
   align-items: center;
-} */
+  margin-top: 100px;
+}
 
 .register-box {
   width: 90%;
@@ -210,10 +207,10 @@
 }
 
 .register-form {
-  margin-top: 2rem;
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .register-form label {
@@ -250,7 +247,7 @@
 
 .social-register {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
   color: #828282;
   font-size: 14px;
 }
@@ -261,7 +258,6 @@
   gap: 1rem;
   margin-top: 0.5rem;
 }
-
 .btn-google, .btn-facebook {
   cursor: pointer;
   padding: 10px 20px;
@@ -292,3 +288,712 @@
   color: #2176AE;
   text-decoration: none;
 }
+
+/* Navbar.css */
+.navbar-top {
+  position: fixed;        
+  top: 0;
+  left: 0;
+  width: 100vw;           
+  height: 60px;
+  background: black;
+  z-index: 9999;          
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.navbar-top .menu-item {
+  position: absolute;
+  top: 6px;
+  color: white;
+  font-size: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.10px;
+  word-wrap: break-word;
+}
+
+.navbar-top .item-personal {
+  left: 70.88px;
+  width: 181.12px;
+}
+.navbar-top .item-business {
+  left: 281.25px;
+  width: 239.62px;
+}
+.navbar-top .item-university {
+  left: 550.12px;
+  width: 252px;
+}
+.navbar-top .item-government {
+  left: 831.38px;
+  width: 201.38px;
+}
+/* Second row */
+.navbar-bottom {
+  width: 100%;
+  height: 80px;
+  position: fixed;
+  background: white;
+  margin-top: 20px;
+  left: 0;
+}
+
+.logo {
+  width: 100.38px;
+  height: 100.38px;
+  position: absolute;
+  left: 1px;
+  top: -28px;
+  cursor: pointer;
+}
+
+.discovery-button {
+  position: absolute;
+  top: 24px;
+  left: 121px;
+  width: 108px;
+  cursor: pointer;
+}
+
+/* Đây là wrapper để bắt hover trên cả nút + menu */
+.discovery-button-hover-area {
+  position: relative;
+  width: 108px;
+}
+
+.discovery-button-inner {
+  width: 108px;
+  height: 32px;
+  background: white;
+  border-radius: 4px;
+  outline: 1px solid black;
+  position: relative;
+  z-index: 2;
+}
+
+.discovery-button-inner span {
+  position: absolute;
+  left: 12px;
+  top: 6px;
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  color: #4855E2;
+  line-height: 20px;
+}
+
+.discovery-arrow {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 80px;
+  top: 8px;
+  background-color: #4855E2;
+  clip-path: polygon(0% 25%, 50% 75%, 100% 25%);
+}
+
+/* Menu ẩn mặc định */
+.discovery-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 200px;
+  border-radius: 6px;
+  display: none;
+  z-index: 1;
+  margin-top: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.discovery-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.discovery-menu li {
+  padding: 10px 20px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.discovery-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Hover toàn bộ vùng chứa nút + menu */
+.discovery-button-hover-area:hover .discovery-menu {
+  display: block;
+}
+
+.search-box {
+  position: absolute;
+  top: 24px;
+  left: 261px;
+  width: 370px;
+  height: 32px;
+  background: white;
+  border: 1px solid #747474;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  color: #747474;
+  background: transparent;
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.search-icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+
+.nav-link {
+  position: absolute;
+  top: 30px;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+  color: #707070;
+  cursor: pointer;
+}
+
+.link-degree {
+  left: 907px;
+  width: 153.72px;
+}
+
+.link-career {
+  left: 1081.96px;
+  width: 96.08px;
+}
+
+.link-login {
+  left: 1199.28px;
+  width: 81.92px;
+  color: #4855E2;
+}
+
+.register-button {
+  position: absolute;
+  top: 24px;
+  left: 1308.5px;
+  width: 133.5px;
+  height: 32px;
+  background: white;
+  border-radius: 4px;
+  outline: 1px solid #4855E2;
+  cursor: pointer;
+}
+
+.register-button span {
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Roboto', sans-serif;
+  color: #4855E2;
+  line-height: 20px;
+}
+
+/* Footer.css */
+footer {
+  background-color: #ffffff;
+  color: #1e3a8a; /* Blue-800 */
+  padding: 40px 20px 10px;
+  border-top: 1px solid #93c5fd; /* Blue-300 */
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+
+footer .content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: auto;
+  padding-bottom: 30px;
+}
+
+footer .logo-img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+footer h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1e40af;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer ul li {
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: #1e3a8a;
+}
+
+footer a {
+  display: block;
+  margin-bottom: 6px;
+  color: #1e3a8a;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+footer a:hover {
+  color: #2563eb; /* Blue-600 */
+  text-decoration: underline;
+}
+
+footer .contact div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #1e3a8a;
+}
+
+footer .contact svg {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+footer hr {
+  border: none;
+  border-top: 1px solid #dbeafe; /* Blue-100 */
+  margin-bottom: 20px;
+}
+
+footer .bottom {
+  text-align: center;
+  font-size: 12px;
+  color: #60a5fa; /* Blue-400 */
+  border-top: 1px solid #dbeafe;
+  padding-top: 10px;
+}
+/* 
+Banner */
+.banner-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color:  rgba(229, 245, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  width: 100vw; 
+  height: 40vw;
+  box-sizing: border-box;
+  margin: 0;    
+}
+
+.banner-text {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.banner-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.banner-subtitle {
+  font-size: 18px;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.banner-button {
+  padding: 14px 28px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.banner-image-section {
+  flex: 1;
+  text-align: right;
+}
+
+.banner-image {
+  max-width: 100%;
+  height: 400px;
+  margin-right: 150px;
+  margin-top: 70px;
+}
+
+/* Component1 */
+.component1-container {
+  width: 100vw;
+  height: 240px;
+  position: relative;
+  margin: 0;
+}
+
+.component1-background {
+  width: 99vw;
+  height: 240px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #f9f9f9;
+}
+
+.component1-text {
+  position: absolute;
+  top: 24px;
+  left: 53px;
+  color: black;
+  font-size: 32px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+  word-wrap: break-word;
+}
+
+.component1-image {
+  width: 100vw;
+  height: 130px;
+  position: absolute;
+  top: 100px;
+  left: 0;
+  padding-left: 10px;
+  padding-bottom:-10px;
+  object-fit: cover; /* ✅ giữ tỉ lệ hình, cắt nếu cần để lấp đầy */
+}
+/* 
+Component2 */
+
+.component2-container {
+  width: 1440px;
+  height: 300px;
+  position: relative;
+  background: white;
+}
+
+.component2-background {
+  width: 1440px;
+  height: 300px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: white;
+}
+
+.component2-text {
+  position: absolute;
+  left: 50px;
+  top: 30px;
+  color: black;
+  font-size: 32px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+}
+
+.component2-button {
+  position: absolute;
+  left: 50px;
+  top: 144px;
+  width: 214px;
+  height: 44px;
+  background: white;
+  border: 1px solid #4548F2;
+  border-radius: 4px;
+  color: #4548F2;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: 0.08px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.component2-button:hover {
+  background: #f0f0ff;
+}
+
+.component2-image {
+  width: 261px;
+  height: 261px;
+  position: absolute;
+  left: 1124px;
+  top: 30px;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+/* Component3 */
+.component3-container {
+  width: 100vw;
+  height: 360px;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+}
+
+.component3-background {
+  width: 100vw;
+  height: 360px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(229, 245, 255, 0.8);
+}
+
+.component3-title {
+  position: absolute;
+  left: 500px;
+  top: 24px;
+  color: black;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+}
+
+.component3-section {
+  width: 249px;
+  height: 142px;
+  position: absolute;
+}
+
+.section-title {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: black;
+  line-height: 48px;
+  letter-spacing: 0.1px;
+}
+
+.section-description {
+  position: absolute;
+  top: 94px;
+  left: 0;
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  line-height: 48px;
+  letter-spacing: 0.09px;
+}
+
+.section-left {
+  left: 121px;
+  top: 118px;
+}
+
+.section-middle {
+  left: 596px;
+  top: 118px;
+}
+
+.section-right {
+  left: 1071px;
+  top: 118px;
+}
+
+.component3-icon1 {
+  width: 40px;
+  height: 40px;
+  left: 217px;
+  top: 118px;
+  position: absolute;
+  border-radius: 5px;
+}
+
+.component3-icon2 {
+  width: 40px;
+  height: 40px;
+  left: 680px;
+  top: 118px;
+  position: absolute;
+  border-radius: 5px;
+}
+
+.component3-icon3 {
+  width: 40px;
+  height: 40px;
+  left: 1150px;
+  top: 118px;
+  position: absolute;
+  border-radius: 5px;
+}
+
+/* Component4 */
+.component4-container {
+  width: 1384px;
+  height: 787px;
+  position: relative;
+}
+
+.component4-background {
+  width: 100%;
+  height: 100%;
+  background: rgba(229, 245, 255, 0.7);
+  border-radius: 40px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.component4-button-more,
+.component4-button-free-trial {
+  position: absolute;
+  width: 214px;
+  height: 44px;
+  background: white;
+  border: 1px solid #4548F2;
+  color: #4548F2;
+  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 600;
+  line-height: 44px;
+  letter-spacing: 0.08px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* Vị trí từng button */
+.component4-button-more {
+  left: 479px;
+  top: 691px;
+}
+
+.component4-button-free-trial {
+  left: 90px;
+  top: 155px;
+}
+
+.component4-button-text {
+  position: absolute;
+  left: 530px;
+  top: 689px;
+  color: #4548F2;
+  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: 0.08px;
+}
+
+.component4-card {
+  width: 247px;
+  height: 290px;
+  position: absolute;
+}
+
+.component4-card-bg {
+  width: 247px;
+  height: 290px;
+  position: absolute;
+  background: white;
+  border-radius: 20px;
+  border: 0.5px solid #A9A9A9;
+}
+
+.component4-main-img {
+  width: 235px;
+  height: 127.43px;
+  left: 6px;
+  top: 7px;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.component4-avatar {
+  width: 81px;
+  height: 81px;
+  left: 6px;
+  top: 139px;
+  position: absolute;
+}
+
+.component4-title {
+  position: absolute;
+  left: 14px;
+  top: 215px;
+  color: black;
+  font-size: 14px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.07px;
+  word-wrap: break-word;
+}
+
+.component4-subtitle {
+  position: absolute;
+  left: 14px;
+  top: 255px;
+  color: black;
+  font-size: 10px;
+  font-family: Roboto;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.05px;
+  word-wrap: break-word;
+}
+
+.component4-title-main {
+  position: absolute;
+  left: 90px;
+  top: 48px;
+  color: black;
+  font-size: 32px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+  word-wrap: break-word;
+}
+
+
+
+
+
+
+

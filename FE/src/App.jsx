@@ -13,18 +13,17 @@ const App = () => {
   return (
     <>
       <Router>
-        {/* <Navbar /> */}
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
-        {/* <Footer /> */}
-        <ToastContainer position="top-center" />
+        <Footer />
       </Router>
+      <ToastContainer position="top-center" />
     </>
   );
 };
-
 export default App;

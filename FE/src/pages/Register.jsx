@@ -55,15 +55,15 @@ const Register = () => {
       <div className="register-box">
         {/* Left side */}
         <div className="register-left">
-          <h1>Join Us Now</h1>
-          <p>Register to start learning English anytime, anywhere.</p>
-          <button className="btn-primary" onClick={() => navigate("/")}>Go to Home</button>
+          <h1>Đăng ký ngay</h1>
+          <p>Đăng ký tài khoản để bắt đầu học Tiếng Anh mọi lúc mọi nơi.</p>
+          <button className="btn-primary" onClick={() => navigate("/")}>Trang chủ</button>
         </div>
 
         {/* Right side */}
         <div className="register-right">
-          <h2>Register your account</h2>
           <form onSubmit={handleRegister} className="register-form">
+              <h2>Đăng ký</h2>
             <label>Email</label>
             <input
               type="email"
@@ -115,7 +115,7 @@ const Register = () => {
           </form>
 
           <div className="social-register">
-            <p>Or register with</p>
+            <p>Hoặc đăng ký với</p>
             <div className="social-buttons">
               <button onClick={handleGoogleRegister} className="btn-google">Google</button>
               <button onClick={handleFacebookRegister} className="btn-facebook">Facebook</button>
