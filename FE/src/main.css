@@ -291,16 +291,16 @@
 
 /* Navbar.css */
 .navbar-top {
-  position: fixed;        
+  position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;           
-  height: 60px;
-  background: black;
-  z-index: 9999;          
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
+  width: 100%;
+  z-index: 999;
+  background-color: black;
+  color: white;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
 }
 .navbar-top .menu-item {
   position: absolute;
@@ -332,12 +332,15 @@
 }
 /* Second row */
 .navbar-bottom {
-  width: 100%;
-  height: 80px;
   position: fixed;
-  background: white;
-  margin-top: 20px;
-  left: 0;
+  width: 100%;
+  z-index: 998;
+  background-color: white;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  margin-top: 10px;
 }
 
 .logo {
@@ -611,13 +614,15 @@ Banner */
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color:  rgba(229, 245, 255, 0.8);
+  background-color: rgba(229, 245, 255, 0.8);
   font-family: 'Segoe UI', sans-serif;
-  width: 100vw; 
+  width: 100vw;
   height: 40vw;
+  overflow: hidden; /* Quan trọng nếu có con tràn */
   box-sizing: border-box;
-  margin: 0;    
+  margin: 0;
 }
+
 
 .banner-text {
   flex: 1;
@@ -867,6 +872,7 @@ Component2 */
 .component4-container {
   width: 1384px;
   height: 787px;
+  margin-top: 20px;
   position: relative;
 }
 
@@ -990,6 +996,426 @@ Component2 */
   letter-spacing: 0.16px;
   word-wrap: break-word;
 }
+
+/* Component5 */
+.component5-container {
+  width: 796px;
+  height: 124px;
+  position: relative;
+  margin-left: 350px;
+  margin-top: 30px;
+}
+
+.component5-title {
+  position: absolute;
+  left: 119px;
+  top: 0;
+  color: black;
+  font-size: 32px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+  word-wrap: break-word;
+}
+
+.component5-search-bar {
+  width: 796px;
+  height: 32px;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  outline: 1px solid #747474;
+  outline-offset: -1px;
+}
+
+.component5-placeholder {
+  position: absolute;
+  width: 748px;
+  height: 20px;
+  top: 6px;
+  left: -330px;
+  color: #747474;
+  font-size: 13px;
+  font-family: Roboto;
+  font-weight: 400;
+  line-height: 20px;
+  word-wrap: break-word;
+}
+
+.component5-icon {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 8px;
+  left: 768px;
+  background: white;
+  cursor: pointer;
+}
+
+.component5-tag-bg {
+  position: absolute;
+  width: 58px;
+  height: 15px;
+  top: 106px;
+  background: rgba(217, 217, 217, 0.4);
+  border-radius: 5px;
+}
+
+.component5-tag-text {
+  position: absolute;
+  top: 104px;
+  color: #4548F2;
+  font-size: 13px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 20px;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+.component5-label {
+  position: absolute;
+  top: 104px;
+  color: black;
+  font-size: 13px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 20px;
+  word-wrap: break-word;
+}
+
+.component5-input {
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  width: 748px;
+  height: 20px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: Roboto;
+  color: #000;
+  background: transparent;
+}
+ /* Component6 */
+.component6-container {
+  width: 1247px;
+  height: 220px;
+  position: relative;
+  margin-left: 350px;
+  margin-top: 100px;
+}
+
+.component6-title {
+  position: absolute;
+  left: 0;
+  margin-left: -220px;
+  top: 0;
+  color: black;
+  font-size: 32px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+  word-wrap: break-word;
+}
+
+.component6-card {
+  position: absolute;
+  width: 373px;
+  height: 151px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.20);
+  margin-left: -220px;
+}
+
+.component6-avatar {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  top: 12px;
+  left: 23px;
+  border-radius: 50%;
+}
+
+.component6-name {
+  position: absolute;
+  color: black;
+  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.08px;
+  word-wrap: break-word;
+}
+
+.component6-quote {
+  position: absolute;
+  color: rgba(0, 0, 0, 0.50);
+  font-size: 12px;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0.06px;
+  word-wrap: break-word;
+  width: 340px;
+}
+
+/* Component7 */
+.faq-wrapper {
+  width: 1247px;
+  height: 387px;
+  position: relative;
+  font-family: Roboto, sans-serif;
+  margin-top: 100px ;
+  margin-left: 130px;
+}
+
+/* Title */
+.faq-title {
+  position: absolute;
+  left: 0px;
+  top: 0;
+  color: black;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.16px;
+  word-wrap: break-word;
+  
+}
+
+/* Main box background */
+.faq-box {
+  width: 1247px;
+  height: 306px;
+  position: absolute;
+  left: 0;
+  top: 81px;
+  background: white;
+  border-radius: 5px;
+  border: 1px rgba(0, 0, 0, 0.3) solid;
+}
+
+/* Show more background */
+.faq-showmore-bg {
+  width: 306px;
+  height: 44px;
+  position: absolute;
+  left: 528px;
+  top: 329px;
+  background: white;
+}
+
+/* Show more text */
+.faq-showmore-text {
+  position: absolute;
+  left: 571px;
+  top: 327px;
+  color: #4548F2;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: 0.08px;
+  word-wrap: break-word;
+}
+
+/* Show more icon */
+.faq-showmore-icon {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 538px;
+  top: 339px;
+  overflow: hidden;
+}
+
+.icon-bg {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  background: transparent;
+}
+
+.icon-arrow {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: -5px;
+  top: -8px;
+  color: #4548F2; /* Màu này sẽ áp dụng nếu SVG dùng fill="currentColor" */
+}
+
+
+/* FAQ items */
+.faq-icon {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  overflow: hidden;
+}
+
+.faq-icon-0 {
+  left: 94px;
+  top: 135px;
+}
+
+.faq-icon-1 {
+  left: 94px;
+  top: 208px;
+}
+
+.faq-icon-2 {
+  left: 94px;
+  top: 281px;
+}
+
+.faq-icon::before {
+  content: '';
+  position: absolute;
+  width: 12.12px;
+  height: 20px;
+  left: 5.88px;
+  top: 2px;
+}
+
+/* FAQ questions */
+.faq-question {
+  position: absolute;
+  left: 135px;
+  color: black;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.10px;
+  word-wrap: break-word;
+}
+
+.faq-question-0 {
+  top: 123px;
+}
+
+.faq-question-1 {
+  top: 196px;
+}
+
+.faq-question-2 {
+  top: 269px;
+}
+
+/* Dividers */
+.faq-divider {
+  width: 1175.04px;
+  height: 0;
+  position: absolute;
+  outline: 1px rgba(0, 0, 0, 0.1) solid;
+  outline-offset: -0.5px;
+}
+
+.faq-divider-0 {
+  left: 63.98px;
+  top: 181px;
+}
+
+.faq-divider-1 {
+  left: 64px;
+  top: 254px;
+}
+
+.faq-divider-2 {
+  left: 64px;
+  top: 327px;
+}
+
+/* Component8 */
+.component8-container {
+  width: 1600px;
+  height: 332px;
+  position: relative;
+  margin-top: 100px;
+}
+
+.component8-subtitle {
+  position: absolute;
+  left: 578px;
+  top: 273px;
+  color: black;
+  font-size: 20px;
+  font-family: Roboto;
+  font-weight: 800;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  word-wrap: break-word;
+} 
+
+.component8-background {
+  width: 100vw;
+  height: 324px;
+  position: absolute;
+  left: 0;
+  top: 8px;
+  background: #EFEFF7;
+}
+
+.component8-image {
+  width: 177px;
+  height: 177px;
+  position: absolute;
+  left: 631px;
+  top: 0;
+}
+
+.component8-title {
+  position: absolute;
+  left: 573px;
+  top: 162px;
+  color: black;
+  font-size: 20px;
+  font-family: Roboto;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  word-wrap: break-word;
+}
+
+.component8-button {
+  position: absolute;
+  left: 613px;
+  top: 199px;
+  width: 214px;
+  height: 44px;
+  background: white;
+  border: 1px solid #4548F2;
+  cursor: pointer;
+
+  /* Dùng flex để xếp 2 dòng text */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 0;
+}
+
+.button-primary-text {
+  color: #4548F2;
+  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.08px;
+}
+
+
+
+
+
+
 
 
 
