@@ -1,20 +1,23 @@
-import '../../Component.css'
+import { useState } from 'react';
+import '../../Component.css';
 import { FaTrash, FaEdit, FaSearch } from "react-icons/fa";
+import CreateAccountForm from '../../components/CreateAccountForm';
 
 const Students = () => {
-const users = [
-  {
-    id: 1,
-    name: "Nguyen Quoc Dat",
-    email: "dat@gmail.com",
-    phone: "0902660951",
-    position: "...",
-    type: "...",
-    country: "Ho Chi Minh",
-  },
+  const [showForm, setShowForm] = useState(false);
 
-];
-    return (
+  const users = [
+    {
+      id: 1,
+      name: "Nguyen Quoc Dat",
+      email: "dat@gmail.com",
+      phone: "0902660951",
+      type: "Khách hàng",
+      country: "Ho Chi Minh",
+    },
+  ];
+
+  return (
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h2 className='h2'>Khách hàng</h2>
@@ -25,20 +28,19 @@ const users = [
           <input type="text" placeholder="Tìm kiếm" />
           <FaSearch className="search-icon" />
         </div>
-        <button className="add-btn">Thêm tài khoản</button>
+        <button className="add-btn" onClick={() => setShowForm(true)}>Thêm tài khoản</button>
       </div>
 
       <table className="user-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
+            <th>Họ và tên</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>Position</th>
-            <th>Type</th>
-            <th>Country</th>
-            <th>Edit</th>
+            <th>SDT</th>
+            <th>Vai trò</th>
+            <th>Địa chỉ</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -48,7 +50,6 @@ const users = [
               <td>{u.name}</td>
               <td>{u.email}</td>
               <td>{u.phone}</td>
-              <td>{u.position}</td>
               <td>{u.type}</td>
               <td>{u.country}</td>
               <td className="action-icons">
@@ -61,14 +62,17 @@ const users = [
       </table>
 
       <div className="pagination">
-        <span className="prev">&lt; Previous</span>
+        <span className="prev">&lt; Trước</span>
         <span className="page active">1</span>
         <span className="page">2</span>
         <span className="page">3</span>
         <span className="page">4</span>
-        <span className="next">Next &gt;</span>
+        <span className="next">Sau &gt;</span>
       </div>
+
+      {showForm && <CreateAccountForm onClose={() => setShowForm(false)} />}
     </div>
-    )
+  );
 }
+
 export default Students;

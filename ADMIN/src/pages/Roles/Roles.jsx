@@ -1,8 +1,10 @@
 import '../../Component.css'
 import React, { useState } from 'react';
+import CreateRoleForm from '../../components/CreateRoleForm';
 import { FaTrash, FaEdit, FaSearch } from "react-icons/fa";
 
 const Roles = () => {
+  const [showForm, setShowForm] = useState(false);
 const handleStatusToggle = (index) => {
   const updatedUsers = [...users];
   updatedUsers[index].status = !updatedUsers[index].status;
@@ -13,10 +15,9 @@ const handleStatusToggle = (index) => {
 const [users, setUsers] = useState([
   {
     id: 1,
-    role: "Nguyen Quoc Dat",
+    role: "Khách hàng",
     status: true,
-    action: "",
-    createdDate: "20/5/2025",
+    action: "Là học viên của DA Course",
   },
 ]);
 
@@ -31,18 +32,17 @@ const [users, setUsers] = useState([
           <input type="text" placeholder="Tìm kiếm" />
           <FaSearch className="search-icon" />
         </div>
-        <button className="add-btn">Thêm vai trò</button>
+        <button className="add-btn" onClick={() => setShowForm(true)}>Thêm vai trò</button>
       </div>
 
       <table className="user-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Role</th>
+            <th>Vai trò</th>
             <th>Status</th>
-            <th>Action</th>
-            <th>Created date</th>
-            <th>Edit</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -61,9 +61,7 @@ const [users, setUsers] = useState([
   </label>
 </td>
 
-
               <td>{u.action}</td>
-              <td>{u.createdDate}</td>
               <td className="action-icons">
                 <FaEdit className="icon edit" />
                 <FaTrash className="icon delete" />
@@ -81,6 +79,7 @@ const [users, setUsers] = useState([
         <span className="page">4</span>
         <span className="next">Next &gt;</span>
       </div>
+      {showForm && <CreateRoleForm onClose={() => setShowForm(false)} />}
     </div>
     )
 }
