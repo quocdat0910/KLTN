@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Link, useNavigate, Navigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const Login = () => {
   const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
