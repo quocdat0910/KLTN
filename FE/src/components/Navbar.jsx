@@ -14,7 +14,7 @@ const Navbar = () => {
     <>
       {/* Bottom white navbar */}
       <div className="navbar-bottom">
-        <img className="logo" src="logo.png" alt="Logo" />
+        <img onClick={() => navigate("/")} className="logo" src="logo.png" alt="Logo" />
               <div className="discovery-button">
           <div className="discovery-button-hover-area">
             <div className="discovery-button-inner">
@@ -42,8 +42,8 @@ const Navbar = () => {
       </div>
 
 
-        <div className="nav-link link-degree">Giới thiệu</div>
-        <div className="nav-link link-career">Liên hệ</div>
+        <div className="nav-link link-degree" onClick={() => navigate("/aboutus")}>Giới thiệu</div>
+        <div className="nav-link link-career" onClick={() => navigate("/contactus")}>Liên hệ</div>
         <div className="nav-link link-login"  onClick={() => navigate("/login")}>Đăng nhập</div>
 
         <div className="register-button">
