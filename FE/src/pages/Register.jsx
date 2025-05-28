@@ -1,7 +1,8 @@
 import "../main.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -15,11 +16,10 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [showVerificationNotice, setShowVerificationNotice] = useState(false);
   const [resending, setResending] = useState(false);
-  const [verificationSuccess, setVerificationSuccess] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -28,28 +28,49 @@ const Register = () => {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác minh.");
-      setShowVerificationNotice(true);
-      setLoading(false);
 
-      // 🔁 Giả lập xác minh thành công sau 5 giây
-      setTimeout(() => {
-        setVerificationSuccess(true);
-        toast.success("Xác minh email thành công!");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000); // Chuyển hướng sau khi xác minh
-      }, 5000);
-    }, 1500);
+    try {
+      const response = await axios.post(
+        `http://localhost:4000/api/v1/users/register`,
+        {
+          email,
+          password,
+          confirmPassword,
+          firstName,
+          lastName,
+          dateOfBirth: dob,
+          gender,
+          phone,
+        }
+      );
+
+      toast.success(response.data.message);
+      setShowVerificationNotice(true);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Đăng ký thất bại, vui lòng thử lại";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResendVerification = () => {
+  const handleResendVerification = async () => {
     setResending(true);
-    setTimeout(() => {
-      toast.success("Đã gửi lại email xác minh!");
+
+    try {
+      const response = await axios.post(
+        `http://localhost:4000/api/v1/users/request-verification`,
+        { email }
+      );
+      toast.success(response.data.message);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Gửi lại email xác minh thất bại";
+      toast.error(message);
+    } finally {
       setResending(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -122,7 +143,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Nam"
+                  value="male"
+                  checked={gender === "male"}
                   onChange={(e) => setGender(e.target.value)}
                 />{" "}
                 Nam
@@ -131,7 +153,8 @@ const Register = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Nữ"
+                  value="female"
+                  checked={gender === "female"}
                   onChange={(e) => setGender(e.target.value)}
                 />{" "}
                 Nữ
@@ -186,7 +209,7 @@ const Register = () => {
       </div>
 
       {/* Overlay Xác minh Email */}
-      {showVerificationNotice && !verificationSuccess && (
+      {showVerificationNotice && (
         <div className="overlay">
           <div className="popup">
             <p className="success-message">
@@ -208,17 +231,6 @@ const Register = () => {
                 Hủy
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Popup xác minh thành công */}
-      {verificationSuccess && (
-        <div className="overlay">
-          <div className="popup">
-            <p className="success-message">
-               Xác minh thành công! Đang chuyển đến trang đăng nhập...
-            </p>
           </div>
         </div>
       )}
