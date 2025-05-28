@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ContactUs from "./pages/ContactUs.jsx";
+import Account from "./pages/Account.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
@@ -28,6 +29,7 @@ const Layout = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/myaccount" element={<Account />} />
       </Routes>
       <Footer />
     </>

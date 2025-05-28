@@ -474,6 +474,45 @@
   margin-bottom: 1020px;
 }
 
+.user-dropdown {
+  position: relative;
+  cursor: pointer;
+  margin-left: 1120px;
+}
+
+.user-name {
+  font-size: 16px;
+  color: #4855E2;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  z-index: 999;
+  top: 100%;
+  left: 0;
+  width: 160px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+
 .logo {
   width: 100.38px;
   height: 100.38px;
@@ -605,6 +644,12 @@
   object-fit: contain;
 }
 
+.nav-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 
 .nav-link {
   position: absolute;
@@ -617,6 +662,8 @@
   color: #707070;
   cursor: pointer;
 }
+
+
 
 .link-degree {
   left: 907px;
@@ -1708,5 +1755,214 @@ Component2 */
   font-family: 'Inter';
   font-weight: 500;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Account */
+.account-wrapper {
+  display: flex;
+  width: 100vw;
+  padding: 40px;
+  gap: 40px;
+  font-family: 'Inter', sans-serif;
+  background-color: #E5F5FF ;
+}
+
+.account-left {
+  width: 250px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align:center;
+  margin-top: 60px;
+  height: 300px;
+}
+
+.account-left2 {
+  width: 260px;
+  background-color: white;
+  padding: 5px;
+  border-radius: 10px;
+  text-align:center;
+  margin-top: 60px;
+  height: 130px;
+  margin-top: 45px;
+  margin-left: -10px;
+}
+
+.avatar img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+
+.account-left h2 {
+  font-size: 20px;
+  margin: 30px 0 10px;
+}
+
+.blue-btn {
+  background-color: #2176AE;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top:10px;
+  width: 100%;
+}
+
+.account-right {
+  width: 1030px;
+  background-color: white;
+  padding: 60px;
+  border-radius: 10px;
+  margin-top: 60px;
+}
+
+.account-right h1 {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 40px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group2 {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.form-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.form-group2 label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #e0e0e0;
+  font-size: 14px;
+}
+
+.form-group2 input,
+.form-group2 select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 14px;
+}
+
+/* ChangePasswordForm */
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.create-form {
+  width: 350px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  font-family: 'Inter', sans-serif;
+  height: 400px;
+}
+
+.create-form2 {
+  width: 350px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  font-family: 'Inter', sans-serif;
+  height: 310px;
+}
+
+.form-title {
+  font-size: 30px;
+  color: #2176AE;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 12px;
+  color: black;
+  text-align: left;
+  display: block;
+}
+
+
+.form-input {
+   width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.create-button {
+  padding: 10px 20px;
+  background-color: #2176AE;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
 }
