@@ -10,23 +10,23 @@ const Sidebar = () => {
         <img src="logo.png" alt="Logo" className="logo-img" />
       </div>
       <ul className="nav-menu">
-        <li onClick={() => navigateTo("/")} className="active">
+        <li onClick={() => navigateTo("admin/")} className="active">
           <i className="fas fa-home"></i>
           <span>Thống kê</span>
         </li>
-        <li onClick={() => navigateTo("/students")}>
+        <li onClick={() => navigateTo("admin/students")}>
           <i className="fas fa-user"></i>
           <span>Tài khoản</span>
         </li>
-        <li onClick={() => navigateTo("/subjects")}>
+        <li onClick={() => navigateTo("admin/subjects")}>
           <i className="fas fa-book"></i>
           <span>Môn học</span>
         </li>
-         <li onClick={() => navigateTo("/roles")}>
+         <li onClick={() => navigateTo("admin/roles")}>
           <i className="fas fa-user-tag"></i>
           <span>Vai trò</span> 
         </li>
-        <li onClick={() => navigateTo("/setting")}>
+        <li onClick={() => navigateTo("admin/setting")}>
           <i className="fas fa-cog"></i>
           <span>Cài đặt</span>
         </li>

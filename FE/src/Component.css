@@ -4,7 +4,7 @@
   padding: 30px;
   background-color: #f5f7fb;
   height: 90vh;
-  width: 80vw;
+  width: 83vw;
   overflow-y: auto;
   margin-left: 100px;
 }
@@ -314,7 +314,6 @@ input:checked + .slider:before {
   padding: 24px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   font-family: 'Inter', sans-serif;
-  height: 450px;
 }
 
 .create-form2 {

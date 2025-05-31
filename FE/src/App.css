@@ -13,7 +13,7 @@ html, body {
   width: 1000vw;
   overflow-x: hidden;
 }
-
+  
 .app-container {
   display: flex;
   flex-direction: column;

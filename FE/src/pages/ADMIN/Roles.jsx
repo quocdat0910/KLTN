@@ -1,4 +1,4 @@
-import '../../Component.css'
+import '../../Component.css';
 import React, { useState } from 'react';
 import CreateRoleForm from '../../components/CreateRoleForm';
 import { FaTrash, FaEdit, FaSearch } from "react-icons/fa";
