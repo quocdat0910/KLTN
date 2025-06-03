@@ -68,7 +68,7 @@ const [discoverDropdownOpen, setDiscoverDropdownOpen] = useState(false);
     {discoverDropdownOpen && (
       <div className="discovery-menu">
         <ul>
-          <li onClick={() => handleSelect('Toeic')}>Toeic</li>
+          <li  onClick={() => handleSelect('Toeic')}>Toeic</li>
           <li onClick={() => handleSelect('Ielts')}>Ielts</li>
         </ul>
       </div>

@@ -18,18 +18,23 @@ const Sidebar = () => {
           <i className="fas fa-user"></i>
           <span>Tài khoản</span>
         </li>
-        <li onClick={() => navigateTo("admin/subjects")}>
+        <li onClick={() => navigateTo("admin/course")}>
           <i className="fas fa-book"></i>
-          <span>Môn học</span>
+          <span>Khóa học</span>
         </li>
          <li onClick={() => navigateTo("admin/roles")}>
           <i className="fas fa-user-tag"></i>
           <span>Vai trò</span> 
         </li>
-        <li onClick={() => navigateTo("admin/setting")}>
+        <li onClick={() => navigateTo("admin/categories")}>
+          <i className="fas fa-list"></i>
+          <span>Danh mục</span>
+        </li>
+
+        {/* <li onClick={() => navigateTo("admin/setting")}>
           <i className="fas fa-cog"></i>
           <span>Cài đặt</span>
-        </li>
+        </li> */}
       </ul>
     </div>
   );

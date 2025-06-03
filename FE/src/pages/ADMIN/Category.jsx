@@ -1,9 +1,9 @@
 import '../../Component.css';
 import React, { useState } from 'react';
-import CreateRoleForm from '../../components/CreateRoleForm';
+import CreateCategoryForm from '../../components/CreateCategoryForm';
 import { FaTrash, FaEdit, FaSearch } from "react-icons/fa";
 
-const Roles = () => {
+const Category = () => {
   const [showForm, setShowForm] = useState(false);
 const handleStatusToggle = (index) => {
   const updatedUsers = [...users];
@@ -15,16 +15,16 @@ const handleStatusToggle = (index) => {
 const [users, setUsers] = useState([
   {
     id: 1,
-    role: "Khách hàng",
+    role: "TOEIC",
     status: true,
-    action: "Là học viên của DA Course",
+    action: "Một chứng chỉ tiếng anh",
   },
 ]);
 
     return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2 className='h2'>Vai trò</h2>
+        <h2 className='h2'>Loại khóa học</h2>
       </div>
 
       <div className="search-add">
@@ -32,14 +32,14 @@ const [users, setUsers] = useState([
           <input type="text" placeholder="Tìm kiếm" />
           <FaSearch className="search-icon" />
         </div>
-        <button className="add-btn" onClick={() => setShowForm(true)}>Thêm vai trò</button>
+        <button className="add-btn" onClick={() => setShowForm(true)}>Thêm loại khóa học</button>
       </div>
 
       <table className="user-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Vai trò</th>
+            <th>Loại khóa học</th>
             <th>Trạng thái</th>
             <th>Mô tả</th>
             <th>Thao tác</th>
@@ -79,8 +79,8 @@ const [users, setUsers] = useState([
         <span className="page">4</span>
         <span className="next">Next &gt;</span>
       </div>
-      {showForm && <CreateRoleForm onClose={() => setShowForm(false)} />}
+      {showForm && <CreateCategoryForm onClose={() => setShowForm(false)} />}
     </div>
     )
 }
-export default Roles;
+export default Category;

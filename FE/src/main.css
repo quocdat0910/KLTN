@@ -1965,3 +1965,565 @@ Component2 */
   font-weight: 600;
   cursor: pointer;
 }
+
+ /* ProductCatComponent  */
+.productCat-wrapper {
+  width: 100vw;
+  height: 1759px;
+  position: relative;
+}
+
+.productCat-background {
+  width: 100vw;
+  height: 1759px;
+  background-color: #e0f2fe; /* sky-100 */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.productCat-topBanner {
+  width: 100vw;
+  height: 960px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.productCat-card {
+  width: 240px;
+  height: 288px;
+}
+
+.productCat-cardInner {
+  width: 240px;
+  height: 288px;
+  background-color: white;
+  border-radius: 20px;
+  border: 0.5px solid #a3a3a3; /* neutral-400 */
+  position: relative;
+  cursor: pointer;
+}
+
+.productCat-mainImage {
+  width: 240px;
+  height: 128px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0.5px;
+  left: 0px;
+}
+
+.productCat-iconImage {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: 139px;
+  left: 6px;
+}
+
+.productCat-title {
+  position: absolute;
+  top: 215px;
+  left: 14px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.productCat-subtitle {
+  position: absolute;
+  top: 255px;
+  left: 14px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  color: black;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.productCat-loadMoreBox {
+  width: 208px;
+  height: 44px;
+  position: absolute;
+  top: 1688px;
+  left: 154px;
+  background-color: white;
+  border: 1px solid #4f46e5; /* indigo-600 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.productCat-loadMoreText {
+  color: #4f46e5;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+  line-height: 48px;
+  letter-spacing: -0.02em;
+}
+
+/* ProductDetail */
+.detail-container {
+  width: 1440px;
+  height: 1038px;
+  position: relative;
+}
+
+.detail-bg {
+  width: 1440px;
+  height: 1038px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: white;
+}
+
+.detail-minus {
+  position: absolute;
+  left: 96px;
+  top: 328.69px;
+  color: black;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: 'Roboto';
+  line-height: 48px;
+  letter-spacing: -0.01em;
+}
+
+.detail-chapter-box {
+  width: 798px;
+  height: 64px;
+  background: #e5e5e5;
+  border-radius: 5px 5px 0 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  position: absolute;
+  cursor: pointer;
+}
+
+.detail-chapter-1 { top: 525px; left: 69px; }
+.detail-chapter-2 { top: 701px; left: 69px; }
+.detail-chapter-3 { top: 773px; left: 69px; }
+.detail-chapter-4 { top: 845px; left: 69px; }
+
+.detail-chapter-title {
+  position: absolute;
+  left: 89px;
+  color: black;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: 'Roboto';
+  line-height: 48px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+
+.detail-title-1 { top: 537px; }
+.detail-title-2 { top: 713px; }
+.detail-title-3 { top: 785px; }
+.detail-title-4 { top: 857px; }
+
+.detail-section-title {
+  position: absolute;
+  top: 605px;
+  left: 116px;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-icon-box {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 86px;
+  top: 617px;
+  overflow: hidden;
+}
+
+.detail-icon {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.detail-icon-inner {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  background: #27272a;
+}
+
+.detail-main-title {
+  position: absolute;
+  left: 68px;
+  top: 90px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-content-title {
+  position: absolute;
+  left: 69px;
+  top: 338px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-description {
+  position: absolute;
+  width: 758px;
+  left: 69px;
+  top: 169px;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+  text-align: left;
+}
+
+.detail-info {
+  position: absolute;
+  font-size: 20px;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-info-chapter {
+  width: 96px;
+  top: 396px;
+  left: 69px;
+}
+
+.detail-info-duration {
+  width: 256px;
+  top: 396px;
+  left: 217px;
+}
+
+.detail-price {
+  position: absolute;
+  left: 1037px;
+  top: 362px;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: 'Roboto';
+  color: #0284c7;
+}
+
+.detail-buy-button {
+  width: 384px;
+  height: 56px;
+  padding: 8px 16px;
+  position: absolute;
+  left: 915px;
+  top: 408px;
+  background: #3B82F6;
+  border-radius: 12px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.detail-buy-button-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Montserrat';
+  line-height: normal;
+  cursor: pointer;
+}
+
+.detail-feature {
+  position: absolute;
+  left: 915px;
+  font-size: 20px;
+  font-weight: 400;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-feature-1 { top: 508px; }
+.detail-feature-2 { top: 556px; }
+.detail-feature-3 { top: 604px; }
+.detail-feature-4 { top: 652px; }
+
+.detail-course-img {
+  width: 450px;
+  height: 240px;
+  position: absolute;
+  left: 900px;
+  top: 100px;
+  border-radius: 10px;
+}
+
+.detail-subtitle {
+  position: absolute;
+  left: 120px;
+  top: 652px;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: 'Roboto';
+  color: black;
+  line-height: 48px;
+}
+
+.detail-icon-img {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 82px;
+  top: 658px;
+}
+
+.detail-icon-img2 {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 82px;
+  top: 618px;
+}
+
+/* PaymentForm */
+.paymentForm-container {
+  position: relative;
+  width: 1068px;
+  height: 512px;
+}
+
+.paymentForm-backgroundBox {
+  position: absolute;
+  width: 1068px;
+  height: 510px;
+  left: 0;
+  top: 0;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.paymentForm-description {
+  position: absolute;
+  width: 547px;
+  left: 36px;
+  top: 188px;
+  color: black;
+  font-size: 20px;
+  font-family: 'Roboto';
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+
+.paymentForm-image {
+  position: absolute;
+  width: 240px;
+  height: 128px;
+  left: 36px;
+  top: 34px;
+  border-radius: 10px;
+}
+
+.paymentForm-courseTitle {
+  position: absolute;
+  left: 288px;
+  top: 88px;
+  color: black;
+  font-size: 28px;
+  font-family: 'Roboto';
+  font-weight: 500;
+  line-height: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.paymentForm-sidePanel {
+  position: absolute;
+  width: 444px;
+  height: 512px;
+  left: 626px;
+  top: 0;
+  background-color: rgba(161, 161, 161, 0.5);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.paymentForm-sideTitle,
+.paymentForm-courseName,
+.paymentForm-priceLabel,
+.paymentForm-totalLabel,
+.paymentForm-priceValue,
+.paymentForm-totalValue {
+  position: absolute;
+  color: black;
+  font-size: 24px;
+  font-family: 'Roboto';
+  line-height: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.paymentForm-sideTitle {
+  left: 647px;
+  top: 24px;
+  font-weight: 400;
+}
+
+.paymentForm-totalLabel {
+  left: 647px;
+  top: 318px;
+  font-weight: 400;
+}
+
+.paymentForm-courseName {
+  left: 647px;
+  top: 79px;
+  font-weight: 500;
+}
+
+.paymentForm-priceLabel {
+  left: 645px;
+  top: 120px;
+  font-weight: 400;
+}
+
+.paymentForm-divider {
+  position: absolute;
+  width: 384px;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.paymentForm-divider.top {
+  left: 647px;
+  top: 58px;
+}
+
+.paymentForm-divider.bottom {
+  left: 647px;
+  top: 297px;
+}
+
+.paymentForm-priceValue {
+  left: 895px;
+  top: 120px;
+  position: absolute;
+  font-weight: 400;
+  font-size: 24px;
+  font-family: 'Roboto';
+}
+
+.paymentForm-totalValue {
+  left: 895px;
+  top: 317px;
+  position: absolute;
+  font-weight: 400;
+  font-size: 24px;
+  font-family: 'Roboto';
+}
+
+.paymentForm-discountInput {
+  position: absolute;
+  width: 256px;
+  height: 32px;
+  left: 647px;
+  top: 188px;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.paymentForm-applyButton {
+  position: absolute;
+  width: 96px;
+  height: 36px;
+  left: 924px;
+  top: 188px;
+  border-radius: 30px;
+  background-color: transparent;
+  border: 2px solid #1E40AF;
+  color: #1E40AF;
+  font-size: 16px;
+  font-family: 'Inter';
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.paymentForm-applyButton:hover {
+  background-color: #1E40AF;
+  color: white;
+}
+
+.paymentForm-payButton {
+  position: absolute;
+  left: 837px;
+  top: 399px;
+  width: 192px;
+  height: 48px;
+  background-color: #1D4ED8;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-family: 'Montserrat';
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.paymentForm-payButton:hover {
+  background-color: #1E40AF;
+}
+
+.payment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-close-button {
+  position: absolute;
+  top: 110px;
+  right: 150px;
+  background: #fff;
+  color: #000;
+  border: 1px solid #888;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+
+
+
+
+

@@ -1,30 +1,25 @@
 import '../../Component.css';
 import React, { useState } from 'react';
-import CreateRoleForm from '../../components/CreateRoleForm';
 import { FaTrash, FaEdit, FaSearch } from "react-icons/fa";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 
-const Roles = () => {
-  const [showForm, setShowForm] = useState(false);
-const handleStatusToggle = (index) => {
-  const updatedUsers = [...users];
-  updatedUsers[index].status = !updatedUsers[index].status;
-  setUsers(updatedUsers);
-};
+const Course = () => {
 
+  const navigateTo = useNavigate();
 
 const [users, setUsers] = useState([
   {
     id: 1,
-    role: "Khách hàng",
-    status: true,
-    action: "Là học viên của DA Course",
+    course: "TOEIC 600+",
+    description: "...",
+    price: 600000,
   },
 ]);
 
     return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2 className='h2'>Vai trò</h2>
+        <h2 className='h2'>Khóa học</h2>
       </div>
 
       <div className="search-add">
@@ -32,16 +27,16 @@ const [users, setUsers] = useState([
           <input type="text" placeholder="Tìm kiếm" />
           <FaSearch className="search-icon" />
         </div>
-        <button className="add-btn" onClick={() => setShowForm(true)}>Thêm vai trò</button>
+        <button onClick={() => navigateTo("addCourse")} className="add-btn">Thêm khóa học</button>
       </div>
 
       <table className="user-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Vai trò</th>
-            <th>Trạng thái</th>
+            <th>Khóa học</th>
             <th>Mô tả</th>
+            <th>Giá</th>
             <th>Thao tác</th>
           </tr>
         </thead>
@@ -49,19 +44,9 @@ const [users, setUsers] = useState([
           {users.map((u, index) => (
             <tr key={u.id}>
               <td>{index + 1}</td>
-              <td>{u.role}</td>
-             <td>
-  <label className="switch">
-    <input
-      type="checkbox"
-      checked={u.status}
-      onChange={() => handleStatusToggle(index)}
-    />
-    <span className="slider round"></span>
-  </label>
-</td>
-
-              <td>{u.action}</td>
+              <td>{u.course}</td>
+            <td>{u.description}</td>
+              <td>{u.price}</td>
               <td className="action-icons">
                 <FaEdit className="icon edit" />
                 <FaTrash className="icon delete" />
@@ -70,7 +55,6 @@ const [users, setUsers] = useState([
           ))}
         </tbody>
       </table>
-
       <div className="pagination">
         <span className="prev">&lt; Previous</span>
         <span className="page active">1</span>
@@ -79,8 +63,7 @@ const [users, setUsers] = useState([
         <span className="page">4</span>
         <span className="next">Next &gt;</span>
       </div>
-      {showForm && <CreateRoleForm onClose={() => setShowForm(false)} />}
     </div>
     )
 }
-export default Roles;
+export default Course;

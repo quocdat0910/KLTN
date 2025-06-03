@@ -22,7 +22,6 @@ const CreateAccountForm = ({ onClose }) => {
           <option>Admin</option>
           <option>User</option>
         </select>
-
         <div className="form-buttons">
           <button className="cancel-button" onClick={onClose}>Hủy</button>
           <button className="create-button">Tạo</button>

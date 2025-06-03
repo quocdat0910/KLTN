@@ -8,6 +8,10 @@ import UserLayout from "./layouts/UserLayout";
 import Dashboard from "./pages/ADMIN/Dashboard";
 import Roles from "./pages/ADMIN/Roles";
 import Students from "./pages/ADMIN/Students";
+import Category from "./pages/ADMIN/Category";
+import Course from "./pages/ADMIN/Course";
+import AddCourse from "./pages/ADMIN/AddCourse";
+import AddChapter from "./pages/ADMIN/AddChapter";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,6 +20,8 @@ import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Account from "./pages/Account";
+import ProductCat from "./pages/ProductCat";
+import ProductDetail from "./pages/ProductDetail";
 
 const App = () => {
   return (
@@ -30,6 +36,10 @@ const App = () => {
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/students" element={<Students />} />
           <Route path="/admin/roles" element={<Roles />} />
+          <Route path="/admin/categories" element={<Category />} />
+          <Route path="/admin/course" element={<Course />} />
+          <Route path="/admin/course/addCourse" element={<AddCourse />} />
+          <Route path="/admin/course/addCourse/addChapter" element={<AddChapter />} />
         </Route>
 
         {/* User Layout Routes */}
@@ -38,6 +48,8 @@ const App = () => {
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/myaccount" element={<Account />} />
+          <Route path="/productcat" element={<ProductCat />} />
+          <Route path="/productdetail" element={<ProductDetail />} />
         </Route>
       </Routes>
 
