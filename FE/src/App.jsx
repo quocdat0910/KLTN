@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import AdminLayout from "./layouts/AdminLayout";
 import UserLayout from "./layouts/UserLayout";
+import HomeworkLayout from "./layouts/HomeworkLayout";
 
 import Dashboard from "./pages/ADMIN/Dashboard";
 import Roles from "./pages/ADMIN/Roles";
@@ -22,6 +23,7 @@ import ContactUs from "./pages/ContactUs";
 import Account from "./pages/Account";
 import ProductCat from "./pages/ProductCat";
 import ProductDetail from "./pages/ProductDetail";
+import Homework from "./pages/Homework";
 
 const App = () => {
   return (
@@ -51,7 +53,14 @@ const App = () => {
           <Route path="/productcat" element={<ProductCat />} />
           <Route path="/productdetail" element={<ProductDetail />} />
         </Route>
+
+            {/* Homework Layout Routes */}
+        <Route element={<HomeworkLayout />}>
+        <Route path="/homework" element={<Homework />} />
+        </Route>
       </Routes>
+
+      
 
       <ToastContainer position="top-center" />
     </Router>

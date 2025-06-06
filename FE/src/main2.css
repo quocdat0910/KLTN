@@ -1,0 +1,786 @@
+/* General Reset & Body Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5; /* Light grey background for the whole page */
+    color: #333;
+}
+
+/* Homework Page Wrapper */
+.homework-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box; /* Include padding in element's total width and height */
+    width: 1646px;
+}
+
+/* Header */
+.homework-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    gap: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    width: 1646px;
+}
+
+.homework-logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #3498db; /* Blue color */
+    padding: 5px 10px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+}
+
+.homework-course-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    flex-grow: 1; /* Allows title to take available space */
+    color: #555;
+    margin-right: 800px;
+}
+
+.homework-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.homework-progress-text {
+    font-weight: bold;
+    color: #3498db; /* Blue color for percentage */
+}
+
+.homework-progress-bar-container {
+    width: 100px; /* Fixed width for the bar */
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.homework-progress-bar {
+    height: 100%;
+    background-color: #3498db; /* Blue color for progress */
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+}
+
+.homework-progress-count {
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.homework-notes-btn {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #555;
+    transition: background-color 0.2s;
+}
+
+.homework-notes-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Content Area */
+.homework-content-area {
+    display: flex;
+    flex-grow: 1; /* Allows content to take remaining vertical space */
+    padding: 20px;
+    gap: 25px; /* Space between video and sidebar */
+    align-items:center; /* Align items to the top */
+    margin-left: 10px;
+}
+
+/* Video Section (Left) */
+.homework-video-section {
+    flex: 2; /* Takes 2 parts of available space, e.g., ~66% */
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.homework-video-player-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio (9 / 16 * 100%) */
+    height: 0;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.homework-video-player-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.homework-video-title {
+    font-size: 1.4em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.homework-video-note-link {
+    font-size: 0.9em;
+    color: #3498db;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.homework-video-note-link:hover {
+    text-decoration: underline;
+}
+
+/* Sidebar Section (Right - Table of Contents) */
+.homework-sidebar-section {
+    flex: 1; /* Takes 1 part of available space, e.g., ~33% */
+    background-color: #ffffff;
+    padding: 110px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 180px); /* Adjust based on header/footer height */
+    overflow-y: auto; /* Enable scrolling for long content */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.homework-chapter-item {
+    border-bottom: 1px solid #eee; /* Separator for chapters */
+    padding-bottom: 10px;
+}
+
+.homework-chapter-item:last-child {
+    border-bottom: none; /* No border for the last item */
+    padding-bottom: 0;
+}
+
+.homework-chapter-title {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #555;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.homework-chapter-title:hover {
+    color: #3498db; /* Hover effect */
+}
+
+.homework-chapter-title.expanded {
+    color: #3498db; /* Blue when expanded */
+}
+
+.homework-chapter-toggle {
+    margin-right: 10px;
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.homework-lesson-list {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.homework-lesson-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    margin-left: 20px; /* Indent lessons */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.homework-lesson-item:hover {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.homework-lesson-item.active {
+    background-color: #e6f2fa; /* Light blue background */
+    color: #3498db; /* Blue text */
+    font-weight: bold;
+}
+
+.homework-lesson-icon {
+    margin-right: 8px;
+    color: #888; /* Default icon color */
+}
+
+.homework-lesson-item.active .homework-lesson-icon {
+    color: #3498db; /* Blue icon when active */
+}
+
+/* Footer */
+.homework-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #e0e0e0;
+    width: 1646px;
+}
+
+.homework-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.homework-btn-outline {
+    background-color: transparent;
+    border: 2px solid #3498db;
+    color: #3498db;
+    margin-left: 500px;
+}
+
+.homework-btn-outline:hover {
+    background-color: #e6f2fa;
+}
+
+.homework-btn-primary {
+    background-color: #3498db;
+    border: 2px solid #3498db;
+    color: white;
+}
+
+.homework-btn-primary:hover {
+    background-color: #2a7abc;
+    border-color: #2a7abc;
+}
+
+.homework-chapter-status {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Responsive adjustments (optional, but good practice) */
+@media (max-width: 768px) {
+    .homework-header, .homework-footer {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .homework-course-title, .homework-chapter-status {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .homework-content-area {
+        flex-direction: column;
+    }
+    .homework-video-section, .homework-sidebar-section {
+        flex: none; /* Remove flex grow */
+        width: 100%; /* Take full width */
+        max-height: none; /* Remove max height constraint */
+    }
+    .homework-notes-btn {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Style cho phần thêm ghi chú dưới video */
+.homework-video-note-link .current-video-time {
+    font-weight: bold;
+    color: #3498db; /* Màu xanh của thời gian */
+    cursor: pointer;
+}
+
+/* Add Note Form Container */
+.add-note-form-container {
+    background-color: #f8f8f8; /* Màu nền giống như trong ảnh */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px; /* Khoảng cách từ link "Thêm ghi chú" */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    width: 100%; /* Đảm bảo nó chiếm đủ chiều rộng */
+    box-sizing: border-box; /* Tính cả padding vào width */
+}
+
+.add-note-form-title {
+    font-size: 1.1em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center; /* Căn giữa tiêu đề */
+}
+
+.note-timestamp {
+    color: #3498db; /* Màu xanh cho timestamp trong tiêu đề */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.note-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    resize: vertical; /* Cho phép thay đổi kích thước theo chiều dọc */
+    min-height: 80px; /* Chiều cao tối thiểu */
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* Đảm bảo font nhất quán */
+}
+
+.note-textarea::placeholder {
+    color: #999;
+}
+
+.note-textarea:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.add-note-form-actions {
+    display: flex;
+    justify-content: flex-end; /* Đẩy các nút sang phải */
+    gap: 10px; /* Khoảng cách giữa các nút */
+    margin-top: 20px;
+}
+
+.note-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    border: none; /* Mặc định không border */
+}
+
+.note-btn-cancel {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+}
+
+.note-btn-cancel:hover {
+    background-color: #e9ecef;
+}
+
+.note-btn-save {
+    background-color: #3498db; /* Màu xanh primary */
+    color: white;
+}
+
+.note-btn-save:hover {
+    background-color: #2a7abc; /* Màu xanh đậm hơn khi hover */
+}
+
+/*sr-only class for accessibility*/
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Các style khác nếu cần điều chỉnh */
+
+/* Responsive adjustments (tùy chọn) */
+@media (max-width: 768px) {
+    .add-note-form-container {
+        padding: 15px;
+    }
+    .add-note-form-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .note-btn {
+        width: 100%;
+    }
+}
+
+/* Overlay cho Form Ghi chú */
+.note-form-overlay {
+    position: fixed; /* Cố định vị trí trên màn hình */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Đảm bảo nó nằm trên tất cả các nội dung khác */
+}
+
+/* Căn chỉnh Form Ghi chú bên trong Overlay */
+.add-note-form-container {
+    background-color: #ffffff; /* Thay đổi màu nền thành trắng để nó nổi bật hơn */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px; /* Tăng padding để trông đẹp hơn */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Bóng đổ mạnh hơn */
+    max-width: 500px; /* Giới hạn chiều rộng tối đa */
+    width: 90%; /* Chiếm 90% chiều rộng nếu nhỏ hơn max-width */
+    box-sizing: border-box;
+    /* Xóa margin-top: 20px; vì giờ nó nằm trong overlay */
+}
+
+.add-note-form-title {
+    font-size: 1.4em; /* Kích thước lớn hơn */
+    margin-bottom: 20px; /* Khoảng cách lớn hơn */
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+
+.note-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    resize: vertical;
+    min-height: 120px; /* Tăng chiều cao tối thiểu của textarea */
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* ... (Giữ nguyên các style khác cho note-textarea, note-btn-cancel, note-btn-save) ... */
+
+/* Đảm bảo các phần responsive vẫn hoạt động tốt với overlay */
+@media (max-width: 768px) {
+    .add-note-form-container {
+        padding: 20px;
+        width: 95%; /* Hơi rộng hơn trên mobile */
+    }
+}
+
+/* Overlay cho Danh sách Ghi chú (Slide-in from right) */
+.note-list-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: flex-end; /* Đẩy nội dung (modal-content) sang phải */
+    align-items: stretch; /* Đảm bảo modal-content kéo dài hết chiều cao */
+    z-index: 1001;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.note-list-modal-content {
+    background-color: #ffffff;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    
+    /* Điều chỉnh các thuộc tính này để tăng kích thước */
+    width: 100%; /* Tăng chiều rộng lên 60% của màn hình */
+    max-width: 800px; /* Tăng chiều rộng tối đa lên 800px (hoặc giá trị bạn muốn) */
+    /* Nếu bạn muốn nó luôn là 50% hoặc 60% và không bị giới hạn max-width, bạn có thể bỏ max-width */
+    
+    height: 100%; /* Kéo dài hết chiều cao màn hình */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    transform: translateX(0%);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Khi modal đóng, trượt nó ra khỏi màn hình */
+.note-list-modal-content.slide-out-right {
+    transform: translateX(100%);
+}
+
+.note-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.note-list-title {
+    font-size: 1.5em; /* Có thể tăng thêm nếu muốn tiêu đề lớn hơn */
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.note-list-close-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.note-list-close-btn:hover {
+    color: #333;
+}
+
+.note-list-body {
+    flex-grow: 1;
+    overflow-y: auto; /* Đảm bảo thanh cuộn khi quá nhiều ghi chú */
+    padding-right: 10px; /* Thêm padding cho thanh cuộn */
+}
+
+.notes-display-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.note-item-display {
+    background-color: #f8f8f8;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.note-item-timestamp {
+    font-weight: bold;
+    color: #3498db;
+    font-size: 0.9em;
+}
+
+.note-item-content {
+    color: #555;
+    line-height: 1.5;
+    font-size: 1em; /* Có thể tăng kích thước font nếu muốn nội dung ghi chú lớn hơn */
+}
+
+.no-notes-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .note-list-modal-content {
+        width: 100%; /* Chiếm toàn bộ chiều rộng trên màn hình nhỏ */
+        max-width: none;
+    }
+}
+
+.exercise-container {
+    background-color: #f8f8f8;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%; /* Chiếm toàn bộ chiều cao của video section */
+    box-sizing: border-box;
+}
+
+.exercise-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.question-counter {
+    font-size: 1.1em;
+    color: #666;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.question-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    flex-grow: 1; /* Cho phép nó giãn nở để chiếm không gian */
+    display: flex;
+    flex-direction: column;
+}
+
+.question-text {
+    font-size: 1.1em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.option-item:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}
+
+.option-item input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.2); /* Phóng to radio button */
+}
+
+.option-text {
+    font-size: 1em;
+    color: #444;
+}
+
+/* Styles khi đáp án đúng/sai */
+.option-item.correct-answer {
+    background-color: #e6ffe6; /* Nền xanh nhạt */
+    border-color: #28a745; /* Border xanh đậm */
+}
+
+.option-item.wrong-answer {
+    background-color: #ffe6e6; /* Nền đỏ nhạt */
+    border-color: #dc3545; /* Border đỏ đậm */
+}
+
+
+.exercise-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.exercise-btn {
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.exercise-btn-submit {
+    background-color: #3498db;
+    color: white;
+}
+
+.exercise-btn-submit:hover:not(:disabled) {
+    background-color: #2a7abc;
+}
+
+.exercise-btn-submit:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.exercise-btn-next {
+    background-color: #28a745; /* Màu xanh lá cho nút tiếp tục */
+    color: white;
+}
+
+.exercise-btn-next:hover {
+    background-color: #218838;
+}
+
+/* Feedback Section */
+.feedback-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-top: 15px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-card.correct {
+    background-color: #e6ffe6;
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.feedback-card.wrong {
+    background-color: #ffe6e6;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.feedback-status {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.feedback-icon {
+    font-size: 1.4em;
+    margin-right: 8px;
+}
+
+.feedback-label {
+    font-weight: bold;
+    margin-right: 5px;
+    color: #333; /* Màu đen cho label */
+}
+
+.feedback-explanation {
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #555; /* Màu xám cho giải thích */
+}
