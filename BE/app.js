@@ -5,6 +5,10 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { dbConnection } from "./database/dbConnection.js";
 import userRoutes from "./router/userRoutes.js";
+import courseRoutes from './router/courseRoutes.js';
+import chapterRoutes from './router/chapterRoutes.js';
+import videoRoutes from './router/videoRoutes.js';
+import quizRoutes from './router/quizRoutes.js';
 
 const app = express();
 config({ path: "./config/config.env" });
@@ -28,7 +32,11 @@ app.use(
   })
 );
 
-app.use("/api/v1/users", userRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/courses', courseRoutes);
+app.use('/api/v1/courses/:courseId/chapters', chapterRoutes);
+app.use('/api/v1/chapters/:chapterId/videos', videoRoutes);
+app.use('/api/v1/chapters/:chapterId/quizzes', quizRoutes);
 
 dbConnection();
 
