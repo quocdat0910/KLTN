@@ -41,7 +41,7 @@ const App = () => {
           <Route path="/admin/categories" element={<Category />} />
           <Route path="/admin/course" element={<Course />} />
           <Route path="/admin/course/addCourse" element={<AddCourse />} />
-          <Route path="/admin/course/addCourse/addChapter" element={<AddChapter />} />
+          <Route path="/admin/course/addCourse/addChapter"  element={<AddChapter />} />
         </Route>
 
         {/* User Layout Routes */}
