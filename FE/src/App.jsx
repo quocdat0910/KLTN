@@ -44,7 +44,7 @@ const App = () => {
           <Route path="/admin/course/addCourse/addChapter"  element={<AddChapter />} />
         </Route>
 
-        {/* User Layout Routes */}
+        {/* User Layout Routes   sdg */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/aboutus" element={<AboutUs />} />
