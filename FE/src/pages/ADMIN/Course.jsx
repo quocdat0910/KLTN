@@ -23,10 +23,6 @@ const [users, setUsers] = useState([
       </div>
 
       <div className="search-add">
-        <div className="search-box">
-          <input type="text" placeholder="Tìm kiếm" />
-          <FaSearch className="search-icon" />
-        </div>
         <button onClick={() => navigateTo("addCourse")} className="add-btn">Thêm khóa học</button>
       </div>
 

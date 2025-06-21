@@ -267,15 +267,22 @@ export const logout = async (req, res, next) => {
   }
 };
 
-export const getProfile = async (req, res, next) => {
+// Ví dụ: backend/controllers/userController.js
+export const getUserProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).select('-password -__v');
+    // Lấy người dùng. Đảm bảo 'avatar' được bao gồm trong kết quả.
+    const user = await User.findById(req.user._id).select('-password -__v'); // .select() sẽ tự lấy tất cả trừ các trường bị loại trừ
+
     if (!user) {
-      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng.' });
     }
-    res.status(200).json({ user });
+
+    res.status(200).json({
+      success: true,
+      user, // <-- Đối tượng 'user' này cần chứa 'avatar'
+    });
   } catch (error) {
-    console.error('Lỗi lấy hồ sơ:', error.message);
+    console.error("Lỗi khi lấy thông tin người dùng:", error);
     next(error);
   }
 };

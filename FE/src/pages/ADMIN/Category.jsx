@@ -28,10 +28,6 @@ const [users, setUsers] = useState([
       </div>
 
       <div className="search-add">
-        <div className="search-box">
-          <input type="text" placeholder="Tìm kiếm" />
-          <FaSearch className="search-icon" />
-        </div>
         <button className="add-btn" onClick={() => setShowForm(true)}>Thêm loại khóa học</button>
       </div>
 

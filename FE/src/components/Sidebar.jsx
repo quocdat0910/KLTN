@@ -7,7 +7,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="logo-container">
-        <img src="logo.png" alt="Logo" className="logo-img" />
+        <img src="/logo.png" alt="Logo" className="logo-img" />
       </div>
       <ul className="nav-menu">
         <li onClick={() => navigateTo("admin/")} className="active">
@@ -22,10 +22,10 @@ const Sidebar = () => {
           <i className="fas fa-book"></i>
           <span>Khóa học</span>
         </li>
-         <li onClick={() => navigateTo("admin/roles")}>
+         {/* <li onClick={() => navigateTo("admin/roles")}>
           <i className="fas fa-user-tag"></i>
           <span>Vai trò</span> 
-        </li>
+        </li> */}
         <li onClick={() => navigateTo("admin/categories")}>
           <i className="fas fa-list"></i>
           <span>Danh mục</span>

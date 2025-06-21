@@ -44,7 +44,7 @@ const App = () => {
           <Route path="/admin/course/addCourse/addChapter"  element={<AddChapter />} />
         </Route>
 
-        {/* User Layout Routes   sdg */}
+        {/* User Layout Routes  */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/aboutus" element={<AboutUs />} />
@@ -59,8 +59,6 @@ const App = () => {
         <Route path="/homework" element={<Homework />} />
         </Route>
       </Routes>
-
-      
 
       <ToastContainer position="top-center" />
     </Router>

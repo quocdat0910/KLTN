@@ -50,10 +50,10 @@ const userSchema = new mongoose.Schema(
         message: 'Số điện thoại không hợp lệ!',
       },
     },
-    avatar: {
-      type: String,
-      default: null,
-    },
+      avatar: {
+    type: String, // Loại dữ liệu là String để lưu URL
+    default: null, // URL avatar mặc định
+  },
     dateOfBirth: {
       type: Date,
       required: [true, 'Ngày sinh là bắt buộc'],

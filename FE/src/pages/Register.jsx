@@ -107,8 +107,8 @@ const Register = () => {
               type="text"
               required
               placeholder="Nguyễn"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
             />
 
             <label>Tên</label>
@@ -116,8 +116,8 @@ const Register = () => {
               type="text"
               required
               placeholder="Văn A"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
             />
 
             <label>Số điện thoại</label>

@@ -477,7 +477,7 @@
 .user-dropdown {
   position: relative;
   cursor: pointer;
-  margin-left: 1120px;
+  margin-left: 1150px;
 }
 
 .user-name {
@@ -570,15 +570,16 @@
 /* Menu ẩn mặc định */
 .discovery-menu {
   position: absolute;
-  top: 100%;
+  top: 100%; /* Đặt menu ngay dưới element cha (.discovery-wrapper) */
   left: 0;
   background: white;
   min-width: 200px;
   border-radius: 6px;
-  display: none;
-  z-index: 1;
+  display: none; /* Mặc định ẩn */
+  z-index: 100; /* Đảm bảo menu nằm trên các element khác */
   margin-top: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Nếu bạn muốn menu có thể tràn ra ngoài parent và vẫn cuộn, bạn có thể thêm overflow-y: auto; max-height: ...; */
 }
 
 .discovery-menu ul {
@@ -605,7 +606,7 @@
 
 .search-box {
   position: absolute;
-  top: 23px;
+  top: -24px;
   left: 261px;
   width: 370px;
   height: 32px;
@@ -627,10 +628,27 @@
   background: transparent;
 }
 
+/* src/main.css hoặc file CSS của Navbar */
+
+.navbar-avatar {
+    width: 30px; /* Điều chỉnh kích thước phù hợp */
+    height: 30px; /* Điều chỉnh kích thước phù hợp */
+    border-radius: 50%; /* Để avatar hình tròn */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    margin-right: 8px; /* Khoảng cách giữa avatar và tên */
+    vertical-align: middle; /* Căn chỉnh với văn bản */
+}
+
+.user-info-display {
+    display: flex; /* Để avatar và tên nằm cạnh nhau */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    cursor: pointer;
+}
+
 .search-icon {
   width: 16px;
   height: 16px;
-  margin-left: 8px;
+  margin-left: 39px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -887,14 +905,14 @@ Banner */
 Component2 */
 
 .component2-container {
-  width: 1440px;
+  width: 1540px;
   height: 300px;
   position: relative;
   background: white;
 }
 
 .component2-background {
-  width: 1440px;
+  width: 1540px;
   height: 300px;
   position: absolute;
   left: 0;
@@ -1047,7 +1065,7 @@ Component2 */
 
 /* Component4 */
 .component4-container {
-  width: 1384px;
+  width: 1584px;
   height: 787px;
   margin-top: 20px;
   position: relative;
@@ -1758,126 +1776,347 @@ Component2 */
 }
 
 /* Account */
+/* ⭐ Wrapper chính cho toàn bộ nội dung ứng dụng, giúp căn giữa và tạo khoảng cách ⭐ */
+.app-main-content-wrapper {
+    display: flex;
+    /* ⭐ justify-content: center; để căn giữa toàn bộ account-wrapper ⭐ */
+    justify-content: center;
+    align-items: flex-start; /* Căn trên cùng */
+    /* ⭐ Tăng padding để tạo khoảng không gian lớn hơn xung quanh nội dung ⭐ */
+    padding: 80px 40px; /* Tăng padding trên/dưới để hạ thấp nội dung xuống đáng kể */
+    min-height: 100vh;
+    background-color: #E5F5FF;
+    box-sizing: border-box;
+}
+
+/* --- Account Page Styles --- */
+
+/* ⭐ Wrapper chính cho toàn bộ nội dung ứng dụng, giúp căn giữa và tạo khoảng cách ⭐ */
+.app-main-content-wrapper {
+    display: flex;
+    justify-content: center; /* Căn giữa toàn bộ account-wrapper theo chiều ngang */
+    /* ⭐ Thay đổi align-items thành center hoặc stretch để đảm bảo căn chỉnh dọc ⭐ */
+    align-items: center; /* ⭐ Căn giữa nội dung theo chiều dọc trong viewport ⭐ */
+    /* Nếu bạn muốn nội dung bắt đầu từ trên cùng và có khoảng padding trên, hãy dùng flex-start và padding-top */
+    /* padding-top: 80px;  */ /* Nếu muốn nội dung bắt đầu từ trên cùng, bỏ align-items: center và dùng padding-top */
+    padding-bottom: 80px; /* Thêm padding dưới để không bị sát đáy nếu nội dung ngắn */
+    min-height: 100vh; /* Đảm bảo chiều cao tối thiểu */
+    background-color: #E5F5FF;
+    box-sizing: border-box;
+}
+
+/* --- Account Page Styles --- */
+
 .account-wrapper {
-  display: flex;
-  width: 100vw;
-  padding: 40px;
-  gap: 40px;
-  font-family: 'Inter', sans-serif;
-  background-color: #E5F5FF ;
+    display: flex;
+    gap: 50px;
+    width: 100%;
+    max-width: 1400px;
+    /* ⭐ Đảm bảo align-items là flex-start để các cột bắt đầu từ cùng một điểm trên cùng ⭐ */
+    align-items: flex-start; /* ⭐ Căn chỉnh các cột bắt đầu từ đỉnh của chúng ⭐ */
+    flex-wrap: wrap;
+    margin: 0;
+    background-color: transparent;
+    padding: 0;
+    margin-top: 20px;
+    margin-right: 100px;
 }
 
 .account-left {
-  width: 250px;
-  background-color: white;
-  padding: 10px;
-  border-radius: 10px;
-  text-align:center;
-  margin-top: 60px;
-  height: 300px;
+    flex: 0 0 300px;
+    height: 685px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* ⭐ Đảm bảo không có margin-top không cần thiết ⭐ */
+    margin-top: 0; /* Loại bỏ bất kỳ margin-top nào có thể gây lệch */
+}
+
+.account-left input[type="file"] {
+    margin-top: 25px;
+    margin-bottom: 20px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px;
+    background-color: #f8f8f8;
+    color: #555;
+}
+
+.account-left .blue-btn {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .account-left2 {
-  width: 260px;
-  background-color: white;
-  padding: 5px;
-  border-radius: 10px;
-  text-align:center;
-  margin-top: 60px;
-  height: 130px;
-  margin-top: 45px;
-  margin-left: -10px;
+   margin-top: 70px;
+}
+
+.account-left h2,
+.account-left2 h2 {
+    font-size: 30px;
+    color: #2176AE;
+    margin: 0 0 30px;
+    font-weight: 700;
 }
 
 .avatar img {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-}
-
-
-.account-left h2 {
-  font-size: 20px;
-  margin: 30px 0 10px;
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 8px solid #2176AE;
+    box-shadow: 0 0 0 15px rgba(33, 118, 174, 0.3);
 }
 
 .blue-btn {
-  background-color: #2176AE;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top:10px;
-  width: 100%;
+    background-color: #2176AE;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 18px 40px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
+.blue-btn:hover {
+    background-color: #1a5c8a;
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(33, 118, 174, 0.45);
+}
+
+
 .account-right {
-  width: 1030px;
-  background-color: white;
-  padding: 60px;
-  border-radius: 10px;
-  margin-top: 60px;
+    flex: 1;
+    background-color: white;
+    padding: 14px 10px;
+    border-radius: 18px;
+    /* ⭐ Đảm bảo không có margin-top không cần thiết ⭐ */
+    margin-top: 0; /* Loại bỏ bất kỳ margin-top nào có thể gây lệch */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    min-width: 700px;
 }
 
 .account-right h1 {
-  font-size: 28px;
-  margin-bottom: 30px;
+    font-size: 48px;
+    color: #2176AE;
+    margin-bottom: 60px;
+    text-align: center;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 40px;
+    display: grid;
+    gap: 45px 50px; /* Giảm gap ngang để 3 cột hiển thị tốt hơn */
+    grid-template-columns: 1fr 1fr 1fr; /* 3 cột bằng nhau */
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
+.form-group,
 .form-group2 {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
-
-.form-group label {
-  font-size: 14px;
-  margin-bottom: 5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-align: left;
-}
-
+.form-group label,
 .form-group2 label {
-  font-size: 14px;
-  margin-bottom: 5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.8px;
 }
 
 .form-group input,
-.form-group select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #e0e0e0;
-  font-size: 14px;
-}
-
+.form-group select,
 .form-group2 input,
 .form-group2 select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #ffffff;
-  font-size: 14px;
+    padding: 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 19px;
+    color: #333;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Background cho trường bị disabled/chỉ đọc */
+.form-group input:disabled,
+.form-group input[disabled] {
+    background-color: #eef3f7;
+    cursor: not-allowed;
+    color: #777;
+}
+
+/* Background cho trường có thể chỉnh sửa */
+.form-group2 input,
+.form-group2 select {
+    background-color: #ffffff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group2 input:focus,
+.form-group2 select:focus {
+    border-color: #2176AE;
+    outline: none;
+    box-shadow: 0 0 0 0.6rem rgba(33, 118, 174, 0.25);
+}
+
+/* Nút "Lưu thay đổi" ở dưới form bên phải */
+.account-right .blue-btn {
+    margin-top: 60px;
+}
+
+
+/* --- Responsive Adjustments --- */
+
+@media (max-width: 1200px) {
+    .app-main-content-wrapper {
+        padding: 60px 20px;
+        align-items: flex-start; /* Đặt lại thành flex-start trên màn hình nhỏ để nội dung bắt đầu từ trên */
+    }
+    .account-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .account-left,
+    .account-left2,
+    .account-right {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 0;
+        flex: unset;
+    }
+
+    .account-left2 {
+        margin-top: 40px;
+    }
+
+    .account-right {
+        padding: 50px;
+        min-width: unset;
+    }
+
+    .account-right h1 {
+        font-size: 42px;
+    }
+    .form-grid {
+        /* Chuyển về 2 cột trên màn hình trung bình */
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px 50px;
+    }
+}
+
+@media (max-width: 992px) {
+    .form-grid {
+        /* Chuyển hẳn sang 2 cột hoặc tùy chọn khác */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 35px 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-main-content-wrapper {
+        padding: 40px 15px;
+    }
+    .account-left,
+    .account-left2,
+    .account-right {
+        padding: 30px;
+        border-radius: 15px;
+    }
+    .account-left h2,
+    .account-left2 h2 {
+        font-size: 26px;
+        margin-bottom: 25px;
+    }
+    .account-right h1 {
+        font-size: 36px;
+        margin-bottom: 35px;
+    }
+    .blue-btn {
+        padding: 16px 30px;
+        font-size: 18px;
+    }
+    .form-grid {
+        grid-template-columns: 1fr; /* Luôn là 1 cột trên điện thoại */
+        gap: 30px;
+    }
+    .form-group label,
+    .form-group2 label {
+        font-size: 17px;
+        margin-bottom: 12px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group2 input,
+    .form-group2 select {
+        padding: 16px;
+        font-size: 17px;
+    }
+    .avatar img {
+        width: 180px;
+        height: 180px;
+        border-width: 6px;
+        box-shadow: 0 0 0 12px rgba(33, 118, 174, 0.25);
+    }
+}
+
+@media (max-width: 480px) {
+    .app-main-content-wrapper {
+        padding: 20px 10px;
+    }
+    .account-left,
+    .account-left2,
+    .account-right {
+        padding: 20px;
+    }
+    .account-right h1 {
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+    .avatar img {
+        width: 140px;
+        height: 140px;
+        border-width: 4px;
+        box-shadow: 0 0 0 8px rgba(33, 118, 174, 0.2);
+    }
+    .blue-btn {
+        font-size: 16px;
+        padding: 12px 25px;
+    }
+    .form-group label,
+    .form-group2 label {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group2 input,
+    .form-group2 select {
+        padding: 14px;
+        font-size: 15px;
+    }
 }
 
 /* ChangePasswordForm */
@@ -2560,10 +2799,10 @@ Component2 */
 
 .logo {
   position: absolute;
-  top: -17px;
-  left: 0;
-  width: 128px;
-  height: 128px;
+  top: -39px;
+  left: -15px;
+  width: 120px;
+  height: 120px;
 }
 
 .course-title {

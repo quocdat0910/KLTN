@@ -1,119 +1,164 @@
+// src/components/Navbar.jsx
 import '../main.css';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect, useRef } from "react";
-import { Context } from "../main";
+import { Context } from "../main"; // Đảm bảo Context được import đúng
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const { isAuthenticated, setIsAuthenticated, setUser, user } = useContext(Context);
-  const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+    // Lấy isAuthenticated, setIsAuthenticated, user, setUser từ Context
+    const { isAuthenticated, setIsAuthenticated, setUser, user } = useContext(Context);
+    const navigate = useNavigate();
 
-  const handleSelect = (category) => {
-  console.log("Bạn đã chọn:", category);
-};
-const [discoverDropdownOpen, setDiscoverDropdownOpen] = useState(false);
+    // State để quản lý trạng thái mở/đóng của các dropdown
+    const [dropdownOpen, setDropdownOpen] = useState(false); // Dropdown người dùng
+    const [discoverDropdownOpen, setDiscoverDropdownOpen] = useState(false); // Dropdown khám phá
 
+    // Ref để phát hiện click bên ngoài dropdown người dùng, đóng dropdown khi click ra ngoài
+    const dropdownRef = useRef(null);
 
-  const handleLogout = async () => {
-    try {
-      const res = await axios.post("http://localhost:4000/api/v1/users/logout", {}, {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
-      });
-      toast.success(res.data.message);
-      setIsAuthenticated(false);
-      setUser({});
-      setDropdownOpen(false);
-      navigate("/login");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Đăng xuất thất bại");
-    }
-  };
+    // Hàm xử lý khi chọn một mục trong menu "Khám phá"
+    const handleSelect = (category) => {
+        console.log("Bạn đã chọn:", category);
+        // Có thể thêm logic điều hướng hoặc lọc nội dung ở đây
+        // Ví dụ: navigate(`/courses?category=${category}`);
+        setDiscoverDropdownOpen(false); // Đóng dropdown sau khi chọn
+    };
 
-  const handleManageAccount = () => {
-    navigate("/myaccount");
-    setDropdownOpen(false);
-  };
+    // Hàm xử lý đăng xuất người dùng
+    const handleLogout = async () => {
+        try {
+            const res = await axios.post("http://localhost:4000/api/v1/users/logout", {}, {
+                withCredentials: true, // Cho phép gửi cookie
+                headers: { "Content-Type": "application/json" },
+            });
+            toast.success(res.data.message); // Hiển thị thông báo thành công
+            setIsAuthenticated(false); // Cập nhật trạng thái xác thực trong Context
 
-  // Đóng dropdown khi click bên ngoài
-  useEffect(() => {
-  const handleClickOutside = (event) => {
-  if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-    setDropdownOpen(false);
-  }
-};
+            // Khi đăng xuất, reset thông tin user về trạng thái mặc định của người dùng chưa đăng nhập.
+            // Điều này đảm bảo avatar hiển thị `/user.png` NGAY LẬP TỨC sau khi logout.
+            // Khi người dùng đăng nhập lại, logic trong `main.jsx` (Context) sẽ fetch profile
+            // và cấp lại `user.avatar` đúng từ CSDL hoặc `user.png` nếu CSDL không có.
+            setUser({
+                firstName: '',
+                lastName: '',
+                email: '',
+                fullName: 'Người dùng', // Tên mặc định khi chưa đăng nhập
+                avatar: '/user.png'     // Avatar mặc định khi chưa đăng nhập
+            });
+            setDropdownOpen(false); // Đóng dropdown người dùng
+            navigate("/login");     // Điều hướng về trang đăng nhập
+        } catch (error) {
+            // Xử lý lỗi khi đăng xuất
+            toast.error(error.response?.data?.message || "Đăng xuất thất bại");
+        }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    // Hàm điều hướng đến trang quản lý tài khoản
+    const handleManageAccount = () => {
+        navigate("/myaccount");
+        setDropdownOpen(false); // Đóng dropdown người dùng
+    };
 
-  return (
-    <>
-      <div className="navbar-bottom">
-        <img onClick={() => navigate("/")} className="logo" src="logo.png" alt="Logo" />
+    // useEffect để xử lý click bên ngoài để đóng dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Nếu dropdown đang mở và click không phải bên trong dropdown
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        };
+        // Thêm event listener khi component mount
+        document.addEventListener("mousedown", handleClickOutside);
+        // Xóa event listener khi component unmount để tránh rò rỉ bộ nhớ
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []); // Dependency rỗng nghĩa là chỉ chạy một lần khi mount và cleanup khi unmount
 
-      <div
-  className="discovery-button"
-  onMouseEnter={() => setDiscoverDropdownOpen(true)}
-  onMouseLeave={() => setDiscoverDropdownOpen(false)}
->
-  <div className="discovery-button-hover-area">
-    <div className="discovery-button-inner">
-      <span>Khám phá</span>
-      <div className="discovery-arrow"></div>
-    </div>
-    {discoverDropdownOpen && (
-      <div className="discovery-menu">
-        <ul>
-          <li  onClick={() => handleSelect('Toeic')}>Toeic</li>
-          <li onClick={() => handleSelect('Ielts')}>Ielts</li>
-        </ul>
-      </div>
-    )}
-  </div>
-</div>
+    return (
+        <div className="navbar-bottom">
+            {/* Logo, click để về trang chủ */}
+            <img
+                onClick={() => navigate("/")}
+                className="logo"
+                src="/logo.png"
+                alt="Logo"
+            />
 
-        <div className="search-box">
-          <input 
-            type="text" 
-            className="search-input" 
-            placeholder="Bạn muốn học gì ?" 
-          />
-          <div className="search-icon">
-            <img src="search.png" alt="Search" />
-          </div>
-        </div>
-
-        <div className="nav-link link-degree" onClick={() => navigate("/aboutus")}>Giới thiệu</div>
-        <div className="nav-link link-career" onClick={() => navigate("/contactus")}>Liên hệ</div>
-
-        {isAuthenticated ? (
-          <div className="user-dropdown" ref={dropdownRef}>
-            <div className="user-name" onClick={() => setDropdownOpen(!dropdownOpen)}>
-              {user.fullName || "Người dùng"} ▼
+            {/* Nút "Khám phá" với dropdown menu */}
+            <div
+                className="discovery-button"
+                // Sử dụng onMouseEnter/onMouseLeave để mở/đóng dropdown khi hover
+                onMouseEnter={() => setDiscoverDropdownOpen(true)}
+                onMouseLeave={() => setDiscoverDropdownOpen(false)}
+            >
+                <div className="discovery-button-hover-area">
+                    <div className="discovery-button-inner">
+                        <span>Khám phá</span>
+                        <div className="discovery-arrow"></div> {/* Mũi tên chỉ xuống */}
+                    </div>
+                    {/* Menu dropdown "Khám phá" */}
+                    {discoverDropdownOpen && (
+                        <div className="discovery-menu">
+                            <ul>
+                                <li onClick={() => handleSelect('Toeic')}>Toeic</li>
+                                <li onClick={() => handleSelect('Ielts')}>Ielts</li>
+                                {/* Thêm các mục khám phá khác ở đây */}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
-            {dropdownOpen && (
-              <div className="dropdown-menu">
-                <div className="dropdown-item" onClick={handleManageAccount}>Quản lý tài khoản</div>
-                <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
-              </div>
+
+            {/* Ô tìm kiếm */}
+            <div className="search-box">
+                <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Bạn muốn học gì ?"
+                />
+                <div className="search-icon">
+                    <img src="/search.png" alt="Search" />
+                </div>
+            </div>
+
+            {/* Các liên kết điều hướng tĩnh */}
+            <div className="nav-link link-degree" onClick={() => navigate("/aboutus")}>Giới thiệu</div>
+            <div className="nav-link link-career" onClick={() => navigate("/contactus")}>Liên hệ</div>
+
+            {/* Phần hiển thị thông tin người dùng hoặc nút đăng nhập/đăng ký */}
+            {isAuthenticated ? (
+                // Nếu đã đăng nhập, hiển thị avatar và tên người dùng với dropdown
+                <div className="user-dropdown" ref={dropdownRef}>
+                    <div className="user-info-display" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                        <img
+                            // ⭐ Đây là điểm quan trọng: Navbar chỉ đọc user.avatar từ Context.
+                            // Logic xác định nó là URL từ CSDL hay /user.png nằm ở main.jsx.
+                            src={user.avatar} 
+                            alt="Avatar"
+                            className="navbar-avatar"
+                        />
+                        <span className="user-name">{user.fullName} ▼</span>
+                    </div>
+                    {/* Menu dropdown khi click vào avatar/tên người dùng */}
+                    {dropdownOpen && (
+                        <div className="dropdown-menu">
+                            <div className="dropdown-item" onClick={handleManageAccount}>Quản lý tài khoản</div>
+                            <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                // Nếu chưa đăng nhập, hiển thị nút đăng nhập và đăng ký
+                <>
+                    <div className="nav-link link-login" onClick={() => navigate("/login")}>Đăng nhập</div>
+                    <div className="register-button" onClick={() => navigate("/register")}>
+                        <span>Tham gia miễn phí</span>
+                    </div>
+                </>
             )}
-          </div>
-        ) : (
-          <>
-            <div className="nav-link link-login" onClick={() => navigate("/login")}>Đăng nhập</div>
-             <div className="register-button" onClick={() => navigate("/register")}>
-              <span>Tham gia miễn phí</span>
-            </div>
-          </>
-        )}
-      </div>
-    </>
-  );
+        </div>
+    );
 };
 
 export default Navbar;
-  

@@ -7,7 +7,7 @@ import {
   verifyAccount,
   refreshToken,
   logout,
-  getProfile,
+  getUserProfile,
   updateProfile,
   createUser,
   getAllUsers,
@@ -35,8 +35,8 @@ router.post('/request-verification', verificationLimiter, requestVerification); 
 
 // Protected routes (yêu cầu đăng nhập)
 router.post('/logout', protect, logout); // POST /api/v1/users/logout
-//router.get('/profile', protect, getProfile); // GET /api/v1/users/profile
-//router.put('/profile', protect, updateProfile); // PUT /api/v1/users/profile
+router.get('/profile', protect, getUserProfile); // GET /api/v1/users/profile
+router.put('/profile', protect, updateProfile); // PUT /api/v1/users/profile
 
 // Admin routes (yêu cầu vai trò admin)
 router.post('/', protect, admin, createUser); // POST /api/v1/users
