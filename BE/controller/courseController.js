@@ -52,7 +52,7 @@ export const createCourse = async (req, res, next) => {
       type,
       level: level || "Beginner",
       language: language || "English",
-      status: "draft",
+      status: "public",
     });
 
     res.status(201).json({ message: "Tạo khóa học thành công", course });

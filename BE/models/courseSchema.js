@@ -59,7 +59,7 @@ const courseSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['public', 'draft'],
-    default: 'draft',
+    default: 'public',
   },
   enrolledCount: {
     type: Number,
