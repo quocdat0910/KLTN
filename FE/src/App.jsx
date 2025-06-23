@@ -32,16 +32,21 @@ const App = () => {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Admin Layout Routes */}
+{/* Các Route dành cho Admin Layout */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/students" element={<Students />} />
           <Route path="/admin/roles" element={<Roles />} />
           <Route path="/admin/categories" element={<Category />} />
+
+          {/* Các Route quản lý Khóa học */}
           <Route path="/admin/course" element={<Course />} />
-          <Route path="/admin/course/addCourse" element={<AddCourse />} />
-          <Route path="/admin/course/addCourse/addChapter"  element={<AddChapter />} />
+          <Route path="/admin/course/new" element={<AddCourse />} />
+          <Route path="/admin/course/edit/:id" element={<AddCourse />} /> 
+          <Route path="/admin/course/:courseId/chapters/new" element={<AddChapter />} />
+          <Route path="/admin/course/:courseId/chapters/:chapterId" element={<AddChapter />} />
+
+          {/* Thêm các Route dành riêng cho admin khác tại đây */}
         </Route>
 
         {/* User Layout Routes  */}

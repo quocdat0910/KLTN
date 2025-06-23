@@ -142,3 +142,59 @@ export const deleteChapter = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getChapterDetails = async (req, res, next) => {
+    try {
+        const { chapterId } = req.params; // Lấy chapterId từ URL params
+
+        // 1. Tìm chương bằng ID
+        const chapter = await Chapter.findById(chapterId).select('-__v'); // Loại bỏ trường __v không cần thiết
+
+        // 2. Nếu không tìm thấy chương, trả về 404
+        if (!chapter) {
+            return res.status(404).json({
+                success: false,
+                message: 'Không tìm thấy chương này.',
+            });
+        }
+
+        // 3. (Tùy chọn) Kiểm tra quyền truy cập nếu cần thiết
+        // Nếu bạn muốn hạn chế ai có thể xem chi tiết chương (ví dụ: chỉ admin hoặc người đã mua khóa học)
+        // bạn sẽ cần lấy courseId từ chapter.course và thực hiện kiểm tra tương tự như trong getChapters.
+        // Ví dụ:
+        const course = await Course.findById(chapter.course);
+        if (!course) {
+            return res.status(404).json({ success: false, message: 'Khóa học của chương không tồn tại.' });
+        }
+
+        // Kiểm tra quyền truy cập (chỉ admin hoặc người đã mua khóa học có thể xem chi tiết nếu khóa học không phải public/draft)
+        if (req.user && req.user.role === 'student') {
+            const purchase = await Purchase.findOne({ user: req.user._id, course: course._id });
+            if (!purchase) {
+                // Nếu khóa học này là có phí và người dùng chưa mua
+                if (course.price > 0 && course.status !== 'public') { // Hoặc bất kỳ logic nào bạn dùng để xác định khóa học miễn phí/công khai
+                    return res.status(403).json({ success: false, message: 'Bạn chưa sở hữu khóa học này để xem chi tiết chương.' });
+                }
+            }
+        }
+        // Admin luôn có quyền truy cập
+        if (req.user && req.user.role !== 'admin' && course.status === 'draft') {
+             return res.status(403).json({ success: false, message: 'Không có quyền xem chương trong khóa học nháp.' });
+        }
+
+
+        // 4. Trả về thông tin chi tiết chương
+        res.status(200).json({
+            success: true,
+            chapter,
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy chi tiết chương:', error.message);
+        // Nếu ID không hợp lệ (ví dụ: định dạng sai), Mongoose sẽ ném lỗi.
+        // Kiểm tra lỗi cast để trả về 400 thay vì 500 cho ID không hợp lệ
+        if (error.name === 'CastError') {
+            return res.status(400).json({ success: false, message: 'ID chương không hợp lệ.' });
+        }
+        next(error); // Chuyển lỗi cho middleware xử lý lỗi tổng quát
+    }
+};

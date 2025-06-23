@@ -158,7 +158,7 @@ export const updateCourse = async (req, res, next) => {
         description: description || course.description,
         price: price !== undefined ? price : course.price,
         discountPrice:
-          discountPrice !== undefined ? discountPrice : course.discountPrice,
+        discountPrice !== undefined ? discountPrice : course.discountPrice,
         discountEndDate: discountEndDate || course.discountEndDate,
         thumbnail: thumbnailUrl,
         type: type || course.type,
