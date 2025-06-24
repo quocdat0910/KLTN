@@ -47,7 +47,7 @@ const Course = () => {
                 return;
             }
 
-            const res = await axios.get("http://localhost:4000/api/v1/courses/admin", {
+            const res = await axios.get("http://localhost:4000/api/v1/courses", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -108,7 +108,7 @@ const Course = () => {
 
     // Hàm để xử lý việc chỉnh sửa khóa học (chỉ điều hướng)
     const handleEditCourse = (id) => {
-        navigateTo(`/admin/course/edit/${id}`); // Điều hướng đến trang chỉnh sửa với ID khóa học
+        navigateTo(`/admin/courses/edit/${id}`); // Điều hướng đến trang chỉnh sửa với ID khóa học
     };
 
     // --- Render dựa trên trạng thái tải và lỗi ---
@@ -152,7 +152,7 @@ const Course = () => {
             </div>
 
             <div className="search-add">
-                <button onClick={() => navigateTo("/admin/course/new")} className="add-btn">Thêm khóa học</button>
+                <button onClick={() => navigateTo("/admin/courses/new")} className="add-btn">Thêm khóa học</button>
             </div>
 
             <table className="user-table">
@@ -164,7 +164,6 @@ const Course = () => {
                         <th>Giá</th>
                         <th>Loại</th>
                         <th>Cấp độ</th>
-                        <th>Ngôn ngữ</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -178,7 +177,6 @@ const Course = () => {
                                 <td>{course.price.toLocaleString('vi-VN')} VNĐ</td>
                                 <td>{course.type}</td>
                                 <td>{course.level}</td>
-                                <td>{course.language}</td>
                                 <td className="action-icons">
                                     <FaEdit className="icon edit" onClick={() => handleEditCourse(course._id)} title="Sửa khóa học" />
                                     <FaTrash className="icon delete" onClick={() => handleDeleteCourse(course._id)} title="Xóa khóa học" />

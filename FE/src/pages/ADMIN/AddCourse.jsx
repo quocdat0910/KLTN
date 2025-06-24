@@ -2,13 +2,13 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "../../Component.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
-// import AddChapter from "./AddChapter"; // Loại bỏ import này
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom"; // Import useLocation
 import { Context } from '../../main';
 
 function AddCourse() {
     const navigate = useNavigate();
-    const { id: courseId } = useParams(); // 'id' ở đây có thể là courseId nếu route là /admin/course/:id
+    const location = useLocation();
+    const { id: courseId } = useParams(); 
     const { isAuthenticated, user, loading: contextLoading } = useContext(Context);
 
     useEffect(() => {
@@ -38,17 +38,40 @@ function AddCourse() {
     const [courseCreatedId, setCourseCreatedId] = useState(null);
     const [courseCreatedName, setCourseCreatedName] = useState('');
 
-    const [chapters, setChapters] = useState([]); // Vẫn giữ để hiển thị danh sách chương
-    // const [showAddChapterForm, setShowAddChapterForm] = useState(false); // Loại bỏ
-    // const [chapterToEdit, setChapterToEdit] = useState(null); // Loại bỏ
+    const [chapters, setChapters] = useState([]); 
 
     const [isEditMode, setIsEditMode] = useState(false);
+
+    const fetchChaptersForCourse = async (id) => {
+        if (!id) return; 
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+                navigate("/login");
+                return;
+            }
+            const chaptersRes = await axios.get(`http://localhost:4000/api/v1/courses/${id}/chapters`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+            if (Array.isArray(chaptersRes.data.chapters)) {
+                setChapters(chaptersRes.data.chapters);
+            } else {
+                setChapters([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách chương:", error.response?.data?.message || error.message);
+            setChapters([]); 
+        }
+    };
 
     useEffect(() => {
         const fetchCourseAndChapterDetails = async () => {
             if (courseId) {
                 setIsEditMode(true);
-                setLoading(true);
+                setLoading(true); 
                 try {
                     const token = localStorage.getItem('token');
                     if (!token) {
@@ -57,7 +80,6 @@ function AddCourse() {
                         return;
                     }
 
-                    // --- Request 1: Lấy thông tin chi tiết khóa học ---
                     const courseRes = await axios.get(`http://localhost:4000/api/v1/courses/${courseId}`, {
                         headers: { Authorization: `Bearer ${token}` },
                         withCredentials: true,
@@ -74,26 +96,16 @@ function AddCourse() {
                     setCourseCreatedId(courseData._id);
                     setCourseCreatedName(courseData.title);
 
-                    // --- Request 2: Lấy danh sách chương cho khóa học này ---
-                    // Vẫn giữ request này để hiển thị danh sách các chương hiện có trong khóa học
-                    const chaptersRes = await axios.get(`http://localhost:4000/api/v1/courses/${courseId}/chapters`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        withCredentials: true,
-                    });
-                    if (Array.isArray(chaptersRes.data.chapters)) {
-                        setChapters(chaptersRes.data.chapters);
-                    } else {
-                        setChapters([]);
-                    }
+                    await fetchChaptersForCourse(courseData._id);
 
                 } catch (error) {
                     console.error("Lỗi khi tải thông tin khóa học hoặc chương:", error.response?.data?.message || error.message);
                     toast.error("Không thể tải thông tin khóa học hoặc chương: " + (error.response?.data?.message || error.message));
-                    navigate("/admin/course");
+                    navigate("/admin/courses");
                 } finally {
                     setLoading(false);
                 }
-            } else {
+            } else { 
                 setIsEditMode(false);
                 setTitle('');
                 setDescription('');
@@ -105,9 +117,7 @@ function AddCourse() {
                 setThumbnailPreview(null);
                 setCourseCreatedId(null);
                 setCourseCreatedName('');
-                setChapters([]);
-                // setShowAddChapterForm(false); // Loại bỏ
-                // setChapterToEdit(null); // Loại bỏ
+                setChapters([]); 
             }
         };
 
@@ -116,6 +126,15 @@ function AddCourse() {
         }
 
     }, [courseId, isAuthenticated, user, contextLoading, navigate]);
+
+    useEffect(() => {
+        if (location.state?.chapterModified && courseCreatedId) {
+            console.log("Detected chapter modified, refetching chapters...");
+            fetchChaptersForCourse(courseCreatedId);
+            navigate(location.pathname, { replace: true, state: {} }); 
+        }
+    }, [location.state?.chapterModified, courseCreatedId, navigate, location.pathname]);
+
 
     const handleThumbnailFileChange = (event) => {
         const file = event.target.files[0];
@@ -146,37 +165,23 @@ function AddCourse() {
         }
     };
 
-    // Hàm này sẽ không được gọi nữa nếu AddChapter là một trang riêng
-    // const handleChapterSave = (savedChapter) => {
-    //     if (chapterToEdit) {
-    //         setChapters(prevChapters =>
-    //             prevChapters.map(chap =>
-    //                 chap._id === savedChapter._id ? savedChapter : chap
-    //             )
-    //         );
-    //         toast.success("Cập nhật chương thành công!");
-    //     } else {
-    //         setChapters(prevChapters => [...prevChapters, savedChapter]);
-    //         toast.success("Thêm chương mới thành công!");
-    //     }
-    //     setShowAddChapterForm(false);
-    //     setChapterToEdit(null);
-    // };
-
     const handleEditChapter = (chapter) => {
-        // Điều hướng đến trang chỉnh sửa chương với courseId và chapterId
-        navigate(`/admin/course/${courseCreatedId}/chapters/${chapter._id}`);
+        navigate(`/admin/courses/${courseCreatedId}/chapters/${chapter._id}`);
     };
 
     const handleAddChapterClick = () => {
+        // DEBUG: Log the URL before navigating
+        const newChapterUrl = `/admin/courses/${courseCreatedId}/chapters/new`;
+        console.log("DEBUG: Navigating to new chapter URL:", newChapterUrl);
+
         if (courseCreatedId) {
-            navigate(`/admin/course/${courseCreatedId}/chapters/new`);
+            navigate(newChapterUrl);
         } else {
             toast.error("Vui lòng tạo hoặc chọn một khóa học trước khi thêm chương.");
         }
     };
 
-     const handleDeleteChapter = async (chapIdToDelete, chapterTitle) => { // Đổi tên biến để tránh nhầm lẫn với chapterId từ useParams
+    const handleDeleteChapter = async (chapIdToDelete, chapterTitle) => { 
         if (window.confirm(`Bạn có chắc chắn muốn xóa chương "${chapterTitle}"?`)) {
             setLoading(true);
             try {
@@ -187,18 +192,14 @@ function AddCourse() {
                     return;
                 }
 
-                // *** ĐIỀU CHỈNH URL TẠI ĐÂY ***
-                // Sử dụng cả courseId và chapIdToDelete
                 const res = await axios.delete(`http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapIdToDelete}`, {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true,
                 });
 
                 toast.success(res.data.message || "Xóa chương thành công!");
-                // Nếu hàm này nằm trong AddChapter, bạn có thể cần điều hướng về trang CourseEdit sau khi xóa
-                // Hoặc nếu nó nằm trong CourseEdit, bạn sẽ cập nhật danh sách chương ở đó.
-                // setChapters(prevChapters => prevChapters.filter(chap => chap._id !== chapIdToDelete));
-                navigate(`/admin/course/edit/${courseId}`); // Ví dụ: sau khi xóa, quay lại trang chỉnh sửa khóa học
+                await fetchChaptersForCourse(courseCreatedId); 
+
             } catch (error) {
                 console.error("Lỗi khi xóa chương:", error.response?.data?.message || error.message);
                 toast.error("Không thể xóa chương: " + (error.response?.data?.message || error.message));
@@ -284,8 +285,7 @@ function AddCourse() {
                 toast.success(res.data.message || "Tạo khóa học thành công! Bây giờ bạn có thể thêm chương.");
                 setCourseCreatedId(res.data.course._id);
                 setCourseCreatedName(res.data.course.title);
-                // Sau khi tạo khóa học, điều hướng đến trang chỉnh sửa khóa học để có courseId trên URL
-                navigate(`/admin/course/edit/${res.data.course._id}`);
+                navigate(`/admin/courses/edit/${res.data.course._id}`); 
             }
 
         } catch (error) {
@@ -459,7 +459,7 @@ function AddCourse() {
                     <button
                         type="button"
                         className="back-btn"
-                        onClick={() => navigate("/admin/course")}
+                        onClick={() => navigate("/admin/courses")}
                         disabled={loading}
                     >
                         Trở lại
@@ -475,7 +475,7 @@ function AddCourse() {
                         <button
                             type="button"
                             className="create-btn3"
-                            onClick={handleAddChapterClick} // Gọi hàm điều hướng
+                            onClick={handleAddChapterClick}
                             disabled={loading}
                         >
                             + Thêm chương mới
@@ -499,7 +499,7 @@ function AddCourse() {
                                                 <button
                                                     type="button"
                                                     className="icon-btn edit-icon"
-                                                    onClick={() => handleEditChapter(chapter)} // Gọi hàm điều hướng
+                                                    onClick={() => handleEditChapter(chapter)}
                                                     title="Sửa chương"
                                                     disabled={loading}
                                                 >

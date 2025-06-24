@@ -146,8 +146,8 @@ const ProductDetail = () => {
             />
 
             {/* Static icons (if not dynamic from backend) */}
-            <img className="detail-icon-img2" src="video.png" alt="Icon Video" />
-            <img className="detail-icon-img" src="homework.png" alt="Icon Homework" />
+            <img className="detail-icon-img2" src="/video.png" alt="Icon Video" />
+            <img className="detail-icon-img" src="/homework.png" alt="Icon Homework" />
             <div className="detail-subtitle">Bài tập</div>
 
 

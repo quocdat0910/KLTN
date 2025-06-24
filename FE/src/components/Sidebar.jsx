@@ -18,7 +18,7 @@ const Sidebar = () => {
           <i className="fas fa-user"></i>
           <span>Tài khoản</span>
         </li>
-        <li onClick={() => navigateTo("admin/course")}>
+        <li onClick={() => navigateTo("admin/courses")}>
           <i className="fas fa-book"></i>
           <span>Khóa học</span>
         </li>

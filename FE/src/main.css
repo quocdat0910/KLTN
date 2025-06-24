@@ -2315,7 +2315,7 @@ Component2 */
 }
 
 .detail-bg {
-  width: 1440px;
+  width: 1520px;
   height: 1038px;
   position: absolute;
   left: 0;
@@ -2549,17 +2549,23 @@ Component2 */
 .paymentForm-container {
   position: relative;
   width: 1068px;
-  height: 512px;
+  height: 580px;
 }
 
 .paymentForm-backgroundBox {
   position: absolute;
   width: 1068px;
-  height: 510px;
+  height: 580px;
   left: 0;
   top: 0;
   background-color: white;
   border-radius: 10px;
+}
+
+.paymentForm-paypal-btn-wrapper {
+  margin-top: 350px;
+  margin-left: 620px;
+  padding: 40px
 }
 
 .paymentForm-description {
@@ -2600,7 +2606,7 @@ Component2 */
 .paymentForm-sidePanel {
   position: absolute;
   width: 444px;
-  height: 512px;
+  height: 580px;
   left: 626px;
   top: 0;
   background-color: rgba(161, 161, 161, 0.5);
@@ -2799,10 +2805,10 @@ Component2 */
 
 .logo {
   position: absolute;
-  top: -39px;
+  top: -30px;
   left: -15px;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
 }
 
 .course-title {

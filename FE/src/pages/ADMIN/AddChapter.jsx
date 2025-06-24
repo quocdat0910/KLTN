@@ -2,29 +2,32 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { Context } from '../../main';
-import CreateExerciseForm from "../../components/CreateExerciseForm";
-import "../../Component.css";
+import { Context } from '../../main'; 
+import CreateExerciseForm from "../../components/CreateExerciseForm"; 
+import "../../Component.css"; 
 
 function AddChapter() {
     const navigate = useNavigate();
-    const { courseId, chapterId } = useParams();
+    const { courseId, chapterId } = useParams(); 
     const { isAuthenticated, user, loading: contextLoading } = useContext(Context);
 
-    const [chapterName, setChapterName] = useState(''); // Ánh xạ với 'title' trong ChapterSchema
-    const [description, setDescription] = useState(''); // KHÔNG CÓ TRONG ChapterSchema của bạn
-    const [order, setOrder] = useState('');           // CÓ TRONG ChapterSchema
-    const [videoUrl, setVideoUrl] = useState('');     // KHÔNG CÓ TRONG ChapterSchema của bạn
-    const [fileUrl, setFileUrl] = useState('');       // KHÔNG CÓ TRONG ChapterSchema của bạn
+    // DÒNG DEBUG: In ra giá trị của courseId và chapterId từ URL params
+    console.log("DEBUG: courseId from URL params:", courseId);
+    console.log("DEBUG: chapterId from URL params:", chapterId);
 
-    const [loading, setLoading] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
+    const [chapterName, setChapterName] = useState(''); 
+    const [description, setDescription] = useState(''); 
+    const [order, setOrder] = useState(''); // Mặc định là chuỗi rỗng để form hiển thị placeholder
+    const [videoUrl, setVideoUrl] = useState(''); 
+    const [fileUrl, setFileUrl] = useState(''); 
+
+    const [loading, setLoading] = useState(false); 
+    const [isEditMode, setIsEditMode] = useState(false); 
 
     const [showExerciseForm, setShowExerciseForm] = useState(false);
-    const [exercises, setExercises] = useState([]); // Danh sách bài tập (quizzes)
-    const [editingExercise, setEditingExercise] = useState(null);
+    const [exercises, setExercises] = useState([]); 
+    const [editingExercise, setEditingExercise] = useState(null); 
 
-    // --- HÀM XỬ LÝ KHI BÀI TẬP ĐƯỢC TẠO/CẬP NHẬT THÀNH CÔNG ---
     const handleQuizCreated = (newQuiz) => {
         setExercises(prevExercises => {
             if (editingExercise) {
@@ -35,21 +38,81 @@ function AddChapter() {
                 return [...prevExercises, newQuiz];
             }
         });
-        setShowExerciseForm(false);
-        setEditingExercise(null);
+        setShowExerciseForm(false); 
+        setEditingExercise(null); 
         toast.success("Bài tập đã được " + (editingExercise ? "cập nhật" : "thêm") + " vào danh sách chương!");
     };
 
-    // --- CHỨC NĂNG CHỈNH SỬA BÀI TẬP ---
     const handleEditExercise = (quizToEdit) => {
-        setEditingExercise(quizToEdit);
-        setShowExerciseForm(true);
+        setEditingExercise(quizToEdit); 
+        setShowExerciseForm(true); 
     };
 
-    // --- HÀM XỬ LÝ XÓA BÀI TẬP ---
     const handleDeleteExercise = async (quizId, quizTitle) => {
-        if (window.confirm(`Bạn có chắc chắn muốn xóa bài tập "${quizTitle}"?`)) {
-            setLoading(true);
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa bài tập "${quizTitle}"?`)) {
+            return; 
+        }
+        setLoading(true); 
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+                navigate("/login");
+                return;
+            }
+
+            // Đảm bảo chapterId có giá trị khi xóa quiz
+            if (!chapterId || chapterId === 'new') {
+                toast.error("Không thể xóa bài tập: Chương chưa được lưu.");
+                setLoading(false);
+                return;
+            }
+
+            await axios.delete(`http://localhost:4000/api/v1/chapters/${chapterId}/quizzes/${quizId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+
+            setExercises(prevExercises => prevExercises.filter(quiz => quiz._id !== quizId));
+            toast.success("Xóa bài tập thành công!");
+        } catch (error) {
+            console.error("Lỗi khi xóa bài tập:", error.response?.data?.message || error.message);
+            toast.error("Không thể xóa bài tập: " + (error.response?.data?.message || "Lỗi không xác định"));
+        } finally {
+            setLoading(false); 
+        }
+    };
+
+    useEffect(() => {
+        // DEBUG: Log khi useEffect được kích hoạt
+        console.log("DEBUG useEffect triggered.");
+
+        if (contextLoading) {
+            console.log("DEBUG: Context still loading, returning.");
+            return; 
+        }
+        if (!isAuthenticated) {
+            console.log("DEBUG: Not authenticated, navigating to /login.");
+            toast.error("Bạn cần đăng nhập để truy cập trang này.");
+            navigate("/login");
+            return;
+        } else if (user && user.role !== "admin") {
+            console.log("DEBUG: Not an admin, navigating to /.");
+            toast.error("Bạn không có quyền truy cập trang này.");
+            navigate("/");
+            return;
+        }
+
+        // Kiểm tra courseId trước khi xử lý chapterId
+        if (!courseId) {
+            console.log("DEBUG: courseId is missing in URL, navigating to /admin/course."); // Sửa courses thành course
+            toast.error("Không tìm thấy ID khóa học trong URL. Vui lòng quay lại trang quản lý khóa học.");
+            navigate(`/admin/course`); // Sửa courses thành course
+            return;
+        }
+
+        const fetchChapterDetails = async () => {
+            setLoading(true); 
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
@@ -58,127 +121,82 @@ function AddChapter() {
                     return;
                 }
 
-                await axios.delete(`http://localhost:4000/api/v1/chapters/${chapterId}/quizzes/${quizId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                });
-
-                setExercises(prevExercises => prevExercises.filter(quiz => quiz._id !== quizId));
-                toast.success("Xóa bài tập thành công!");
-            } catch (error) {
-                console.error("Lỗi khi xóa bài tập:", error.response?.data?.message || error.message);
-                toast.error("Không thể xóa bài tập: " + (error.response?.data?.message || "Lỗi không xác định"));
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
-
-    // --- LOGIC XÁC THỰC VÀ QUYỀN HẠN ---
-    useEffect(() => {
-        if (contextLoading) {
-            return;
-        }
-        if (!isAuthenticated) {
-            toast.error("Bạn cần đăng nhập để truy cập trang này.");
-            navigate("/login");
-        } else if (user && user.role !== "admin") {
-            toast.error("Bạn không có quyền truy cập trang này.");
-            navigate("/");
-        }
-    }, [isAuthenticated, user, contextLoading, navigate]);
-
-    // --- LOGIC TẢI CHI TIẾT CHƯƠNG VÀ BÀI TẬP KHI Ở CHẾ ĐỘ CHỈNH SỬA ---
-    useEffect(() => {
-        const fetchChapterDetails = async () => {
-            if (chapterId && chapterId !== 'new' && courseId) {
-                setIsEditMode(true);
-                setLoading(true);
-
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) {
-                        toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
-                        navigate("/login");
-                        return;
+                // API call để lấy chi tiết chương
+                const chapterRes = await axios.get(
+                    `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        withCredentials: true,
                     }
+                );
+                const chapterData = chapterRes.data.chapter;
+                setChapterName(chapterData.title || '');
+                setOrder(chapterData.order || '');
+                setDescription(chapterData.description || ''); 
+                setVideoUrl(chapterData.videoUrl || ''); 
+                setFileUrl(chapterData.fileUrl || ''); 
 
-                    // 1. Lấy thông tin chi tiết chương
-                    const chapterRes = await axios.get(
-                        `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}`,
-                        {
-                            headers: { Authorization: `Bearer ${token}` },
-                            withCredentials: true,
-                        }
-                    );
-                    const chapterData = chapterRes.data.chapter;
-                    setChapterName(chapterData.title || '');
-                    setOrder(chapterData.order || '');
-                    // KHÔNG CÓ description, videoUrl, fileUrl TRONG ChapterSchema của bạn.
-                    // Nếu bạn muốn lưu trữ chúng, bạn PHẢI THÊM vào ChapterSchema của backend.
-                    // Hiện tại, chúng sẽ không được tải hoặc gửi lên server cho Chapter model.
-                    setDescription(chapterData.description || ''); // Giữ để hiển thị UI, nhưng sẽ không lưu vào Chapter Model
-                    setVideoUrl(chapterData.videoUrl || '');     // Giữ để hiển thị UI, nhưng sẽ không lưu vào Chapter Model
-                    setFileUrl(chapterData.fileUrl || '');       // Giữ để hiển thị UI, nhưng sẽ không lưu vào Chapter Model
-
-
-                    // 2. Lấy danh sách quizzes (bài tập) cho chương này
-                    const quizzesRes = await axios.get(
-                        `http://localhost:4000/api/v1/chapters/${chapterId}/quizzes`,
-                        {
-                            headers: { Authorization: `Bearer ${token}` },
-                            withCredentials: true,
-                        }
-                    );
-                    if (Array.isArray(quizzesRes.data.quizzes)) {
-                        setExercises(quizzesRes.data.quizzes);
-                    } else {
-                        setExercises([]);
+                // API call để lấy quizzes
+                const quizzesRes = await axios.get(
+                    `http://localhost:4000/api/v1/chapters/${chapterId}/quizzes`, 
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        withCredentials: true,
                     }
-
-                } catch (error) {
-                    console.error("Lỗi khi tải thông tin chương hoặc bài tập:", error.response?.data?.message || error.message);
-                    toast.error("Không thể tải thông tin chương hoặc bài tập: " + (error.response?.data?.message || "Lỗi không xác định"));
-                    navigate(`/admin/course/edit/${courseId}`);
-                } finally {
-                    setLoading(false);
+                );
+                if (Array.isArray(quizzesRes.data.quizzes)) {
+                    setExercises(quizzesRes.data.quizzes); 
+                } else {
+                    setExercises([]);
                 }
-            } else if (chapterId === 'new' && courseId) {
-                setIsEditMode(false);
-                setChapterName('');
-                setDescription(''); // Reset cho UI
-                setOrder('');
-                setVideoUrl('');     // Reset cho UI
-                setFileUrl('');       // Reset cho UI
-                setExercises([]);
-                setEditingExercise(null);
-            } else {
-                toast.error("Không tìm thấy ID khóa học hoặc đường dẫn chương không hợp lệ.");
-                navigate("/admin/course");
+
+            } catch (error) {
+                console.error("Lỗi khi tải thông tin chương hoặc bài tập:", error.response?.data?.message || error.message);
+                toast.error("Không thể tải thông tin chương hoặc bài tập: " + (error.response?.data?.message || "Lỗi không xác định"));
+                navigate(`/admin/courses/edit/${courseId}`); // Sửa courses thành course
+            } finally {
+                setLoading(false); 
             }
         };
 
-        if (isAuthenticated && user && user.role === "admin" && !contextLoading) {
-            fetchChapterDetails();
+        // ĐÂY LÀ LOGIC ĐƯỢC CẢI THIỆN:
+        // Nếu chapterId tồn tại VÀ KHÔNG PHẢI 'new' -> chế độ chỉnh sửa
+        if (chapterId && chapterId !== 'new') { 
+            console.log("DEBUG: Entering edit mode for chapter:", chapterId);
+            setIsEditMode(true);
+            fetchChapterDetails(); 
+        } else { // chapterId là 'new' HOẶC undefined/null/empty string
+            console.log("DEBUG: Entering new chapter creation mode. chapterId was:", chapterId);
+            setIsEditMode(false);
+            // Reset tất cả các state về giá trị ban đầu cho form tạo mới
+            setChapterName('');
+            setDescription(''); 
+            setOrder(1); // Mặc định thứ tự là 1 cho chương mới
+            setVideoUrl(''); 
+            setFileUrl(''); 
+            setExercises([]); 
+            setEditingExercise(null);
+            setLoading(false); // Không có API call ban đầu khi tạo mới
         }
-    }, [courseId, chapterId, isAuthenticated, user, contextLoading, navigate]);
 
-    // --- HÀM XỬ LÝ GỬI FORM CHƯƠNG (Tạo/Cập nhật) ---
+    }, [courseId, chapterId, isAuthenticated, user, contextLoading, navigate]); 
+
     const handleSubmitChapter = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+        e.preventDefault(); 
+        setLoading(true); 
 
         if (!chapterName.trim()) {
             toast.error("Vui lòng nhập tiêu đề chương.");
             setLoading(false);
             return;
         }
-        if (chapterName.trim().length < 3 || chapterName.trim().length > 50) { // Theo min/maxlength của ChapterSchema
+        if (chapterName.trim().length < 3 || chapterName.trim().length > 50) { 
             toast.error("Tiêu đề chương phải từ 3-50 ký tự.");
             setLoading(false);
             return;
         }
-        if (isNaN(parseInt(order)) || parseInt(order) <= 0) {
+        // Order có thể là 0 nếu người dùng xóa input, đảm bảo là số hợp lệ
+        if (isNaN(parseInt(order)) || parseInt(order) <= 0) { 
             toast.error("Thứ tự chương phải là một số nguyên dương.");
             setLoading(false);
             return;
@@ -189,16 +207,14 @@ function AddChapter() {
             return;
         }
 
-        // CHỈ GỬI CÁC TRƯỜNG CÓ TRONG ChapterSchema CỦA BẠN
         const chapterData = {
             title: chapterName.trim(),
             order: parseInt(order),
-            // description, videoUrl, fileUrl KHÔNG CÓ TRONG ChapterSchema.
-            // Nếu muốn lưu, bạn phải thêm vào ChapterSchema ở backend.
-            // Hiện tại, chúng sẽ không được gửi lên server cho Chapter model.
-            // videoUrl: videoUrl.trim(), // Bỏ comment nếu thêm vào ChapterSchema
-            // fileUrl: fileUrl.trim(),   // Bỏ comment nếu thêm vào ChapterSchema
-            // description: description.trim(), // Bỏ comment nếu thêm vào ChapterSchema
+            // Các trường này chỉ được lưu nếu Chapter Schema ở backend có chúng.
+            // Nếu không, chúng sẽ bị bỏ qua bởi Mongoose hoặc gây lỗi validation.
+            description: description.trim(), 
+            videoUrl: videoUrl.trim(),      
+            fileUrl: fileUrl.trim(),        
         };
 
         try {
@@ -221,9 +237,10 @@ function AddChapter() {
                     }
                 );
                 toast.success(res.data.message || "Cập nhật chương thành công!");
+                navigate(`/admin/courses/edit/${courseId}`, { state: { chapterModified: true } }); // Sửa courses thành course
             } else {
                 res = await axios.post(
-                    `http://localhost:4000/api/v1/courses/${courseId}/chapters`, // Endpoint để tạo chương mới
+                    `http://localhost:4000/api/v1/courses/${courseId}/chapters/new`, 
                     chapterData,
                     {
                         headers: { "Authorization": `Bearer ${token}` },
@@ -231,23 +248,21 @@ function AddChapter() {
                     }
                 );
                 toast.success(res.data.message || "Thêm chương mới thành công!");
-                navigate(`/admin/course/${courseId}/chapter/${res.data.chapter._id}`);
+                navigate(`/admin/courses/edit/${courseId}`, { state: { chapterModified: true } }); // Sửa courses thành course
             }
         } catch (error) {
             console.error("Lỗi khi gửi form chương:", error.response?.data?.message || error.message);
             toast.error(error.response?.data?.message || "Thao tác thất bại.");
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     };
 
-    // Hàm đóng form bài tập, reset editingExercise
     const handleCloseExerciseForm = () => {
         setShowExerciseForm(false);
         setEditingExercise(null);
     };
 
-    // --- RENDERING DỰA TRÊN TRẠNG THÁI ---
     if (contextLoading) {
         return (
             <div className="dashboard-container">
@@ -256,14 +271,14 @@ function AddChapter() {
         );
     }
     if (!isAuthenticated || (user && user.role !== "admin")) {
-        return null;
+        return null; 
     }
 
-    if (loading && isEditMode && !chapterName) {
+    if (loading && isEditMode && chapterId && chapterId !== 'new' && !chapterName) {
         return (
             <div className="dashboard-container">
                 <p>Đang tải thông tin chương...</p>
-            </div> // Đã xóa thẻ </p> thừa ở đây
+            </div>
         );
     }
 
@@ -271,7 +286,6 @@ function AddChapter() {
         <div className="dashboard-container">
             <div className="dashboard-header">
                 <h2 className="h2">{isEditMode ? 'Chỉnh sửa chương' : 'Thêm chương mới'}</h2>
-                <p>Khóa học hiện tại: {courseId ? `ID: ${courseId}` : 'Chưa chọn'}</p>
             </div>
 
             <form onSubmit={handleSubmitChapter}>
@@ -307,36 +321,14 @@ function AddChapter() {
 
                 <div className="upload-box">
                     <div className="upload-header">
-                        <h3>Thêm video bài học và tài liệu (Không lưu vào Chapter Model với Schema hiện tại)</h3>
-                        <p>Bạn có thể upload file hoặc nhập URL video/file bài tập</p>
+                        <h3>Thêm video bài học và tài liệu</h3>
+                        <p>Bạn có thể upload file hoặc nhập URL video/file bài tập. (LƯU Ý: Cần cập nhật backend schema để lưu các trường này)</p>
                     </div>
-
-                    <div className="drop-zone">
-                        <input
-                            type="file"
-                            id="fileInput"
-                            className="file-input"
-                            onChange={(e) => toast.info("Tính năng upload file trực tiếp đang được phát triển, vui lòng dùng URL.")}
-                            disabled={loading}
-                        />
-                        <label htmlFor="fileInput" className="drop-label">
-                            <span className="cloud-icon">☁</span>
-                            <p>Kéo thả file hoặc <span className="browse">duyệt qua</span></p>
-                            <p className="file-info">Hỗ trợ các định dạng video/tài liệu</p>
-                        </label>
-                    </div>
-
-                    <div className="file-type-note">
-                        Chỉ hỗ trợ .mp4, .mov, .pdf, .docx, .zip (cần điều chỉnh theo backend)
-                    </div>
-
-                    <div className="separator">HOẶC</div>
-
                     <div className="url-upload-section">
                         <input
                             type="text"
                             className="url-input"
-                            placeholder="Nhập URL Video bài học"
+                            placeholder="Nhập URL Video bài học (Youtube, Vimeo...)"
                             value={videoUrl}
                             onChange={(e) => setVideoUrl(e.target.value)}
                             disabled={loading}
@@ -350,17 +342,34 @@ function AddChapter() {
                             disabled={loading}
                         />
                     </div>
+                    
+                    <div className="drop-zone">
+                         <input
+                            type="file"
+                            id="fileInput"
+                            className="file-input"
+                            onChange={(e) => toast.info("Tính năng upload file trực tiếp đang được phát triển, vui lòng dùng URL hoặc quản lý qua backend.")}
+                            disabled={loading}
+                        />
+                        <label htmlFor="fileInput" className="drop-label">
+                            <span className="cloud-icon">☁</span>
+                            <p>Kéo thả file hoặc <span className="browse">duyệt qua</span></p>
+                            <p className="file-info">Hỗ trợ các định dạng video/tài liệu (Cần Backend API)</p>
+                        </label>
+                    </div>
+                     <div className="file-type-note">
+                        Chỉ hỗ trợ .mp4, .mov, .pdf, .docx, .zip (cần điều chỉnh theo backend và logic upload)
+                    </div>
                 </div>
 
-                {/* --- THÊM BÀI TẬP (QUIZ) --- */}
-                {(isEditMode || (chapterId && chapterId !== 'new')) && (
+                {chapterId && chapterId !== 'new' && ( 
                     <div className="chapter-section">
                         <button
                             type="button"
                             className="create-btn2"
                             onClick={() => {
-                                setEditingExercise(null);
-                                setShowExerciseForm(true);
+                                setEditingExercise(null); 
+                                setShowExerciseForm(true); 
                             }}
                             disabled={loading}
                         >
@@ -369,7 +378,6 @@ function AddChapter() {
                     </div>
                 )}
 
-                {/* --- HIỂN THỊ DANH SÁCH BÀI TẬP --- */}
                 {exercises.length > 0 && (
                     <div className="ex-list-container">
                         <h4>Danh sách bài tập:</h4>
@@ -401,7 +409,6 @@ function AddChapter() {
                     </div>
                 )}
 
-                {/* --- NÚT HÀNH ĐỘNG CỦA FORM CHƯƠNG --- */}
                 <div className="action-buttons">
                     <button
                         type="submit"
@@ -413,7 +420,7 @@ function AddChapter() {
                     <button
                         type="button"
                         className="back-btn"
-                        onClick={() => navigate(`/admin/course/edit/${courseId}`)}
+                        onClick={() => navigate(`/admin/courses/edit/${courseId}`)} // Sửa courses thành course
                         disabled={loading}
                     >
                         Trở lại khóa học
@@ -421,11 +428,10 @@ function AddChapter() {
                 </div>
             </form>
 
-            {/* --- MODAL THÊM BÀI TẬP (CẬP NHẬT PROPS) --- */}
             {showExerciseForm && (
                 <CreateExerciseForm
                     onClose={handleCloseExerciseForm}
-                    chapterId={chapterId}
+                    chapterId={chapterId} 
                     suggestedOrder={exercises.length + 1}
                     onQuizCreated={handleQuizCreated}
                     editingExercise={editingExercise}

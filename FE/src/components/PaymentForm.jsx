@@ -15,10 +15,7 @@ const PaymentForm = ({ course, onClose }) => {
             return;
         }
 
-        // Lấy PayPal Client ID từ biến môi trường của frontend
-        // Dành cho Vite: import.meta.env.VITE_APP_PAYPAL_CLIENT_ID
-        // Dành cho Create React App: process.env.REACT_APP_PAYPAL_CLIENT_ID
-        const PAYPAL_CLIENT_ID_FRONTEND = import.meta.env.VITE_APP_PAYPAL_CLIENT_ID; // <--- SỬ DỤNG BIẾN MÔI TRƯỜNG FRONTEND
+        const PAYPAL_CLIENT_ID_FRONTEND = import.meta.env.VITE_APP_PAYPAL_CLIENT_ID;
 
         if (!PAYPAL_CLIENT_ID_FRONTEND) {
             setPaypalError("PayPal Client ID cho Frontend chưa được cấu hình. Vui lòng kiểm tra biến môi trường.");
@@ -29,8 +26,8 @@ const PaymentForm = ({ course, onClose }) => {
 
         // Tải PayPal SDK script một cách động
         const script = document.createElement('script');
-        // Sử dụng biến môi trường frontend ở đây
-        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID_FRONTEND}&currency=USD`; 
+        // Đặt currency là 'USD' vì PayPal không hỗ trợ VND trực tiếp cho giao dịch thông thường
+        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID_FRONTEND}&currency=USD`;
         script.onload = () => {
             console.log("PayPal SDK Loaded.");
             renderPayPalButtons();
@@ -49,25 +46,24 @@ const PaymentForm = ({ course, onClose }) => {
                 document.body.removeChild(paypalScript);
             }
         };
-    }, [course]); // Phụ thuộc vào course để re-render nếu thông tin course thay đổi
+    }, [course]);
 
     const renderPayPalButtons = () => {
-        if (!course || !course._id || course.price === undefined || !window.paypal) { // Kiểm tra price !== undefined
+        // Đảm bảo course, price và window.paypal tồn tại
+        if (!course || !course._id || course.price === undefined || !window.paypal) {
             console.warn("PayPal buttons cannot be rendered: Missing course info (ID/Price) or PayPal SDK not loaded.");
             return;
         }
 
-        // Đảm bảo chỉ render một lần và không bị trùng lặp
         const paypalButtonContainer = document.getElementById('paypal-button-container');
         if (paypalButtonContainer) {
             paypalButtonContainer.innerHTML = ''; // Xóa nội dung cũ để tránh lỗi render lại
         } else {
-            console.error("PayPal button container not found in DOM."); 
+            console.error("PayPal button container not found in DOM.");
             return;
         }
 
         window.paypal.Buttons({
-            // Hàm này được gọi khi người dùng nhấp vào nút PayPal
             createOrder: async (data, actions) => {
                 setLoadingPaypal(true);
                 setPaypalError(null);
@@ -76,18 +72,17 @@ const PaymentForm = ({ course, onClose }) => {
                     if (!token) {
                         toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập lại.");
                         setLoadingPaypal(false);
-                        // Thay thế actions.reject bằng throw new Error()
-                        throw new Error('UNAUTHORIZED: Token not found'); 
+                        throw new Error('UNAUTHORIZED: Token not found');
                     }
 
-                    // Gọi API backend của bạn để tạo PayPal order
-                    // Endpoint: POST /api/v1/courses/:courseId/payments/paypal
+                    // Backend của bạn sẽ chịu trách nhiệm tạo order PayPal với giá đã cho
                     const response = await axios.post(
                         `http://localhost:4000/api/v1/courses/${course._id}/payments/paypal`,
                         {
                             courseId: course._id,
-                            price: course.price,
-                            currency: 'USD' // Đảm bảo currency này khớp với currency bạn setup trên PayPal và backend
+                            // Đảm bảo backend nhận giá và chuyển đổi nếu cần
+                            price: course.price, 
+                            currency: 'USD' // Frontend gửi USD, backend sẽ quản lý giá trị thực tế
                         },
                         {
                             headers: {
@@ -100,23 +95,20 @@ const PaymentForm = ({ course, onClose }) => {
 
                     if (response.data && response.data.orderId) {
                         toast.info("Đang tạo order PayPal...");
-                        return response.data.orderId; // Trả về order ID từ backend
+                        return response.data.orderId;
                     } else {
                         toast.error("Lỗi: Không nhận được order ID từ server.");
                         setLoadingPaypal(false);
-                        // Thay thế actions.reject bằng throw new Error()
-                        throw new Error('NO_ORDER_ID: Server did not return an order ID'); 
+                        throw new Error('NO_ORDER_ID: Server did not return an order ID');
                     }
                 } catch (error) {
                     console.error("Error creating PayPal order:", error);
                     setPaypalError(error.response?.data?.message || "Không thể tạo order PayPal.");
                     toast.error(error.response?.data?.message || "Tạo order PayPal thất bại.");
                     setLoadingPaypal(false);
-                    // Thay thế actions.reject bằng throw new Error()
-                    throw error; // Ném lại lỗi để PayPal SDK có thể bắt và hiển thị thông báo lỗi phù hợp
+                    throw error;
                 }
             },
-            // Hàm này được gọi sau khi người dùng hoàn tất thanh toán trên PayPal
             onApprove: async (data, actions) => {
                 setLoadingPaypal(true);
                 setPaypalError(null);
@@ -125,12 +117,10 @@ const PaymentForm = ({ course, onClose }) => {
                     if (!token) {
                         toast.error("Bạn chưa đăng nhập. Vui lòng đăng nhập lại.");
                         setLoadingPaypal(false);
-                        // Thay thế actions.reject bằng throw new Error()
                         throw new Error('UNAUTHORIZED: Token not found for approval');
                     }
 
-                    // Gọi API backend của bạn để capture PayPal order
-                    // Endpoint: POST /api/v1/payments/paypal/capture
+                    // Gửi orderId của PayPal và courseId về backend để capture giao dịch
                     const response = await axios.post(
                         `http://localhost:4000/api/v1/payments/paypal/capture`,
                         {
@@ -150,8 +140,6 @@ const PaymentForm = ({ course, onClose }) => {
                         toast.success("Thanh toán thành công! Khóa học đã được thêm vào tài khoản của bạn.");
                         setLoadingPaypal(false);
                         onClose(); // Đóng form thanh toán
-                        // Có thể điều hướng người dùng đến trang khóa học đã mua hoặc trang xác nhận
-                        // navigate('/my-courses');
                     } else {
                         setPaypalError(response.data?.message || "Thanh toán không thành công.");
                         toast.error(response.data?.message || "Thanh toán thất bại.");
@@ -164,12 +152,10 @@ const PaymentForm = ({ course, onClose }) => {
                     setLoadingPaypal(false);
                 }
             },
-            // Hàm này được gọi nếu người dùng hủy thanh toán
             onCancel: (data) => {
                 toast.info("Giao dịch PayPal đã bị hủy.");
                 setLoadingPaypal(false);
             },
-            // Hàm này được gọi nếu có lỗi xảy ra trong quá trình PayPal
             onError: (err) => {
                 console.error("PayPal Error:", err);
                 setPaypalError("Đã xảy ra lỗi với PayPal. Vui lòng thử lại.");
@@ -193,7 +179,6 @@ const PaymentForm = ({ course, onClose }) => {
     return (
         <div className="paymentForm-container">
             <div className="paymentForm-backgroundBox" />
-            <button className="payment-close-button" onClick={onClose}>Đóng</button> {/* Nút đóng bên trong form */}
 
             {/* Thông tin khóa học (động) */}
             <div className="paymentForm-description">
@@ -217,16 +202,16 @@ const PaymentForm = ({ course, onClose }) => {
                 {course.price === 0 ? 'Miễn phí' : `${course.price?.toLocaleString('vi-VN') || 'N/A'} VND`}
             </div>
 
-            {/* Phần mã giảm giá */}
-            <input className="paymentForm-discountInput" type="text" placeholder="Nhập mã giảm giá" disabled={loadingPaypal} />
-            <button className="paymentForm-applyButton" disabled={loadingPaypal}>Áp dụng</button>
-
-              {/* Container cho PayPal Button */}
+            {/* Container cho PayPal Button đã được di chuyển xuống đây */}
             <div id="paypal-button-container" className="paymentForm-paypal-btn-wrapper">
                 {loadingPaypal && <p className="paypal-loading-text">Đang tải PayPal...</p>}
                 {paypalError && <p className="paypal-error-text text-red-600">{paypalError}</p>}
                 {/* Nút PayPal sẽ được render vào đây bởi SDK */}
             </div>
+
+            {/* Phần mã giảm giá (giờ sẽ nằm dưới nút PayPal) */}
+            <input className="paymentForm-discountInput" type="text" placeholder="Nhập mã giảm giá" disabled={loadingPaypal} />
+            <button className="paymentForm-applyButton" disabled={loadingPaypal}>Áp dụng</button>
         </div>
     );
 };
