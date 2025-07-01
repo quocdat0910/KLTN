@@ -5,6 +5,7 @@ import { sendVerificationEmail } from "../utils/emailService.js";
 import RefreshToken from "../models/RefreshToken.js";
 import crypto from "crypto";
 import cloudinary from "cloudinary";
+import mongoose from "mongoose";
 
 // Hàm hỗ trợ để tạo tên cookie dựa trên vai trò
 const getTokenCookieName = (role) => {

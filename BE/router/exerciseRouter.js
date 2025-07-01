@@ -1,5 +1,11 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import {
+  createExercise,
+  updateExercise,
+  deleteExercise,
+  publishExercise
+} from "../controller/exerciseController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router({ mergeParams: true }); // Cho phép truy cập :courseId, :chapterId
@@ -20,11 +26,9 @@ router.get("/:exerciseId/results", protect, getExerciseResults); // Xem kết qu
  */
 
 // Admin routes
-/* 
 router.post("/", protect, restrictTo("admin"), createExercise); // Tạo bài tập mới
 router.put("/:exerciseId", protect, restrictTo("admin"), updateExercise); // Cập nhật bài tập
 router.delete("/:exerciseId", protect, restrictTo("admin"), deleteExercise); // Xóa bài tập
 router.put("/:exerciseId/publish", protect, restrictTo("admin"), publishExercise); // Xuất bản hoặc hủy xuất bản bài tập
- */
 
 export default router;

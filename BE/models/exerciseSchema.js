@@ -15,11 +15,6 @@ const exerciseSchema = new mongoose.Schema(
       minlength: [3, 'Tiêu đề phải ít nhất 3 ký tự'],
       maxlength: [100, 'Tiêu đề không được vượt quá 100 ký tự']
     },
-    description: {
-      type: String,
-      trim: true,
-      maxlength: [500, 'Mô tả không được vượt quá 500 ký tự']
-    },
     type: {
       type: String,
       enum: ['multiple-choice', 'true-false'],
