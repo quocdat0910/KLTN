@@ -1,200 +1,256 @@
-import Chapter from '../models/chapterSchema.js';
-import Course from '../models/courseSchema.js';
-import Purchase from '../models/purchaseSchema.js';
-import validator from 'validator';
+import Chapter from "../models/chapterSchema.js";
+import Course from "../models/courseSchema.js";
+import Lesson from "../models/lessonSchema.js";
+import Exercise from "../models/exerciseSchema.js";
+import Enrollment from "../models/enrollmentSchema.js";
+import UserProgress from "../models/userProgressSchema.js";
+import validator from "validator";
+import mongoose from "mongoose";
 
+// @route POST /api/v1/courses/:courseId/chapters
+// @desc Create a new chapter for a course (using application/json)
+// @access Admin
 export const createChapter = async (req, res, next) => {
   try {
-    const { title, order } = req.body;
-    const courseId = req.params.courseId;
-
-    // Kiểm tra khóa học
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: 'Không tìm thấy khóa học' });
-    }
+    const { courseId } = req.params;
+    const { title, order, isLocked, isPublished, lessons, exercises } = req.body;
 
     // Kiểm tra đầu vào
-    if (!title || !order) {
-      return res.status(400).json({ message: 'Vui lòng cung cấp tiêu đề và thứ tự' });
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "ID khóa học không hợp lệ" });
     }
-    if (!validator.isLength(title, { min: 3, max: 50 })) {
-      return res.status(400).json({ message: 'Tiêu đề phải từ 3-50 ký tự' });
+    if (!title || !validator.isLength(title, { min: 3, max: 100 })) {
+      return res.status(400).json({ message: "Tiêu đề phải có từ 3 đến 100 ký tự" });
     }
-    if (!Number.isInteger(order) || order < 1) {
-      return res.status(400).json({ message: 'Thứ tự phải là số nguyên dương' });
-    }
-
-    // Kiểm tra thứ tự trùng lặp
-    const existingChapter = await Chapter.findOne({ course: courseId, order });
-    if (existingChapter) {
-      return res.status(400).json({ message: 'Thứ tự chương đã tồn tại' });
+    if (!order || !Number.isInteger(Number(order)) || order < 1) {
+      return res.status(400).json({ message: "Thứ tự phải là số nguyên lớn hơn hoặc bằng 1" });
     }
 
-    const chapter = await Chapter.create({ course: courseId, title, order });
-    res.status(201).json({ message: 'Tạo chương thành công', chapter });
-  } catch (error) {
-    console.error('Lỗi tạo chương:', error.message);
-    next(error);
-  }
-};
-
-export const getChapters = async (req, res, next) => {
-  try {
-    const courseId = req.params.courseId;
-    const userId = req.user ? req.user._id : null;
-
-    // Kiểm tra khóa học
+    // Kiểm tra khóa học tồn tại
     const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({ message: 'Không tìm thấy khóa học' });
+      return res.status(404).json({ message: "Không tìm thấy khóa học" });
     }
 
-    // Kiểm tra quyền truy cập
-    if (course.status === 'draft' && (!req.user || req.user.role !== 'admin')) {
-      return res.status(403).json({ message: 'Không có quyền truy cập khóa học này' });
+    // Kiểm tra thứ tự chương
+    const existingChapter = await Chapter.findOne({ courseId, order });
+    if (existingChapter) {
+      return res.status(400).json({ message: "Thứ tự chương đã tồn tại" });
     }
-    if (req.user && req.user.role === 'student') {
-      const purchase = await Purchase.findOne({ user: userId, course: courseId });
-      if (!purchase) {
-        return res.status(403).json({ message: 'Bạn chưa sở hữu khóa học này' });
+
+    // Kiểm tra lessons và exercises nếu được cung cấp
+    if (lessons && Array.isArray(lessons)) {
+      const validLessons = await Lesson.find({ _id: { $in: lessons } });
+      if (validLessons.length !== lessons.length) {
+        return res.status(400).json({ message: "Một hoặc nhiều bài học không hợp lệ" });
+      }
+    }
+    if (exercises && Array.isArray(exercises)) {
+      const validExercises = await Exercise.find({ _id: { $in: exercises } });
+      if (validExercises.length !== exercises.length) {
+        return res.status(400).json({ message: "Một hoặc nhiều bài tập không hợp lệ" });
       }
     }
 
-    const chapters = await Chapter.find({ course: courseId }).sort('order').select('-__v');
-    res.status(200).json({ chapters });
+    // Tạo chương mới
+    const chapter = new Chapter({
+      courseId,
+      title,
+      order,
+      isLocked: isLocked !== undefined ? isLocked : true,
+      isPublished: isPublished !== undefined ? isPublished : false,
+      lessons: lessons && Array.isArray(lessons) ? lessons : [],
+      exercises: exercises && Array.isArray(exercises) ? exercises : [],
+      duration: 0 // Sẽ được tính trong pre-save hook
+    });
+
+    await chapter.save();
+
+    // Cập nhật Course.chapters
+    course.chapters.push(chapter._id);
+    await course.save();
+
+    res.status(201).json({
+      message: "Tạo chương thành công",
+      chapter: {
+        _id: chapter._id,
+        courseId: chapter.courseId,
+        title: chapter.title,
+        order: chapter.order,
+        isLocked: chapter.isLocked,
+        isPublished: chapter.isPublished
+      }
+    });
   } catch (error) {
-    console.error('Lỗi lấy danh sách chương:', error.message);
+    console.error("Lỗi tạo chương:", error.message);
     next(error);
   }
 };
 
+// @route PUT /api/v1/courses/:courseId/chapters/:chapterId
+// @desc Update a chapter (using application/json)
+// @access Admin
 export const updateChapter = async (req, res, next) => {
   try {
-    const { title, order } = req.body;
-    const chapterId = req.params.chapterId;
-
-    // Kiểm tra chương
-    const chapter = await Chapter.findById(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ message: 'Không tìm thấy chương' });
-    }
-
-    // Kiểm tra khóa học
-    const course = await Course.findById(chapter.course);
-    if (!course) {
-      return res.status(404).json({ message: 'Không tìm thấy khóa học' });
-    }
+    const { courseId, chapterId } = req.params;
+    const { title, order, isLocked, isPublished, lessons, exercises } = req.body;
 
     // Kiểm tra đầu vào
-    if (title && !validator.isLength(title, { min: 3, max: 50 })) {
-      return res.status(400).json({ message: 'Tiêu đề phải từ 3-50 ký tự' });
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
+      return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
     }
-    if (order && (!Number.isInteger(order) || order < 1)) {
-      return res.status(400).json({ message: 'Thứ tự phải là số nguyên dương' });
+    if (title && !validator.isLength(title, { min: 3, max: 100 })) {
+      return res.status(400).json({ message: "Tiêu đề phải có từ 3 đến 100 ký tự" });
+    }
+    if (order && (!Number.isInteger(Number(order)) || order < 1)) {
+      return res.status(400).json({ message: "Thứ tự phải là số nguyên lớn hơn hoặc bằng 1" });
     }
 
-    // Kiểm tra thứ tự trùng lặp
+    // Tìm chương
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter || chapter.courseId.toString() !== courseId) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    // Kiểm tra thứ tự chương nếu thay đổi
     if (order && order !== chapter.order) {
-      const existingChapter = await Chapter.findOne({ course: chapter.course, order });
+      const existingChapter = await Chapter.findOne({ courseId, order, _id: { $ne: chapterId } });
       if (existingChapter) {
-        return res.status(400).json({ message: 'Thứ tự chương đã tồn tại' });
+        return res.status(400).json({ message: "Thứ tự chương đã tồn tại" });
       }
     }
 
-    // Cập nhật chương
-    const updatedChapter = await Chapter.findByIdAndUpdate(
-      chapterId,
-      {
-        title: title || chapter.title,
-        order: order || chapter.order,
-      },
-      { new: true, runValidators: true }
-    );
+    // Kiểm tra lessons và exercises nếu được cung cấp
+    if (lessons && Array.isArray(lessons)) {
+      const validLessons = await Lesson.find({ _id: { $in: lessons } });
+      if (validLessons.length !== lessons.length) {
+        return res.status(400).json({ message: "Một hoặc nhiều bài học không hợp lệ" });
+      }
+    }
+    if (exercises && Array.isArray(exercises)) {
+      const validExercises = await Exercise.find({ _id: { $in: exercises } });
+      if (validExercises.length !== exercises.length) {
+        return res.status(400).json({ message: "Một hoặc nhiều bài tập không hợp lệ" });
+      }
+    }
 
-    res.status(200).json({ message: 'Cập nhật chương thành công', chapter: updatedChapter });
+    // Cập nhật các trường
+    if (title) chapter.title = title;
+    if (order) chapter.order = order;
+    if (isLocked !== undefined) chapter.isLocked = isLocked;
+    if (isPublished !== undefined) chapter.isPublished = isPublished;
+    if (lessons && Array.isArray(lessons)) chapter.lessons = lessons;
+    if (exercises && Array.isArray(exercises)) chapter.exercises = exercises;
+
+    chapter.updatedAt = Date.now();
+    await chapter.save();
+
+    res.status(200).json({
+      message: "Cập nhật chương thành công",
+      chapter: {
+        _id: chapter._id,
+        courseId: chapter.courseId,
+        title: chapter.title,
+        order: chapter.order,
+        isLocked: chapter.isLocked,
+        isPublished: chapter.isPublished
+      }
+    });
   } catch (error) {
-    console.error('Lỗi cập nhật chương:', error.message);
+    console.error("Lỗi cập nhật chương:", error.message);
     next(error);
   }
 };
 
+// @route DELETE /api/v1/courses/:courseId/chapters/:chapterId
+// @desc Delete a chapter and related data
+// @access Admin
 export const deleteChapter = async (req, res, next) => {
   try {
-    const chapterId = req.params.chapterId;
+    const { courseId, chapterId } = req.params;
 
-    // Kiểm tra chương
-    const chapter = await Chapter.findById(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ message: 'Không tìm thấy chương' });
+    // Kiểm tra đầu vào
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
+      return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
     }
 
-    // Xóa video và bài tập liên quan
-    await Video.deleteMany({ chapter: chapterId });
-    await Quiz.deleteMany({ chapter: chapterId });
+    // Tìm chương
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter || chapter.courseId.toString() !== courseId) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    // Kiểm tra khóa học có người đăng ký
+    const enrollmentCount = await Enrollment.countDocuments({ courseId });
+    if (enrollmentCount > 0) {
+      return res.status(400).json({ message: "Không thể xóa chương khi khóa học đã có người đăng ký" });
+    }
+
+    // Xóa lessons và exercises liên quan
+    await Lesson.deleteMany({ _id: { $in: chapter.lessons } });
+    await Exercise.deleteMany({ _id: { $in: chapter.exercises } });
+
+    // Xóa tiến độ liên quan trong UserProgress
+    await UserProgress.updateMany(
+      { courseId },
+      { $pull: { chapterProgress: { chapterId } } }
+    );
+
+    // Xóa chương khỏi Course.chapters
+    await Course.updateOne(
+      { _id: courseId },
+      { $pull: { chapters: chapterId } }
+    );
 
     // Xóa chương
-    await Chapter.findByIdAndDelete(chapterId);
+    await Chapter.deleteOne({ _id: chapterId });
 
-    res.status(200).json({ message: 'Xóa chương thành công' });
+    res.status(200).json({ message: "Xóa chương thành công" });
   } catch (error) {
-    console.error('Lỗi xóa chương:', error.message);
+    console.error("Lỗi xóa chương:", error.message);
     next(error);
   }
 };
 
-export const getChapterDetails = async (req, res, next) => {
-    try {
-        const { chapterId } = req.params; // Lấy chapterId từ URL params
+// @route PUT /api/v1/courses/:courseId/chapters/:chapterId/publish
+// @desc Publish or unpublish a chapter
+// @access Admin
+export const publishChapter = async (req, res, next) => {
+  try {
+    const { courseId, chapterId } = req.params;
+    const { isPublished } = req.body;
 
-        // 1. Tìm chương bằng ID
-        const chapter = await Chapter.findById(chapterId).select('-__v'); // Loại bỏ trường __v không cần thiết
-
-        // 2. Nếu không tìm thấy chương, trả về 404
-        if (!chapter) {
-            return res.status(404).json({
-                success: false,
-                message: 'Không tìm thấy chương này.',
-            });
-        }
-
-        // 3. (Tùy chọn) Kiểm tra quyền truy cập nếu cần thiết
-        // Nếu bạn muốn hạn chế ai có thể xem chi tiết chương (ví dụ: chỉ admin hoặc người đã mua khóa học)
-        // bạn sẽ cần lấy courseId từ chapter.course và thực hiện kiểm tra tương tự như trong getChapters.
-        // Ví dụ:
-        const course = await Course.findById(chapter.course);
-        if (!course) {
-            return res.status(404).json({ success: false, message: 'Khóa học của chương không tồn tại.' });
-        }
-
-        // Kiểm tra quyền truy cập (chỉ admin hoặc người đã mua khóa học có thể xem chi tiết nếu khóa học không phải public/draft)
-        if (req.user && req.user.role === 'student') {
-            const purchase = await Purchase.findOne({ user: req.user._id, course: course._id });
-            if (!purchase) {
-                // Nếu khóa học này là có phí và người dùng chưa mua
-                if (course.price > 0 && course.status !== 'public') { // Hoặc bất kỳ logic nào bạn dùng để xác định khóa học miễn phí/công khai
-                    return res.status(403).json({ success: false, message: 'Bạn chưa sở hữu khóa học này để xem chi tiết chương.' });
-                }
-            }
-        }
-        // Admin luôn có quyền truy cập
-        if (req.user && req.user.role !== 'admin' && course.status === 'draft') {
-             return res.status(403).json({ success: false, message: 'Không có quyền xem chương trong khóa học nháp.' });
-        }
-
-
-        // 4. Trả về thông tin chi tiết chương
-        res.status(200).json({
-            success: true,
-            chapter,
-        });
-    } catch (error) {
-        console.error('Lỗi khi lấy chi tiết chương:', error.message);
-        // Nếu ID không hợp lệ (ví dụ: định dạng sai), Mongoose sẽ ném lỗi.
-        // Kiểm tra lỗi cast để trả về 400 thay vì 500 cho ID không hợp lệ
-        if (error.name === 'CastError') {
-            return res.status(400).json({ success: false, message: 'ID chương không hợp lệ.' });
-        }
-        next(error); // Chuyển lỗi cho middleware xử lý lỗi tổng quát
+    // Kiểm tra đầu vào
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
+      return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
     }
+    if (isPublished === undefined || typeof isPublished !== "boolean") {
+      return res.status(400).json({ message: "Trạng thái xuất bản không hợp lệ" });
+    }
+
+    // Tìm chương
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter || chapter.courseId.toString() !== courseId) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    // Cập nhật trạng thái
+    chapter.isPublished = isPublished;
+    chapter.updatedAt = Date.now();
+    await chapter.save();
+
+    res.status(200).json({
+      message: `Chương đã được ${isPublished ? "xuất bản" : "hủy xuất bản"}`,
+      chapter: {
+        _id: chapter._id,
+        courseId: chapter.courseId,
+        title: chapter.title,
+        order: chapter.order,
+        isPublished: chapter.isPublished
+      }
+    });
+  } catch (error) {
+    console.error("Lỗi xuất bản/hủy xuất bản chương:", error.message);
+    next(error);
+  }
 };

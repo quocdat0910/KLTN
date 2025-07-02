@@ -4,11 +4,14 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { dbConnection } from "./database/dbConnection.js";
-import userRoutes from "./router/userRoutes.js";
-import courseRoutes from './router/courseRoutes.js';
-import chapterRoutes from './router/chapterRoutes.js';
-import videoRoutes from './router/videoRoutes.js';
-import quizRoutes from './router/quizRoutes.js';
+import userRouter from "./router/userRouter.js";
+import courseRouter from "./router/courseRouter.js";
+import chapterRouter from "./router/chapterRouter.js";
+import lessonRouter from "./router/lessonRouter.js";
+import exerciseRouter from "./router/exerciseRouter.js";
+import noteRouter from "./router/noteRouter.js";
+import userProgressRouter from "./router/userProgressRouter.js";
+import enrollmentRouter from "./router/enrollmentRouter.js";
 
 const app = express();
 config({ path: "./config/config.env" });
@@ -32,18 +35,22 @@ app.use(
   })
 );
 
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/courses', courseRoutes);
-app.use('/api/v1/courses/:courseId/chapters', chapterRoutes);
-app.use('/api/v1/chapters/:chapterId/videos', videoRoutes);
-app.use('/api/v1/chapters/:chapterId/quizzes', quizRoutes);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/courses", courseRouter);
+app.use("/api/v1/progress", userProgressRouter);
+app.use("/api/v1/enrollments", enrollmentRouter);
+app.use("/api/v1/courses/:courseId/chapters", chapterRouter);
+app.use("/api/v1/courses/:courseId/chapters/:chapterId/lessons", lessonRouter);
+app.use("/api/v1/courses/:courseId/chapters/:chapterId/exercises", exerciseRouter);
+app.use("/api/v1/courses/:courseId/chapters/:chapterId/lessons/:lessonId/notes", noteRouter);
+
 
 dbConnection();
 
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
+  console.error("Error:", err.message);
   res.status(err.status || 500).json({
-    message: err.message || 'Có lỗi xảy ra, vui lòng thử lại',
+    message: err.message || "Có lỗi xảy ra, vui lòng thử lại",
   });
 });
 
