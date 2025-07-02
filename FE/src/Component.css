@@ -1066,6 +1066,235 @@ input:checked + .slider:before {
     background-color: #5a6268;
 }
 
+/* TestPage */
+/* TestPage.css */
+
+.test-page-container {
+    width: 100vw; /* Chiều rộng toàn bộ viewport */
+    height: 100vh; /* Chiều cao toàn bộ viewport */
+    background: #E0F2F7; /* Giống màu nền của PracticeTest */
+    display: flex; /* Dùng flexbox để căn giữa nội dung */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.test-page-title {
+    color: black;
+    font-size: 40px; /* Điều chỉnh font size cho phù hợp với hình ảnh */
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 30px; /* Khoảng cách với card bên dưới */
+    text-align: center;
+    margin-top: 40px;
+}
+
+.test-card {
+    width: 700px; /* Điều chỉnh chiều rộng theo hình ảnh */
+    height: auto; /* Chiều cao tự động theo nội dung */
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px; /* Padding bên trong card */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Khoảng cách giữa các phần tử trong card */
+}
+
+.test-header {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa các phần tử trong header */
+    margin-bottom: 20px;
+}
+
+.test-timer {
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+.test-question-count {
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.test-progress-bar-track {
+    flex-grow: 1; /* Thanh tiến độ sẽ lấp đầy không gian còn lại */
+    height: 10px;
+    background: #D9D9D9;
+    border-radius: 5px;
+}
+
+.test-progress-bar-fill {
+    width: 20%; /* Ví dụ 20%, sẽ được điều chỉnh bằng JS */
+    height: 100%;
+    background: #FA831A; /* Màu cam */
+    border-radius: 5px;
+}
+
+.test-question-number {
+    width: 30px; /* Kích thước icon số câu hỏi */
+    height: 30px;
+    background: #B0B0B0; /* Màu xám của số 1 */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    flex-shrink: 0; /* Không cho phép co lại */
+    margin-left: 30px;
+}
+
+.test-question-text {
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    flex-grow: 1; /* Chiếm hết phần còn lại */
+    margin-right: 130px;
+    text-align: left;
+    margin-left: 20px;
+}
+
+.test-question-item {
+    display: flex;
+    align-items: flex-start; /* Căn chỉnh theo trên nếu câu hỏi dài */
+    margin-bottom: 15px;
+}
+
+.test-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Khoảng cách giữa các lựa chọn */
+    margin-left: 45px; /* Thụt lề để căn với text câu hỏi */
+}
+
+.test-option-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: black;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.test-option-item input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000; /* Viền đen cho radio button */
+    border-radius: 50%;
+    appearance: none; /* Bỏ style mặc định của trình duyệt */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none; /* Bỏ outline khi focus */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style cho radio button khi được chọn */
+.test-option-item input[type="radio"]:checked {
+    background-color: #007BFF; /* Màu xanh khi chọn */
+    border-color: #007BFF;
+}
+
+.test-option-item input[type="radio"]:checked::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: white; /* Dot trắng bên trong */
+}
+
+
+.test-navigation-buttons {
+    display: flex;
+    justify-content: space-between; /* Đẩy các nút về hai phía */
+    align-items: center;
+    margin-top: 30px; /* Khoảng cách từ lựa chọn đến nút điều hướng */
+}
+
+.test-nav-button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none; /* Bỏ border mặc định */
+    transition: background-color 0.2s ease;
+}
+
+.test-nav-button.prev {
+    background: transparent;
+    border: 1px solid #B0B0B0; /* Viền xám */
+    color: #B0B0B0;
+}
+
+.test-nav-button.prev:hover {
+    background-color: #f0f0f0;
+}
+
+.test-nav-button.next {
+    background: #3182CE; /* Màu xanh của nút submit */
+    color: white;
+}
+
+.test-nav-button.next:hover {
+    background-color: #2a69a8;
+}
+
+.test-submit-button {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    padding: 15px 20px;
+    background: #3182CE; /* Màu xanh của nút submit */
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    line-height: normal;
+    margin-top: 20px; /* Khoảng cách từ nút điều hướng */
+    transition: background-color 0.2s ease;
+}
+
+.test-submit-button:hover {
+    background-color: #2a69a8;
+}
+
+/* Icons for nav buttons (placeholders, you might use actual SVG/font icons) */
+.test-nav-button::before {
+    content: '<'; /* Placeholder cho mũi tên trái */
+    font-family: monospace; /* Đảm bảo hình dạng ký tự đơn giản */
+    font-size: 1em;
+}
+
+.test-nav-button.next::after {
+    content: '>'; /* Placeholder cho mũi tên phải */
+    font-family: monospace;
+    font-size: 1em;
+}
+.test-nav-button.prev::before { content: '<'; }
+.test-nav-button.next::after { content: '>'; }
+.test-nav-button.next::before { content: none; } /* Bỏ content cho mũi tên trái trên nút 'next' */
+
 
 
 

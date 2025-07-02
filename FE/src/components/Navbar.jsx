@@ -123,6 +123,7 @@ const Navbar = () => {
             </div>
 
             {/* Các liên kết điều hướng tĩnh */}
+            <div className="nav-link link-test" onClick={() => navigate("/practicetest")}>Thi thử</div>
             <div className="nav-link link-degree" onClick={() => navigate("/aboutus")}>Giới thiệu</div>
             <div className="nav-link link-career" onClick={() => navigate("/contactus")}>Liên hệ</div>
 
@@ -145,6 +146,7 @@ const Navbar = () => {
                         <div className="dropdown-menu">
                             <div className="dropdown-item" onClick={handleManageAccount}>Quản lý tài khoản</div>
                             <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
+                            <div className="dropdown-item" >Khóa học của tôi</div>
                         </div>
                     )}
                 </div>

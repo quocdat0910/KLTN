@@ -24,6 +24,9 @@ import Account from "./pages/Account";
 import ProductCat from "./pages/ProductCat";
 import ProductDetail from "./pages/ProductDetail";
 import Homework from "./pages/Homework";
+import MyCourse from "./pages/MyCourse";
+import PracticeTest from "./pages/PracticeTest";
+import TestPage from "./components/TestPage";
 
 const App = () => {
   return (
@@ -55,6 +58,9 @@ const App = () => {
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/myaccount" element={<Account />} />
+          <Route path="/mycourse" element={<MyCourse />} />
+          <Route path="/testpage" element={<TestPage />} />
+          <Route path="/practicetest" element={<PracticeTest />} />
           <Route path="/productcat" element={<ProductCat />} />
           <Route path="/course/:id" element={<ProductDetail />} />
         </Route>

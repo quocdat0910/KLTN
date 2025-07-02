@@ -692,6 +692,11 @@
   width: 96.08px;
 }
 
+.link-test {
+  left: 821.96px;
+  width: 96.08px;
+}
+
 .link-login {
   left: 1199.28px;
   width: 81.92px;
@@ -3098,6 +3103,298 @@ Component2 */
   background-color: currentColor;
 }
 
+/* MyCourse */
+/* MyCourse.css */
+
+.my-course-container {
+    width: 1540px;
+    height: 669px;
+    position: relative;
+    background: rgba(229, 245, 255, 0.8);
+}
+
+.my-course-title {
+    position: absolute;
+    left: 110px;
+    top: 100px;
+    color: black;
+    font-size: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    line-height: 24px;
+    word-wrap: break-word;
+    margin-left: 80px;
+    margin-top: 30px;
+}
+
+/* Base style cho các thẻ khóa học */
+.course-card {
+    width: 247px;
+    height: 326px;
+    background: white;
+    border-radius: 20px;
+    border: 0.5px #A9A9A9 solid;
+    position: absolute; /* Quan trọng để định vị */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 80px;
+}
+
+/* Vị trí cụ thể cho từng thẻ khóa học */
+.course-card-1 {
+    left: 104px;
+    top: 216px;
+}
+
+.course-card-2 {
+    left: 412px;
+    top: 216px;
+}
+
+.course-card-3 {
+    left: 720px;
+    top: 216px;
+}
+
+/* Thẻ thứ 4 có chiều cao và vị trí top khác một chút theo thiết kế ban đầu của bạn */
+.course-card-4 {
+    left: 1028px;
+    top: 210px; /* Điều chỉnh top theo thiết kế ban đầu của bạn */
+    height: 332px; /* Điều chỉnh chiều cao theo thiết kế ban đầu của bạn */
+}
+
+.course-image {
+    width: 236.06px;
+    height: 128px;
+    border-radius: 10px;
+    position: absolute;
+    left: 6px;
+    top: 7px;
+    object-fit: cover;
+}
+
+.university-logo {
+    width: 81px;
+    height: 81px;
+    position: absolute;
+    left: 6px;
+    top: 139px;
+}
+
+.course-title {
+    position: absolute;
+    left: 14px;
+    top: 215px;
+    color: black;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: 0.07px;
+    word-wrap: break-word;
+}
+
+.course-level {
+    position: absolute;
+    left: 14px;
+    top: 255px;
+    color: black;
+    font-size: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.05px;
+    word-wrap: break-word;
+}
+
+.progress-bar-track {
+    width: 220px;
+    height: 10px;
+    background: #D9D9D9;
+    border-radius: 20px;
+    position: absolute;
+    left: 8px;
+    top: 290px;
+}
+
+.progress-bar-fill {
+    width: 111px; /* Điều chỉnh width này theo phần trăm tiến độ thực tế */
+    height: 10px;
+    background: #FA831A;
+    border-radius: 20px;
+    position: absolute;
+    left: 8px;
+    top: 290px;
+}
+
+/* PracticeTest */
+/* PracticeTest.css */
+
+.practice-test-container {
+    width: 1440px;
+    height: 669px;
+    position: relative;
+}
+
+.practice-background-div {
+    width: 1530px;
+    height: 669px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #E0F2F7; /* sky-100 */
+}
+
+.practice-main-card {
+    width: 622px;
+    height: 444px; /* Vẫn giữ nguyên chiều cao này */
+    left: 404px;
+    top: 150px;
+    background: white;
+    border-radius: 20px;
+    position: relative; /* Quan trọng để các phần tử con định vị tương đối */
+}
+
+/* Main title */
+.practice-main-title {
+    left: 80px;
+    top: 35px;
+    position: absolute;
+    color: black;
+    font-size: 48px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: -0.96px;
+    width: calc(100% - 160px);
+    text-align: center;
+}
+
+/* "Bắt đầu làm bài" Button */
+.practice-start-button {
+    width: 532px;
+    height: 56px;
+    padding: 8px 16px;
+    left: 40px;
+    top: 358px;
+    position: absolute;
+    background: #3182CE; /* Màu xanh mới theo hình ảnh */
+    border-radius: 12px;
+    display: flex; /* Sử dụng flex để căn giữa text bên trong */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border: none; /* Bỏ border mặc định của button */
+    color: white; /* Đảm bảo màu chữ trắng */
+    font-size: 30px; /* Di chuyển style chữ vào đây cho button chính */
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    line-height: normal;
+}
+
+/* Không cần .practice-start-button-text nữa vì text nằm trực tiếp trong button */
+
+.practice-section-title {
+    left: 38px;
+    top: 96px;
+    position: absolute;
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.practice-label-text {
+    position: absolute;
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+/* Input Fields */
+.practice-input-field {
+    position: absolute;
+    height: 32px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.50);
+    padding: 4px 8px; /* Thêm padding để text không bị dính vào viền */
+    font-size: 20px; /* Kích thước font cho input text */
+    font-family: 'Inter', sans-serif;
+    color: black; /* Màu chữ mặc định */
+}
+
+.practice-input-field::placeholder {
+    color: rgba(0, 0, 0, 0.50); /* Style cho placeholder */
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+/* Specific positions for labels and inputs */
+.practice-label-name {
+    width: 112px;
+    left: 40px;
+    top: 167px;
+}
+.practice-input-name {
+    width: 240px;
+    left: 40px;
+    top: 204px;
+}
+
+.practice-label-phone {
+    width: 144px;
+    left: 308px;
+    top: 167px;
+}
+.practice-input-phone {
+    width: 240px;
+    left: 308px;
+    top: 204px;
+}
+
+.practice-label-city {
+    width: 176px;
+    left: 38px;
+    top: 255px;
+}
+.practice-input-city {
+    width: 514px;
+    left: 38px;
+    top: 292px;
+}
+
+
+/* Subject Buttons (IELTS/TOEIC) */
+.practice-subject-button {
+    width: 80px;
+    height: 28px;
+    position: absolute;
+    border-radius: 20px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: transparent; /* Mặc định trong suốt */
+    color: black; /* Mặc định màu chữ đen */
+    font-size: 12px; /* Di chuyển style chữ vào đây cho button chính */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/* Không cần .practice-subject-button-text nữa vì text nằm trực tiếp trong button */
+
+.practice-subject-button-ielts {
+    left: 38px;
+    top: 131px;
+}
+
+.practice-subject-button-toeic {
+    left: 133px;
+    top: 131px;
+}
 
 
 
