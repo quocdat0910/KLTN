@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 
 // @route GET /api/v1/courses/:courseId/chapters/:chapterId/lessons
 // @desc Get all lessons of a chapter
-// @access Authenticated users
+// @access Protected
 export const getAllLessons = async (req, res, next) => {
   try {
     const { courseId, chapterId } = req.params;
@@ -22,8 +22,8 @@ export const getAllLessons = async (req, res, next) => {
 
     // Kiểm tra khóa học và chương tồn tại
     const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
     }
     const chapter = await Chapter.findById(chapterId);
     if (!chapter || chapter.courseId.toString() !== courseId) {
@@ -38,7 +38,7 @@ export const getAllLessons = async (req, res, next) => {
 
     // Lấy danh sách bài học
     const lessons = await Lesson.find({ chapterId, isPublished: true })
-      .select("title videoUrl videoDuration order isPublished")
+      .select("title videoUrl videoDuration")
       .sort({ order: 1 });
 
     res.status(200).json({
@@ -53,7 +53,7 @@ export const getAllLessons = async (req, res, next) => {
 
 // @route GET /api/v1/courses/:courseId/chapters/:chapterId/lessons/:lessonId
 // @desc Get a lesson by ID
-// @access Authenticated users
+// @access Protected
 export const getLessonById = async (req, res, next) => {
   try {
     const { courseId, chapterId, lessonId } = req.params;
@@ -66,8 +66,8 @@ export const getLessonById = async (req, res, next) => {
 
     // Kiểm tra khóa học và chương tồn tại
     const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
     }
     const chapter = await Chapter.findById(chapterId);
     if (!chapter || chapter.courseId.toString() !== courseId) {
@@ -92,15 +92,11 @@ export const getLessonById = async (req, res, next) => {
     res.status(200).json({
       message: "Lấy bài học thành công",
       lesson: {
-        _id: lesson._id,
-        chapterId: lesson.chapterId,
         title: lesson.title,
         videoUrl: lesson.videoUrl,
         videoDuration: lesson.videoDuration,
-        order: lesson.order,
         transcript: lesson.transcript,
         resources: lesson.resources,
-        isPublished: lesson.isPublished,
         notes: lesson.notes
       }
     });

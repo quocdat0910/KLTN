@@ -8,7 +8,7 @@ import validator from "validator";
 import mongoose from "mongoose";
 
 // @route POST /api/v1/courses/:courseId/chapters
-// @desc Create a new chapter for a course (using application/json)
+// @desc Create a new chapter for a course
 // @access Admin
 export const createChapter = async (req, res, next) => {
   try {
@@ -88,7 +88,7 @@ export const createChapter = async (req, res, next) => {
 };
 
 // @route PUT /api/v1/courses/:courseId/chapters/:chapterId
-// @desc Update a chapter (using application/json)
+// @desc Update a chapter
 // @access Admin
 export const updateChapter = async (req, res, next) => {
   try {

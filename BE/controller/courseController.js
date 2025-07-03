@@ -57,46 +57,70 @@ export const getCourseById = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?._id;
 
-    // Tìm khóa học
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID khóa học không hợp lệ" });
+    }
+
     const course = await Course.findById(id).populate({
       path: "chapters",
       match: { isPublished: true },
-      select: "title description order isPublished",
+      select: "title description",
     });
 
     if (!course || course.status !== "published") {
-      return res
-        .status(404)
-        .json({
-          message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản",
-        });
+      return res.status(404).json({
+        message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản",
+      });
     }
 
-    // Kiểm tra trạng thái đăng ký
-    const enrollment = userId
-      ? await Enrollment.findOne({ userId, courseId: id, status: "active" })
-      : null;
+    const isEnrolled = userId
+      ? await Enrollment.exists({ userId, courseId: id, status: "active" })
+      : false;
+    const isAdmin = req.user?.role === "admin";
 
-    if (enrollment) {
-      // Nếu đã đăng ký, populate lessons và exercises
+    if (isEnrolled || isAdmin) {
       await course.populate({
         path: "chapters",
         populate: [
           {
             path: "lessons",
             match: { isPublished: true },
-            select: "title order isPublished",
+            select: "title _id",
           },
           {
             path: "exercises",
             match: { isPublished: true },
-            select: "title order isPublished",
+            select: "title _id",
           },
         ],
       });
     }
 
-    res.status(200).json({ course });
+    const response = {
+      _id: course._id.toString(),
+      title: course.title,
+      shortDescription: course.shortDescription,
+      price: course.price || 0,
+      chapters: course.chapters.map((chapter) => ({
+        _id: chapter._id,
+        title: chapter.title,
+        description: chapter.description,
+        lessons: chapter.lessons
+          ? chapter.lessons.map((lesson) => ({
+              _id: lesson._id,
+              title: lesson.title,
+            }))
+          : [],
+        exercises: chapter.exercises
+          ? chapter.exercises.map((exercise) => ({
+              _id: exercise._id,
+              title: exercise.title,
+            }))
+          : [],
+      })),
+    };
+
+    res.status(200).json({ course: response });
   } catch (error) {
     console.error("Lỗi lấy chi tiết khóa học:", error.message);
     next(error);

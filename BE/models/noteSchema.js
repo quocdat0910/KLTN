@@ -24,10 +24,6 @@ const noteSchema = new mongoose.Schema(
       required: [true, 'Thời gian ghi chú là bắt buộc'],
       min: [0, 'Thời gian không được nhỏ hơn 0']
     },
-    isPrivate: {
-      type: Boolean,
-      default: true // Ghi chú mặc định là riêng tư
-    },
     createdAt: {
       type: Date,
       default: Date.now

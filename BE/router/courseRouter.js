@@ -25,14 +25,13 @@ const enrollLimiter = rateLimit({
 
 // Public routes
 router.get("/", getAllCourses); // Xem danh sách khóa học (lọc theo category, level, skills)
-router.get("/:id", getCourseById); // Xem chi tiết khóa học
+router.get("/:id", protect, getCourseById); // Xem chi tiết khóa học
 
 // Protected routes
 router.post("/enroll/:id", protect, enrollLimiter, enrollCourse); // Đăng ký khóa học
 router.get("/progress/:id", protect, getCourseProgress); // Xem tiến độ học tập của khóa học 
 
 // Admin routes
-
 router.post("/", protect, restrictTo("admin"), createCourse); // Tạo khóa học mới
 router.put("/:id", protect, restrictTo("admin"), updateCourse); // Cập nhật khóa học
 router.delete("/:id", protect, restrictTo("admin"), deleteCourse); // Xóa khóa học

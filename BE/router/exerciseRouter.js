@@ -1,6 +1,8 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import {
+  getAllExercises,
+  getExerciseById,
   createExercise,
   updateExercise,
   deleteExercise,
@@ -18,10 +20,9 @@ const submitLimiter = rateLimit({
 });
 
 // Protected routes
-/*
 router.get("/", protect, getAllExercises); // Xem danh sách bài tập của chương
 router.get("/:exerciseId", protect, getExerciseById); // Xem chi tiết bài tập
-router.post("/:exerciseId/submit", protect, submitLimiter, submitExercise); // Nộp bài tập
+/*router.post("/:exerciseId/submit", protect, submitLimiter, submitExercise); // Nộp bài tập
 router.get("/:exerciseId/results", protect, getExerciseResults); // Xem kết quả bài tập
  */
 

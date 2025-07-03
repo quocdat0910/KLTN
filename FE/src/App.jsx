@@ -56,7 +56,7 @@ const App = () => {
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/myaccount" element={<Account />} />
           <Route path="/productcat" element={<ProductCat />} />
-          <Route path="/course/:id" element={<ProductDetail />} />
+          <Route path="/courses/:id" element={<ProductDetail />} />
         </Route>
 
             {/* Homework Layout Routes */}

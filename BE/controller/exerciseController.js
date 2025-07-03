@@ -6,6 +6,113 @@ import UserProgress from "../models/userProgressSchema.js";
 import validator from "validator";
 import mongoose from "mongoose";
 
+// @route GET /api/v1/courses/:courseId/chapters/:chapterId/exercises
+// @desc Get all exercises of a chapter
+// @access Protected
+export const getAllExercises = async (req, res, next) => {
+  try {
+    const { courseId, chapterId } = req.params;
+    const userId = req.user._id;
+
+    // Kiểm tra đầu vào
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
+      return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
+    }
+
+    // Kiểm tra khóa học và chương tồn tại
+    const course = await Course.findById(courseId);
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
+    }
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter || chapter.courseId.toString() !== courseId) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    // Kiểm tra quyền truy cập
+    const isEnrolled = await Enrollment.exists({ courseId, userId });
+    if (!chapter.isPublished && !isEnrolled && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Bạn không có quyền truy cập chương này" });
+    }
+
+    // Lấy danh sách bài tập
+    const exercises = await Exercise.find({ chapterId, isPublished: true })
+      .select("title type passingScore timeLimit")
+      .sort({ order: 1 });
+
+    res.status(200).json({
+      message: "Lấy danh sách bài tập thành công",
+      exercises
+    });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách bài tập:", error.message);
+    next(error);
+  }
+};
+
+// @route GET /api/v1/courses/:courseId/chapters/:chapterId/exercises/:exerciseId
+// @desc Get an exercise by ID for attempting
+// @access Protected
+export const getExerciseById = async (req, res, next) => {
+  try {
+    const { courseId, chapterId, exerciseId } = req.params;
+    const userId = req.user._id;
+
+    // Kiểm tra đầu vào
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId) || !mongoose.Types.ObjectId.isValid(exerciseId)) {
+      return res.status(400).json({ message: "ID khóa học, chương hoặc bài tập không hợp lệ" });
+    }
+
+    // Kiểm tra khóa học và chương tồn tại
+    const course = await Course.findById(courseId);
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
+    }
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter || chapter.courseId.toString() !== courseId) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    // Tìm bài tập
+    const exercise = await Exercise.findById(exerciseId);
+    if (!exercise || exercise.chapterId.toString() !== chapterId) {
+      return res.status(404).json({ message: "Không tìm thấy bài tập hoặc bài tập không thuộc chương này" });
+    }
+
+    // Kiểm tra quyền truy cập
+    const isEnrolled = await Enrollment.exists({ courseId, userId });
+    if (!chapter.isPublished && !isEnrolled && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Bạn không có quyền truy cập chương này" });
+    }
+    if (!exercise.isPublished && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Bạn không có quyền truy cập bài tập này" });
+    }
+
+    // Loại bỏ correctAnswer và explanation từ questions (trừ khi là admin)
+    const modifiedQuestions = req.user.role === "admin" ? exercise.questions : exercise.questions.map(q => ({
+      questionText: q.questionText,
+      questionAudio: q.questionAudio,
+      questionImage: q.questionImage,
+      options: q.options,
+      points: q.points
+    }));
+
+    res.status(200).json({
+      message: "Lấy bài tập thành công",
+      exercise: {
+        title: exercise.title,
+        type: exercise.type,
+        passingScore: exercise.passingScore,
+        timeLimit: exercise.timeLimit,
+        questions: modifiedQuestions
+      }
+    });
+  } catch (error) {
+    console.error("Lỗi lấy bài tập:", error.message);
+    next(error);
+  }
+};
+
 // @route POST /api/v1/courses/:courseId/chapters/:chapterId/exercises
 // @desc Create a new exercise for a chapter
 // @access Admin
@@ -67,8 +174,8 @@ export const createExercise = async (req, res, next) => {
 
     // Kiểm tra khóa học và chương tồn tại
     const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
     }
     const chapter = await Chapter.findById(chapterId);
     if (!chapter || chapter.courseId.toString() !== courseId) {
@@ -102,14 +209,10 @@ export const createExercise = async (req, res, next) => {
     res.status(201).json({
       message: "Tạo bài tập thành công",
       exercise: {
-        _id: exercise._id,
-        chapterId: exercise.chapterId,
         title: exercise.title,
         type: exercise.type,
-        order: exercise.order,
         passingScore: exercise.passingScore,
-        timeLimit: exercise.timeLimit,
-        isPublished: exercise.isPublished
+        timeLimit: exercise.timeLimit
       }
     });
   } catch (error) {
@@ -212,14 +315,10 @@ export const updateExercise = async (req, res, next) => {
     res.status(200).json({
       message: "Cập nhật bài tập thành công",
       exercise: {
-        _id: exercise._id,
-        chapterId: exercise.chapterId,
         title: exercise.title,
         type: exercise.type,
-        order: exercise.order,
         passingScore: exercise.passingScore,
-        timeLimit: exercise.timeLimit,
-        isPublished: exercise.isPublished
+        timeLimit: exercise.timeLimit
       }
     });
   } catch (error) {
@@ -312,14 +411,10 @@ export const publishExercise = async (req, res, next) => {
     res.status(200).json({
       message: `Bài tập đã được ${isPublished ? "xuất bản" : "hủy xuất bản"}`,
       exercise: {
-        _id: exercise._id,
-        chapterId: exercise.chapterId,
         title: exercise.title,
         type: exercise.type,
-        order: exercise.order,
         passingScore: exercise.passingScore,
-        timeLimit: exercise.timeLimit,
-        isPublished: exercise.isPublished
+        timeLimit: exercise.timeLimit
       }
     });
   } catch (error) {
