@@ -9,37 +9,70 @@ import mongoose from "mongoose";
 
 // @route GET /api/v1/courses/:courseId/chapters/:chapterId/lessons
 // @desc Get all lessons of a chapter
-// @access Authenticated users
+// @access Protected
 export const getAllLessons = async (req, res, next) => {
   try {
     const { courseId, chapterId } = req.params;
-    const userId = req.user._id;
+    // Lấy userId từ req.user (được gắn bởi middleware bảo vệ route)
+    const userId = req.user._id; 
+    const userRole = req.user.role; // Lấy vai trò của người dùng
 
-    // Kiểm tra đầu vào
+    // 1. Kiểm tra đầu vào
     if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
       return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
     }
 
-    // Kiểm tra khóa học và chương tồn tại
+    // 2. Kiểm tra khóa học và chương tồn tại
     const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+      return res.status(404).json({ message: "Không tìm thấy khóa học." });
     }
+
     const chapter = await Chapter.findById(chapterId);
     if (!chapter || chapter.courseId.toString() !== courseId) {
-      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này." });
     }
 
-    // Kiểm tra quyền truy cập
-    const isEnrolled = await Enrollment.exists({ courseId, userId });
-    if (!chapter.isPublished && !isEnrolled && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Bạn không có quyền truy cập chương này" });
+    // 3. Kiểm tra quyền truy cập (Authorization Logic)
+    // Admin luôn có quyền xem tất cả các bài học
+    if (userRole !== "admin") {
+      // Đối với người dùng không phải admin:
+      // - Khóa học phải được xuất bản.
+      // - Nếu chương chưa được xuất bản, người dùng phải là người đã đăng ký khóa học.
+      //   (Lưu ý: Nếu khóa học chưa published, người dùng thông thường không thể đăng ký,
+      //    nên điều kiện course.status !== "published" ở trên đã chặn rồi.
+      //    Logic này chủ yếu kiểm tra quyền truy cập chương CỤ THỂ nếu nó bị khóa)
+
+      if (course.status !== "published") {
+        return res.status(403).json({ message: "Khóa học chưa được xuất bản." });
+      }
+
+      const isEnrolled = await Enrollment.exists({ course: courseId, user: userId }); // Sử dụng tên trường đúng trong Enrollment model
+      
+      // Nếu chương bị khóa VÀ người dùng chưa đăng ký
+      if (chapter.isLocked && !isEnrolled) {
+        return res.status(403).json({ message: "Chương này bị khóa. Vui lòng đăng ký khóa học để truy cập." });
+      }
+
+      // Nếu chương chưa được xuất bản VÀ người dùng chưa đăng ký
+      if (!chapter.isPublished && !isEnrolled) {
+        return res.status(403).json({ message: "Chương này chưa được xuất bản và bạn không có quyền truy cập." });
+      }
     }
 
-    // Lấy danh sách bài học
-    const lessons = await Lesson.find({ chapterId, isPublished: true })
-      .select("title videoUrl videoDuration order isPublished")
-      .sort({ order: 1 });
+    // 4. Xây dựng điều kiện truy vấn bài học
+    let lessonQuery = { chapterId: chapterId };
+
+    // Nếu người dùng KHÔNG phải admin, CHỈ lấy các bài học đã được xuất bản.
+    // Nếu là admin, không thêm điều kiện isPublished vào query, để lấy TẤT CẢ bài học.
+    if (userRole !== "admin") {
+      lessonQuery.isPublished = true;
+    }
+
+    // 5. Lấy danh sách bài học
+    const lessons = await Lesson.find(lessonQuery)
+      .select("title videoUrl videoDuration order isPublished") // Thêm isPublished để frontend hiển thị trạng thái
+      .sort({ order: 1 }); // Sắp xếp theo thứ tự tăng dần
 
     res.status(200).json({
       message: "Lấy danh sách bài học thành công",
@@ -47,13 +80,13 @@ export const getAllLessons = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Lỗi lấy danh sách bài học:", error.message);
-    next(error);
+    next(error); // Chuyển lỗi cho middleware xử lý lỗi tổng thể
   }
 };
 
 // @route GET /api/v1/courses/:courseId/chapters/:chapterId/lessons/:lessonId
 // @desc Get a lesson by ID
-// @access Authenticated users
+// @access Protected
 export const getLessonById = async (req, res, next) => {
   try {
     const { courseId, chapterId, lessonId } = req.params;
@@ -66,8 +99,8 @@ export const getLessonById = async (req, res, next) => {
 
     // Kiểm tra khóa học và chương tồn tại
     const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+    if (!course || course.status !== "published") {
+      return res.status(404).json({ message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản" });
     }
     const chapter = await Chapter.findById(chapterId);
     if (!chapter || chapter.courseId.toString() !== courseId) {
@@ -92,15 +125,11 @@ export const getLessonById = async (req, res, next) => {
     res.status(200).json({
       message: "Lấy bài học thành công",
       lesson: {
-        _id: lesson._id,
-        chapterId: lesson.chapterId,
         title: lesson.title,
         videoUrl: lesson.videoUrl,
         videoDuration: lesson.videoDuration,
-        order: lesson.order,
         transcript: lesson.transcript,
         resources: lesson.resources,
-        isPublished: lesson.isPublished,
         notes: lesson.notes
       }
     });

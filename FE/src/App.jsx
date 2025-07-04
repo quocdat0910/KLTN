@@ -45,7 +45,7 @@ const App = () => {
           {/* Các Route quản lý Khóa học */}
           <Route path="/admin/courses" element={<Course />} />
           <Route path="/admin/courses/new" element={<AddCourse />} />
-          <Route path="/admin/courses/edit/:id" element={<AddCourse />} /> 
+          <Route path="/admin/courses/:id" element={<AddCourse />} /> 
           <Route path="/admin/courses/:courseId/chapters/new" element={<AddChapter />} />
           <Route path="/admin/courses/:courseId/chapters/:chapterId" element={<AddChapter />} />
 

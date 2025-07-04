@@ -40,20 +40,22 @@ const Course = () => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                // Trường hợp này có thể xảy ra nếu token bị xóa đột ngột
                 setError("Không tìm thấy token xác thực. Vui lòng đăng nhập lại.");
                 setLoading(false);
                 navigateTo("/login"); // Chuyển hướng đến trang đăng nhập
                 return;
             }
 
-            const res = await axios.get("http://localhost:4000/api/v1/courses", {
+            // Gửi yêu cầu với limit rất lớn để lấy gần như tất cả các khóa học
+            // Hoặc gửi ?all=true nếu bạn đã triển khai logic đó ở backend
+            const res = await axios.get(`http://localhost:4000/api/v1/courses/admin`, { // hoặc ?all=true nếu backend hỗ trợ
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
                 withCredentials: true,
             });
 
+            // Nếu backend của bạn vẫn trả về totalPages và total, bạn có thể bỏ qua chúng.
             setCourses(res.data.courses);
             setLoading(false);
         } catch (err) {
@@ -62,7 +64,6 @@ const Course = () => {
             setError(errorMessage);
             setLoading(false);
             toast.error(`Lỗi: ${errorMessage}`);
-            // Xử lý các lỗi cụ thể, ví dụ nếu 401 thì chuyển hướng về login
             if (err.response && err.response.status === 401) {
                 navigateTo("/login");
             }
@@ -75,7 +76,7 @@ const Course = () => {
         if (!contextLoading && isAuthenticated && user && user.role === "admin") {
             fetchCourses();
         }
-    }, [isAuthenticated, user, contextLoading]); // Thêm contextLoading vào dependency
+    }, [isAuthenticated, user, contextLoading]); // dependencies chỉ còn những cái cần thiết
 
     // Hàm để xử lý việc xóa một khóa học
     const handleDeleteCourse = async (id) => {
@@ -108,11 +109,10 @@ const Course = () => {
 
     // Hàm để xử lý việc chỉnh sửa khóa học (chỉ điều hướng)
     const handleEditCourse = (id) => {
-        navigateTo(`/admin/courses/edit/${id}`); // Điều hướng đến trang chỉnh sửa với ID khóa học
+        navigateTo(`/admin/courses/${id}`); // Điều hướng đến trang chỉnh sửa với ID khóa học
     };
 
     // --- Render dựa trên trạng thái tải và lỗi ---
-    // Hiển thị trạng thái đang tải của Context trước tiên
     if (contextLoading) {
         return (
             <div className="dashboard-container">
@@ -121,13 +121,11 @@ const Course = () => {
         );
     }
 
-    // Sau khi contextLoading là false, kiểm tra các điều kiện khác
-    // Nếu không xác thực hoặc không phải admin, không render gì vì đã chuyển hướng trong useEffect
     if (!isAuthenticated || (user && user.role !== "admin")) {
-        return null;
+        return null; // Đã chuyển hướng trong useEffect
     }
 
-    if (loading) { // Loading của việc fetch courses
+    if (loading) {
         return (
             <div className="dashboard-container">
                 <p>Đang tải danh sách khóa học, vui lòng chờ...</p>
@@ -143,6 +141,7 @@ const Course = () => {
             </div>
         );
     }
+    console.log("Courses data:", courses);
 
     // --- Render UI chính sau khi dữ liệu đã được tải và không có lỗi ---
     return (
@@ -153,6 +152,7 @@ const Course = () => {
 
             <div className="search-add">
                 <button onClick={() => navigateTo("/admin/courses/new")} className="add-btn">Thêm khóa học</button>
+                {/* Đã xóa các input filter và pagination UI */}
             </div>
 
             <table className="user-table">
@@ -163,7 +163,7 @@ const Course = () => {
                         <th>Mô tả</th>
                         <th>Giá</th>
                         <th>Loại</th>
-                        <th>Cấp độ</th>
+                        <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -171,12 +171,12 @@ const Course = () => {
                     {courses.length > 0 ? (
                         courses.map((course, index) => (
                             <tr key={course._id}>
-                                <td>{index + 1}</td>
+                                <td>{index + 1}</td> 
                                 <td>{course.title}</td>
-                                <td>{course.description.substring(0, 50)}{course.description.length > 50 ? '...' : ''}</td>
+                                <td>{course.shortDescription ? course.shortDescription.substring(0, 50) + (course.shortDescription.length > 50 ? '...' : '') : 'N/A'}</td>
                                 <td>{course.price.toLocaleString('vi-VN')} VNĐ</td>
-                                <td>{course.type}</td>
-                                <td>{course.level}</td>
+                                <td>{course.courseType}</td>
+                                <td>{course.status}</td>
                                 <td className="action-icons">
                                     <FaEdit className="icon edit" onClick={() => handleEditCourse(course._id)} title="Sửa khóa học" />
                                     <FaTrash className="icon delete" onClick={() => handleDeleteCourse(course._id)} title="Xóa khóa học" />
@@ -191,11 +191,12 @@ const Course = () => {
                 </tbody>
             </table>
 
-            <div className="pagination">
+            {/* Đã xóa phần phân trang */}
+            {/* <div className="pagination">
                 <span className="prev">&lt; Previous</span>
                 <span className="page active">1</span>
                 <span className="next">Next &gt;</span>
-            </div>
+            </div> */}
         </div>
     );
 };

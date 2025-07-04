@@ -1,5 +1,14 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import {
+  enrollCourse,
+  getUserEnrollments,
+  getEnrollmentById,
+  getAllEnrollments,
+  getEnrollmentsByUser,
+  getEnrollmentsByCourse,
+  updateEnrollment
+} from "../controller/enrollController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -11,18 +20,16 @@ const enrollLimiter = rateLimit({
   message: "Quá nhiều yêu cầu đăng ký khóa học, vui lòng thử lại sau 1 giờ"
 });
 
+router.post("/courses/:courseId/enroll", protect, enrollLimiter, enrollCourse);
+
 // Protected routes
-/* 
-router.get("/", protect, getUserEnrollments); // Xem danh sách khóa học đã đăng ký của người dùng
-router.get("/:enrollmentId", protect, getEnrollmentById); // Xem chi tiết đăng ký (bao gồm paymentDetails)
- */
+router.get("/", protect, getUserEnrollments);
+router.get("/:enrollmentId", protect, getEnrollmentById);
 
 // Admin routes
-/* 
-router.get("/all", protect, restrictTo("admin"), getAllEnrollments); // Xem tất cả đăng ký trên hệ thống
-router.get("/user/:userId", protect, restrictTo("admin"), getEnrollmentsByUser); // Xem đăng ký của một người dùng
-router.get("/course/:courseId", protect, restrictTo("admin"), getEnrollmentsByCourse); // Xem đăng ký của một khóa học
-router.put("/:enrollmentId", protect, restrictTo("admin"), updateEnrollment); // Cập nhật trạng thái hoặc thông tin đăng ký
- */
+router.get("/all", protect, restrictTo("admin"), getAllEnrollments);
+router.get("/user/:userId", protect, restrictTo("admin"), getEnrollmentsByUser);
+router.get("/course/:courseId", protect, restrictTo("admin"), getEnrollmentsByCourse);
+router.put("/:enrollmentId", protect, restrictTo("admin"), updateEnrollment);
 
 export default router;

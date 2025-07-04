@@ -47,10 +47,6 @@ const enrollmentSchema = new mongoose.Schema(
         default: null
       }
     },
-    expiresAt: {
-      type: Date,
-      default: null // Thời gian hết hạn truy cập (null nếu không giới hạn)
-    },
     createdAt: {
       type: Date,
       default: Date.now

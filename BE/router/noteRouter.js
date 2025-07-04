@@ -1,5 +1,13 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import {
+  getLessonNotes,
+  addLessonNote,
+  updateLessonNote,
+  deleteLessonNote,
+  getAllLessonNotes,
+  getNotesByUser
+} from "../controller/noteController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router({ mergeParams: true }); // Truy cập :courseId, :chapterId, :lessonId
@@ -12,17 +20,13 @@ const noteLimiter = rateLimit({
 });
 
 // Protected routes
-/* 
-router.get("/", protect, getLessonNotes); // Xem danh sách ghi chú của bài học (chỉ ghi chú của người dùng hoặc công khai)
+router.get("/", protect, getLessonNotes); // Xem danh sách ghi chú của bài học
 router.post("/", protect, noteLimiter, addLessonNote); // Thêm ghi chú mới
 router.put("/:noteId", protect, updateLessonNote); // Cập nhật ghi chú
 router.delete("/:noteId", protect, deleteLessonNote); // Xóa ghi chú
- */
 
 // Admin routes
-/* 
 router.get("/all", protect, restrictTo("admin"), getAllLessonNotes); // Xem tất cả ghi chú của bài học
 router.get("/user/:userId", protect, restrictTo("admin"), getNotesByUser); // Xem ghi chú của một người dùng
- */
 
 export default router;

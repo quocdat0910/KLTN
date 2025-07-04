@@ -132,14 +132,12 @@ const Navbar = () => {
                 // Nếu đã đăng nhập, hiển thị avatar và tên người dùng với dropdown
                 <div className="user-dropdown" ref={dropdownRef}>
                     <div className="user-info-display" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                        <img
-                            // ⭐ Đây là điểm quan trọng: Navbar chỉ đọc user.avatar từ Context.
-                            // Logic xác định nó là URL từ CSDL hay /user.png nằm ở main.jsx.
-                            src={user.avatar} 
-                            alt="Avatar"
-                            className="navbar-avatar"
+                       <img
+                        src={user?.avatar || "/user.png"} // fallback nếu avatar bị thiếu
+                        alt="Avatar"
+                        className="navbar-avatar"
                         />
-                        <span className="user-name">{user.fullName} ▼</span>
+                        <span className="user-name">{user?.fullName || "Người dùng"} ▼</span>
                     </div>
                     {/* Menu dropdown khi click vào avatar/tên người dùng */}
                     {dropdownOpen && (

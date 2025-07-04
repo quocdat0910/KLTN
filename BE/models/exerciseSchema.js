@@ -8,6 +8,12 @@ const exerciseSchema = new mongoose.Schema(
       ref: 'Chapter',
       required: [true, 'Chương là bắt buộc']
     },
+
+    googleSheetUrl: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     title: {
       type: String,
       required: [true, 'Tiêu đề bài tập là bắt buộc'],

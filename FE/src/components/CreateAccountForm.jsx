@@ -65,73 +65,116 @@ const CreateAccountForm = ({ onClose, userToEdit, fetchUsersCallback }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Chuyển đổi định dạng gender và role gửi lên API
-    const payload = {
-      ...formData,
-      gender: formData.gender === 'Nam' ? 'male' : (formData.gender === 'Nữ' ? 'female' : ''),
-      role: formData.role === 'Admin' ? 'admin' : (formData.role === 'User' ? 'student' : ''),
-    };
-
-    // ⭐ Xử lý mật khẩu và xác nhận mật khẩu ⭐
-    // Nếu đang tạo mới, hoặc đang chỉnh sửa mà người dùng có nhập mật khẩu
-    if (!isEditing || (isEditing && formData.password)) {
-        if (payload.password !== payload.confirmPassword) {
-            alert('Mật khẩu và xác nhận mật khẩu không khớp.');
-            return;
-        }
-    }
-    delete payload.confirmPassword; // Xóa confirmPassword khỏi payload trước khi gửi
-
-    // Nếu đang chỉnh sửa và mật khẩu không được nhập, xóa trường mật khẩu khỏi payload
-    if (isEditing && !payload.password) {
-      delete payload.password;
-    }
-
-    // Validation cơ bản phía client
-    // Yêu cầu mật khẩu chỉ khi tạo mới
-    if (!payload.email || (!isEditing && !payload.password) || !payload.firstName || !payload.lastName || !payload.gender || !payload.phone || !payload.role) {
-      alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+    const adminToken = localStorage.getItem('token');
+    if (!adminToken) {
+      alert('Không có quyền thực hiện thao tác này. Vui lòng đăng nhập lại.');
       return;
     }
 
+    const API_URL_BASE = 'http://localhost:4000/api/v1/users'; // URL cơ sở
+
     try {
-      const adminToken = localStorage.getItem('token');
-      if (!adminToken) {
-        alert('Không có quyền thực hiện thao tác này. Vui lòng đăng nhập lại.');
-        return;
-      }
-
-      const API_URL_BASE = 'http://localhost:4000/api/v1/users'; // URL cơ sở
-
-      let response;
       if (isEditing) {
-        // ⭐ Gửi yêu cầu PUT/PATCH để cập nhật ⭐
-        response = await axios.put(`${API_URL_BASE}/${userToEdit._id}`, payload, { // Sử dụng axios.put
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminToken}`,
-          },
-          withCredentials: true,
-        });
-      } else {
-        // ⭐ Gửi yêu cầu POST để tạo mới ⭐
-        response = await axios.post(API_URL_BASE, payload, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminToken}`,
-          },
-          withCredentials: true,
-        });
-      }
+        // --- Xử lý cập nhật người dùng hiện có ---
+        const { password, confirmPassword, ...restFormData } = formData;
 
-      if (response.status === 200 || response.status === 201) { // 200 OK cho PUT, 201 Created cho POST
-        alert(response.data.message || (isEditing ? 'Cập nhật tài khoản thành công!' : 'Tạo tài khoản thành công!'));
-        onClose(); // Đóng form
-        if (fetchUsersCallback) {
-            fetchUsersCallback(); // Gọi callback để refresh danh sách user
+        // Chuyển đổi định dạng gender và role gửi lên API
+        const updatePayload = {
+          ...restFormData,
+          gender: restFormData.gender === 'Nam' ? 'male' : (restFormData.gender === 'Nữ' ? 'female' : ''),
+          role: restFormData.role === 'Admin' ? 'admin' : (restFormData.role === 'User' ? 'student' : ''),
+        };
+
+        let response;
+        if (password) {
+          // Nếu có nhập mật khẩu, gọi API đổi mật khẩu riêng
+          if (password !== confirmPassword) {
+            alert('Mật khẩu mới và xác nhận mật khẩu mới không khớp.');
+            return;
+          }
+
+          const passwordPayload = {
+            newPassword: password,
+            confirmNewPassword: confirmPassword,
+          };
+
+          response = await axios.put(`${API_URL_BASE}/${userToEdit._id}/change-password`, passwordPayload, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${adminToken}`,
+            },
+            withCredentials: true,
+          });
+
+          // Sau khi đổi mật khẩu thành công, có thể cập nhật các thông tin khác nếu muốn
+          // hoặc refresh danh sách người dùng. Ở đây ta chỉ thông báo thành công và đóng form.
+          if (response.status === 200) {
+            alert(response.data.message || 'Đổi mật khẩu thành công!');
+            onClose();
+            if (fetchUsersCallback) {
+              fetchUsersCallback();
+            }
+            return; // Dừng lại sau khi đổi mật khẩu
+          }
+        } else {
+          // Nếu không nhập mật khẩu, chỉ cập nhật thông tin chung
+          // Validation cơ bản phía client cho trường hợp cập nhật thông tin
+          if (!updatePayload.email || !updatePayload.firstName || !updatePayload.lastName || !updatePayload.gender || !updatePayload.phone || !updatePayload.role) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+            return;
+          }
+
+          response = await axios.put(`${API_URL_BASE}/${userToEdit._id}`, updatePayload, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${adminToken}`,
+            },
+            withCredentials: true,
+          });
+
+          if (response.status === 200) {
+            alert(response.data.message || 'Cập nhật tài khoản thành công!');
+            onClose();
+            if (fetchUsersCallback) {
+              fetchUsersCallback();
+            }
+          }
         }
       } else {
-        alert(response.data.message || 'Có lỗi xảy ra.');
+        // --- Xử lý tạo người dùng mới ---
+        const payload = {
+          ...formData,
+          gender: formData.gender === 'Nam' ? 'male' : (formData.gender === 'Nữ' ? 'female' : ''),
+          role: formData.role === 'Admin' ? 'admin' : (formData.role === 'User' ? 'student' : ''),
+        };
+
+        if (payload.password !== payload.confirmPassword) {
+          alert('Mật khẩu và xác nhận mật khẩu không khớp.');
+          return;
+        }
+        delete payload.confirmPassword; // Xóa confirmPassword khỏi payload trước khi gửi
+
+        // Validation cơ bản phía client cho trường hợp tạo mới
+        if (!payload.email || !payload.password || !payload.firstName || !payload.lastName || !payload.gender || !payload.phone || !payload.role) {
+          alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+          return;
+        }
+
+        const response = await axios.post(API_URL_BASE, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`,
+          },
+          withCredentials: true,
+        });
+
+        if (response.status === 201) { // 201 Created cho POST
+          alert(response.data.message || 'Tạo tài khoản thành công!');
+          onClose(); // Đóng form
+          if (fetchUsersCallback) {
+            fetchUsersCallback(); // Gọi callback để refresh danh sách user
+          }
+        }
       }
     } catch (error) {
       console.error('Lỗi khi gọi API:', error.response?.data || error.message);
@@ -282,11 +325,12 @@ const CreateAccountForm = ({ onClose, userToEdit, fetchUsersCallback }) => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                // Trường xác nhận mật khẩu chỉ bắt buộc nếu đã nhập mật khẩu mới
                 required={!isEditing || (isEditing && formData.password !== '')}
               />
             </div>
           </div>
-          
+
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={onClose}>Hủy</button>
             <button type="submit" className="create-button">{isEditing ? 'Cập nhật' : 'Tạo tài khoản'}</button>

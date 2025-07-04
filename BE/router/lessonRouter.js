@@ -22,7 +22,6 @@ const noteLimiter = rateLimit({
 });
 
 // Protected routes
-
 router.get("/", protect, getAllLessons); // Xem danh sách bài học của chương
 router.get("/:lessonId", protect, getLessonById); // Xem chi tiết bài học (video, resources, notes)
 /* router.post("/:lessonId/notes", protect, noteLimiter, addLessonNote); // Thêm ghi chú vào bài học

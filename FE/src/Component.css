@@ -546,6 +546,46 @@ input:checked + .slider:before {
   margin: 0 0 10px;
 }
 
+.avatar-wrapper {
+  position: relative;
+  cursor: pointer;
+  margin-left: 420px;
+}
+
+.avatar-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 120px;
+}
+
+.dropdown-menu button {
+  width: 100%;
+  padding: 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f0f0;
+}
+
 /* Drag & Drop Zone */
 .drop-zone {
   border: 2px dashed #ccc;
@@ -836,7 +876,17 @@ input:checked + .slider:before {
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #eee;
-    margin-right: 430px;
+    margin-right: 450px;
+}
+
+.action-buttons2 {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-right: 330px;
 }
 
 .create-btn, .back-btn {
@@ -848,6 +898,20 @@ input:checked + .slider:before {
     transition: background-color 0.3s ease, color 0.3s ease;
     font-weight: bold;
 }
+
+.create-btn2, .back-btn2 {
+    padding: 12px 25px;
+    font-size: 1em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-left: -40px;
+}
+
+
 
 .create-btn {
     background-color: #007bff;
@@ -995,6 +1059,7 @@ input:checked + .slider:before {
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
+    margin-left: 20px;
     border-top: 1px solid #eee;
 }
 
@@ -1295,6 +1360,157 @@ input:checked + .slider:before {
 .test-nav-button.next::after { content: '>'; }
 .test-nav-button.next::before { content: none; } /* Bỏ content cho mũi tên trái trên nút 'next' */
 
+/* --- Styles for Skill Checkbox Group --- */
+.form-group .checkbox-group {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các checkbox xuống dòng nếu không đủ chỗ */
+    gap: 15px; /* Khoảng cách giữa các checkbox */
+    padding: 10px 0; /* Padding trên dưới cho nhóm checkbox */
+}
+
+.checkbox-group .checkbox-label {
+    display: flex; /* Dùng flexbox để căn chỉnh input và text */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    cursor: pointer; /* Thay đổi con trỏ chuột thành dạng bàn tay */
+    font-size: 1rem; /* Kích thước chữ */
+    color: #333; /* Màu chữ */
+    user-select: none; /* Ngăn không cho chọn văn bản khi click */
+}
+
+.checkbox-group .checkbox-label input[type="checkbox"] {
+    appearance: none; /* Ẩn checkbox mặc định của trình duyệt */
+    -webkit-appearance: none;
+    width: 20px; /* Kích thước của hộp checkbox tùy chỉnh */
+    height: 20px;
+    border: 2px solid #ccc; /* Viền của hộp checkbox */
+    border-radius: 4px; /* Bo tròn góc */
+    margin-right: 8px; /* Khoảng cách giữa hộp checkbox và label text */
+    display: grid;
+    place-content: center; /* Căn giữa dấu tích */
+    transition: all 0.2s ease-in-out; /* Hiệu ứng chuyển động mượt mà */
+    flex-shrink: 0; /* Ngăn không cho checkbox bị co lại */
+}
+
+/* Style cho checkbox khi được chọn */
+.checkbox-group .checkbox-label input[type="checkbox"]:checked {
+    background-color: #007bff; /* Màu nền khi được chọn */
+    border-color: #007bff; /* Màu viền khi được chọn */
+}
+
+/* Tạo dấu tích (checkmark) bên trong checkbox khi được chọn */
+.checkbox-group .checkbox-label input[type="checkbox"]:checked::before {
+    content: '✓'; /* Dấu tích Unicode */
+    font-size: 1.2rem; /* Kích thước dấu tích */
+    color: #fff; /* Màu dấu tích */
+    transform: scale(1); /* Đảm bảo dấu tích hiển thị đúng kích thước */
+}
+
+/* Hiệu ứng hover */
+.checkbox-group .checkbox-label input[type="checkbox"]:not(:disabled):hover {
+    border-color: #0056b3; /* Thay đổi màu viền khi hover */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Thêm box-shadow khi hover */
+}
+
+/* Style cho checkbox khi bị disabled */
+.checkbox-group .checkbox-label input[type="checkbox"]:disabled {
+    background-color: #e9ecef; /* Màu nền khi disabled */
+    border-color: #ced4da; /* Màu viền khi disabled */
+    cursor: not-allowed; /* Con trỏ không được phép */
+    opacity: 0.7; /* Giảm độ trong suốt */
+}
+
+.checkbox-group .checkbox-label input[type="checkbox"]:disabled:checked {
+    background-color: #89bdf1; /* Màu nền khi disabled và checked */
+    border-color: #89bdf1;
+}
+
+/* Style cho label text khi disabled */
+.checkbox-group .checkbox-label input[type="checkbox"]:disabled + span {
+    color: #6c757d; /* Màu chữ khi disabled */
+}
+
+/* Đảm bảo label text không bị ẩn */
+.checkbox-group .checkbox-label span {
+    margin-left: 0; /* Đặt lại margin nếu có xung đột */
+}
+
+/* Component.css */
+
+/* --- Styles for Chapter Checkbox Toggle Switch --- */
+.chapter-form-group {
+    margin-bottom: 1rem; /* Giữ khoảng cách giữa các nhóm form */
+}
+
+.chapter-toggle-label {
+    display: flex; /* Dùng flexbox để căn chỉnh label và switch */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    user-select: none; /* Ngăn chặn chọn văn bản khi click */
+}
+
+/* Ẩn checkbox mặc định */
+.chapter-toggle-label input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute; /* Đặt ra ngoài luồng để không chiếm không gian */
+}
+
+/* Tạo phần tử trực quan cho switch */
+.chapter-toggle-slider {
+    position: relative;
+    display: inline-block;
+    width: 40px; /* Chiều rộng của switch */
+    height: 20px; /* Chiều cao của switch */
+    background-color: #ccc; /* Màu nền khi tắt */
+    border-radius: 20px; /* Bo tròn để tạo hình oval */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu nền */
+    margin-right: 10px; /* Khoảng cách giữa switch và text label */
+}
+
+/* Tạo nút tròn của switch */
+.chapter-toggle-slider:before {
+    content: "";
+    position: absolute;
+    width: 16px; /* Kích thước nút tròn */
+    height: 16px; /* Kích thước nút tròn */
+    border-radius: 50%; /* Bo tròn hoàn toàn */
+    background-color: white; /* Màu nút tròn */
+    transition: transform 0.3s; /* Hiệu ứng di chuyển nút */
+    left: 2px; /* Vị trí ban đầu của nút */
+    bottom: 2px; /* Vị trí ban đầu của nút */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ */
+}
+
+/* Khi checkbox được check (bật) */
+.chapter-toggle-label input[type="checkbox"]:checked + .chapter-toggle-slider {
+    background-color: #4CAF50; /* Màu nền khi bật (xanh lá) */
+}
+
+.chapter-toggle-label input[type="checkbox"]:checked + .chapter-toggle-slider:before {
+    transform: translateX(20px); /* Di chuyển nút sang phải */
+}
+
+/* Hiệu ứng focus */
+.chapter-toggle-label input[type="checkbox"]:focus + .chapter-toggle-slider {
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5); /* Đổ bóng khi focus */
+}
+
+/* Khi disabled */
+.chapter-toggle-label input[type="checkbox"]:disabled + .chapter-toggle-slider {
+    background-color: #e0e0e0; /* Màu nền khi disabled */
+    cursor: not-allowed;
+}
+
+.chapter-toggle-label input[type="checkbox"]:disabled + .chapter-toggle-slider:before {
+    background-color: #f0f0f0; /* Màu nút khi disabled */
+}
+
+.chapter-toggle-label input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
 
 
 

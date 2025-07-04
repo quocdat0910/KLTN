@@ -1,6 +1,6 @@
 import React from 'react';
 import '../main.css'; // Import the CSS file
-import { navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PracticeTest = () => {
   return (
@@ -60,7 +60,7 @@ const PracticeTest = () => {
 
         {/* "Bắt đầu làm bài" Button */}
         {/* Sử dụng thẻ <button> */}
-        <button type="submit" className="practice-start-button" onClick={() => navigate("/t")}>
+        <button type="submit" className="practice-start-button" onClick={() => useNavigate("/testpage")}>
           Bắt đầu làm bài
         </button>
       </div>

@@ -8,7 +8,7 @@ import validator from "validator";
 import mongoose from "mongoose";
 
 // @route POST /api/v1/courses/:courseId/chapters
-// @desc Create a new chapter for a course (using application/json)
+// @desc Create a new chapter for a course
 // @access Admin
 export const createChapter = async (req, res, next) => {
   try {
@@ -88,7 +88,7 @@ export const createChapter = async (req, res, next) => {
 };
 
 // @route PUT /api/v1/courses/:courseId/chapters/:chapterId
-// @desc Update a chapter (using application/json)
+// @desc Update a chapter
 // @access Admin
 export const updateChapter = async (req, res, next) => {
   try {
@@ -254,3 +254,72 @@ export const publishChapter = async (req, res, next) => {
     next(error);
   }
 };
+
+// @route GET /api/v1/courses/:courseId/chapters
+export const getAllChaptersByCourse = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+
+    // Validate courseId
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "ID khóa học không hợp lệ" });
+    }
+
+    // Check if the course exists (optional, but good for robust error handling)
+    const courseExists = await Course.exists({ _id: courseId });
+    if (!courseExists) {
+      return res.status(404).json({ message: "Không tìm thấy khóa học" });
+    }
+
+    // Find all chapters for the given courseId and sort them by order
+    const chapters = await Chapter.find({ courseId }).sort({ order: 1 });
+
+    res.status(200).json({
+      message: "Lấy danh sách chương thành công",
+      chapters
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chương:", error.message);
+    next(error);
+  }
+};
+
+// @route GET /api/v1/courses/:courseId/chapters/:chapterId
+// @desc Get details of a single chapter (and its lessons/exercises)
+// @access Public (or adjust based on your needs, e.g., Admin for full details, or if it's for an enrolled user)
+export const getChapterDetails = async (req, res, next) => {
+  try {
+    const { courseId, chapterId } = req.params;
+
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId)) {
+      return res.status(400).json({ message: "ID khóa học hoặc chương không hợp lệ" });
+    }
+
+    // Find the chapter and populate its lessons and exercises
+    // Consider carefully what fields you want to populate for security and performance.
+    // For admin, you might want all fields. For public, perhaps only published lessons/exercises.
+    const chapter = await Chapter.findOne({ _id: chapterId, courseId })
+      .populate({
+        path: 'lessons',
+        select: '-__v -createdAt -updatedAt' // Exclude these fields from lessons
+      })
+      .populate({
+        path: 'exercises',
+        select: '-__v -createdAt -updatedAt' // Exclude these fields from exercises
+      });
+
+    if (!chapter) {
+      return res.status(404).json({ message: "Không tìm thấy chương hoặc chương không thuộc khóa học này" });
+    }
+
+    res.status(200).json({
+      message: "Lấy chi tiết chương thành công",
+      chapter
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết chương:", error.message);
+    next(error);
+  }
+};
+
