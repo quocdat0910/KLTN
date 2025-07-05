@@ -577,7 +577,7 @@
   border-radius: 6px;
   display: none; /* Mặc định ẩn */
   z-index: 100; /* Đảm bảo menu nằm trên các element khác */
-  margin-top: 4px;
+  margin-top: 0; /* Loại bỏ khoảng trống */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* Nếu bạn muốn menu có thể tràn ra ngoài parent và vẫn cuộn, bạn có thể thêm overflow-y: auto; max-height: ...; */
 }
@@ -599,9 +599,21 @@
   background-color: #f0f0f0;
 }
 
-/* Hover toàn bộ vùng chứa nút + menu */
-.discovery-button-hover-area:hover .discovery-menu {
-  display: block;
+/* Tạo pseudo-element để lấp khoảng trống giữa button và menu */
+.discovery-button-hover-area::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 10px; /* Tạo vùng đệm để di chuột */
+  background: transparent;
+  z-index: 99;
+}
+
+/* Đảm bảo menu hiển thị khi hover */
+.discovery-button:hover .discovery-menu {
+  display: block !important;
 }
 
 .search-box {
@@ -918,7 +930,7 @@ Component2 */
 
 .component2-background {
   width: 1540px;
-  height: 300px;
+  height: 330px;
   position: absolute;
   left: 0;
   top: 0;
@@ -2312,243 +2324,360 @@ Component2 */
   letter-spacing: -0.02em;
 }
 
-/* ProductDetail */
+/* General Layout & Positioning */
 .detail-container {
-  width: 1440px;
-  height: 1038px;
-  position: relative;
+    width: 1690px; /* Chiều rộng cố định cho toàn bộ trang */
+    height: 900px; /* QUAN TRỌNG: Chiều cao cố định để không bị tràn xuống footer */
+    position: relative; /* Container cho các phần tử absolute */
+    background: white; /* Nền trắng */
+    overflow: hidden; /* Ẩn bất kỳ nội dung nào tràn ra khỏi container chính */
 }
 
 .detail-bg {
-  width: 1520px;
-  height: 1038px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: white;
+    width: 100%;
+    height: 100%; /* Nếu detail-container có height cố định, cái này cũng full height */
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: white;
+    z-index: -1; /* Đảm bảo nó nằm dưới cùng */
 }
 
-.detail-minus {
-  position: absolute;
-  left: 96px;
-  top: 328.69px;
-  color: black;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Roboto';
-  line-height: 48px;
-  letter-spacing: -0.01em;
-}
-
-.detail-chapter-box {
-  width: 798px;
-  height: 64px;
-  background: #e5e5e5;
-  border-radius: 5px 5px 0 0;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  position: absolute;
-  cursor: pointer;
-}
-
-.detail-chapter-1 { top: 525px; left: 69px; }
-.detail-chapter-2 { top: 701px; left: 69px; }
-.detail-chapter-3 { top: 773px; left: 69px; }
-.detail-chapter-4 { top: 845px; left: 69px; }
-
-.detail-chapter-title {
-  position: absolute;
-  left: 89px;
-  color: black;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Roboto';
-  line-height: 48px;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-}
-
-.detail-title-1 { top: 537px; }
-.detail-title-2 { top: 713px; }
-.detail-title-3 { top: 785px; }
-.detail-title-4 { top: 857px; }
-
-.detail-section-title {
-  position: absolute;
-  top: 605px;
-  left: 116px;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
-}
-
-.detail-icon-box {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 86px;
-  top: 617px;
-  overflow: hidden;
-}
-
-.detail-icon {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.detail-icon-inner {
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  background: #27272a;
-}
-
+/* Main Content Positioning - Đã căn chỉnh theo hình ảnh */
 .detail-main-title {
-  position: absolute;
-  left: 68px;
-  top: 90px;
-  font-size: 32px;
-  font-weight: 600;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
-}
-
-.detail-content-title {
-  position: absolute;
-  left: 69px;
-  top: 338px;
-  font-size: 32px;
-  font-weight: 600;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
+    position: absolute;
+    top: 90px;
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Roboto';
+    color: black;
+    line-height: 48px;
+    width: 500px;
+    text-align: left;
+    margin-left: 70px;
 }
 
 .detail-description {
-  position: absolute;
-  width: 758px;
-  left: 69px;
-  top: 169px;
-  font-size: 24px;
-  font-weight: 400;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
-  text-align: left;
+    position: absolute;
+    width: 758px;
+    left: 69px;
+    top: 169px;
+    font-size: 24px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    color: black;
+    line-height: 36px;
+    text-align: left;
+    max-height: 108px; /* Giới hạn 3 dòng để khớp hình ảnh */
+    overflow: hidden;
 }
 
-.detail-info {
-  position: absolute;
-  font-size: 20px;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
-}
-
-.detail-info-chapter {
-  width: 96px;
-  top: 396px;
-  left: 69px;
-}
-
-.detail-info-duration {
-  width: 256px;
-  top: 396px;
-  left: 217px;
+.detail-course-img {
+    width: 450px;
+    height: 240px;
+    position: absolute;
+    left: 1000px;
+    top: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .detail-price {
-  position: absolute;
-  left: 1037px;
-  top: 362px;
-  font-size: 24px;
-  font-weight: 400;
-  font-family: 'Roboto';
-  color: #0284c7;
+    position: absolute;
+    left: 1157px; /* Căn giữa giá dưới hình ảnh */
+    top: 362px; /* Dưới hình ảnh */
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'Roboto';
+    color: #0284c7;
+    width: fit-content; /* Đảm bảo giá không bị tràn */
+    text-align: center; /* Căn giữa văn bản nếu width cố định */
 }
 
 .detail-buy-button {
-  width: 384px;
-  height: 56px;
-  padding: 8px 16px;
-  position: absolute;
-  left: 915px;
-  top: 408px;
-  background: #3B82F6;
-  border-radius: 12px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
+    width: 384px;
+    height: 56px;
+    padding: 8px 16px;
+    position: absolute;
+    left: 1015px; /* Căn chỉnh với hình ảnh */
+    top: 408px; /* Dưới giá */
+    background: #3B82F6;
+    border-radius: 12px;
+    display: flex; /* Sử dụng flex để căn giữa text */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.detail-buy-button:hover {
+    background-color: #2563eb;
 }
 
 .detail-buy-button-text {
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: 'Montserrat';
-  line-height: normal;
-  cursor: pointer;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Montserrat';
+    line-height: normal;
 }
 
 .detail-feature {
-  position: absolute;
-  left: 915px;
-  font-size: 20px;
-  font-weight: 400;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
+    position: absolute;
+    left: 915px; /* Căn chỉnh với nút mua */
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    color: black;
+    line-height: 30px;
 }
 
-.detail-feature-1 { top: 508px; }
-.detail-feature-2 { top: 556px; }
-.detail-feature-3 { top: 604px; }
-.detail-feature-4 { top: 652px; }
+.detail-feature-1 { top: 508px; left:1010px }
+.detail-feature-2 { top: 538px; left:1010px }
+.detail-feature-3 { top: 568px; left:1010px }
+.detail-feature-4 { top: 598px; left:1010px }
 
-.detail-course-img {
-  width: 450px;
-  height: 240px;
-  position: absolute;
-  left: 900px;
-  top: 100px;
-  border-radius: 10px;
+/* Content Section Titles - Căn chỉnh chính xác theo hình ảnh */
+.detail-content-title {
+    position: absolute;
+    left: 69px;
+    top: 338px; /* Như trong hình ảnh */
+    font-size: 28px;
+    font-weight: 600;
+    font-family: 'Roboto';
+    color: black;
+    line-height: 48px;
 }
 
-.detail-subtitle {
-  position: absolute;
-  left: 120px;
-  top: 652px;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Roboto';
-  color: black;
-  line-height: 48px;
+/* Chapter Info Summary (11 chương, Thời lượng: 3 giờ 50 phút) */
+.detail-chapter-info-summary {
+    position: absolute;
+    left: 69px;
+    top: 385px; /* Dưới "Nội dung khóa học" */
+    font-size: 18px;
+    font-family: 'Roboto';
+    color: #555;
+    display: flex;
+    gap: 20px;
 }
 
-.detail-icon-img {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 82px;
-  top: 658px;
+.detail-chapter-info-summary .chapter-count {
+    font-weight: 500;
 }
 
-.detail-icon-img2 {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 82px;
-  top: 618px;
+.detail-chapter-info-summary .duration-info {
+    font-weight: 400;
 }
+
+/* Chapter List Specific CSS - Quan trọng để không bị tràn */
+.chapter-list-section {
+    position: absolute;
+    left: 69px;
+    top: 420px; /* Bắt đầu ngay dưới thông tin tổng quan */
+    width: 798px; /* Chiều rộng cố định */
+    height: 430px; /* QUAN TRỌNG: Giới hạn chiều cao của danh sách chương */
+    overflow-y: auto; /* QUAN TRỌNG: Cho phép cuộn nếu nội dung chương quá dài */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+}
+
+.chapter-item {
+    border-bottom: 1px solid #eee;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.chapter-item:last-child {
+    border-bottom: none;
+}
+
+.detail-chapter-box {
+    padding: 15px 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.detail-chapter-box:hover {
+    background-color: #f0f0f0;
+}
+
+.detail-chapter-title {
+    font-size: 1.15rem; /* ~18.4px */
+    font-weight: 500;
+    font-family: 'Roboto';
+    color: black;
+    flex-grow: 1;
+    line-height: normal;
+}
+
+.toggle-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3498db;
+    margin-left: 15px;
+    transition: transform 0.3s ease;
+    min-width: 20px;
+    text-align: center;
+}
+
+.detail-chapter-box.open .toggle-icon {
+    content: "-";
+    transform: none;
+}
+
+.chapter-content {
+    padding: 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #eee;
+    overflow: hidden;
+}
+
+.chapter-content.closed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.chapter-content.open {
+    max-height: 2000px; /* Đặt một giá trị đủ lớn để chứa TẤT CẢ nội dung của chương */
+    opacity: 1;
+    transition: max-height 0.5s ease-in, opacity 0.4s ease-in, padding 0.4s ease-in;
+}
+
+.chapter-content p {
+    margin-bottom: 15px;
+    line-height: 1.7;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: #000;
+    border-radius: 8px;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.no-content-message {
+    padding: 15px;
+    background-color: #f0f8ff;
+    border-left: 5px solid #3498db;
+    color: #333;
+    margin-top: 15px;
+    font-style: italic;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.loading-content-message {
+    padding: 18px;
+    background-color: #e3f2fd;
+    border-left: 5px solid #2196f3;
+    color: #1a237e;
+    margin-top: 20px;
+    font-style: italic;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+.chapter-sub-list {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+/* Điều chỉnh tiêu đề "Bài học:" và "Bài tập:" */
+.chapter-sub-list h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 15px;
+    /* Bỏ display:flex và align-items:center ở đây vì icon đã được chuyển xuống từng item */
+}
+
+/* Quan trọng: Điều chỉnh cho icon và text nằm cạnh nhau trong lesson/exercise item */
+.lesson-item,
+.exercise-item {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    display: flex; /* Sử dụng flexbox */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 10px; /* Khoảng cách giữa icon và text */
+    justify-content: flex-start; /* Căn chỉnh các item từ trái sang */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lesson-item:hover,
+.exercise-item:hover {
+    background-color: #eef2f7;
+    transform: translateX(3px);
+}
+
+.lesson-title,
+.exercise-title {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: normal;
+    flex-grow: 1; /* Cho phép text chiếm hết không gian còn lại */
+}
+
+.inline-icon {
+    width: 20px; /* Kích thước icon */
+    height: 20px; /* Kích thước icon */
+    flex-shrink: 0; /* Ngăn icon bị co lại */
+    /* vertical-align: middle; -- Không cần khi dùng flexbox */
+    /* margin-right: 8px; -- Thay bằng gap trong flex container */
+}
+
+/* Payment Form Overlay */
+.payment-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Các lớp cho trạng thái tải/lỗi */
+.detail-container.flex {
+    display: flex;
+    /* ... các thuộc tính căn giữa khác nếu cần */
+} 
 
 /* PaymentForm */
 .paymentForm-container {
@@ -3107,123 +3236,87 @@ Component2 */
 /* MyCourse.css */
 
 .my-course-container {
-    width: 1540px;
-    height: 669px;
-    position: relative;
-    background: rgba(229, 245, 255, 0.8);
+  width: 100%;
+  min-height: 100vh;
+  background: #e9f5ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0 0 0;
 }
 
 .my-course-title {
-    position: absolute;
-    left: 110px;
-    top: 100px;
-    color: black;
-    font-size: 50px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    line-height: 24px;
-    word-wrap: break-word;
-    margin-left: 80px;
-    margin-top: 30px;
+  color: #111;
+  font-size: 2.8rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 80px;
 }
 
-/* Base style cho các thẻ khóa học */
+.my-course-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  width: 100%;
+  max-width: 1200px;
+}
+
 .course-card {
-    width: 247px;
-    height: 326px;
-    background: white;
-    border-radius: 20px;
-    border: 0.5px #A9A9A9 solid;
-    position: absolute; /* Quan trọng để định vị */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: 80px;
-}
-
-/* Vị trí cụ thể cho từng thẻ khóa học */
-.course-card-1 {
-    left: 104px;
-    top: 216px;
-}
-
-.course-card-2 {
-    left: 412px;
-    top: 216px;
-}
-
-.course-card-3 {
-    left: 720px;
-    top: 216px;
-}
-
-/* Thẻ thứ 4 có chiều cao và vị trí top khác một chút theo thiết kế ban đầu của bạn */
-.course-card-4 {
-    left: 1028px;
-    top: 210px; /* Điều chỉnh top theo thiết kế ban đầu của bạn */
-    height: 332px; /* Điều chỉnh chiều cao theo thiết kế ban đầu của bạn */
+  width: 320px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(80, 120, 200, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+  min-height: 370px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
+  cursor: pointer;
+  overflow: hidden;
+  border: none;
+  margin-bottom: 24px;
 }
 
 .course-image {
-    width: 236.06px;
-    height: 128px;
-    border-radius: 10px;
-    position: absolute;
-    left: 6px;
-    top: 7px;
-    object-fit: cover;
-}
-
-.university-logo {
-    width: 81px;
-    height: 81px;
-    position: absolute;
-    left: 6px;
-    top: 139px;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
 }
 
 .course-title {
-    position: absolute;
-    left: 14px;
-    top: 215px;
-    color: black;
-    font-size: 14px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    line-height: 20px;
-    letter-spacing: 0.07px;
-    word-wrap: break-word;
+  color: #111;
+  font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 4px;
 }
 
 .course-level {
-    position: absolute;
-    left: 14px;
-    top: 255px;
-    color: black;
-    font-size: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    line-height: 20px;
-    letter-spacing: 0.05px;
-    word-wrap: break-word;
+  color: #666;
+  font-size: 0.95rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  margin-bottom: 8px;
 }
 
 .progress-bar-track {
-    width: 220px;
-    height: 10px;
-    background: #D9D9D9;
-    border-radius: 20px;
-    position: absolute;
-    left: 8px;
-    top: 290px;
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin: 12px 0;
+  overflow: hidden;
 }
 
 .progress-bar-fill {
-    width: 111px; /* Điều chỉnh width này theo phần trăm tiến độ thực tế */
-    height: 10px;
-    background: #FA831A;
-    border-radius: 20px;
-    position: absolute;
-    left: 8px;
-    top: 290px;
+  height: 100%;
+  background: #007bff;
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
 /* PracticeTest */
@@ -3394,6 +3487,98 @@ Component2 */
 .practice-subject-button-toeic {
     left: 133px;
     top: 131px;
+}
+
+.my-course-grid {
+  display: flexbox;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  justify-items: center;
+  padding: 0 20px;
+  margin-right:400px;
+  margin-top:50px;
+}
+
+.course-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(80, 120, 200, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+  width: 320px;
+  min-height: 370px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
+  cursor: pointer;
+  overflow: hidden;
+  border: none;
+  margin-bottom: 24px;
+}
+
+.course-card-content {
+  padding: 20px 20px 16px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Status text styles */
+.status-text {
+  font-weight: 600;
+}
+
+.status-active {
+  color: #28a745;
+}
+
+.status-completed {
+  color: #007bff;
+}
+
+.status-expired {
+  color: #dc3545;
+}
+
+/* Enrollment date style */
+.enrollment-date {
+  color: #999;
+  font-size: 12px;
+}
+
+/* Status row layout */
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+}
+
+/* Payment row layout */
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Progress bar styles */
+.progress-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #007bff;
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
 

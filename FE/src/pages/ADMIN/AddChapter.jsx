@@ -390,8 +390,11 @@ function AddChapter() {
             isPublished: isPublished,
             exercises: exerciseIds,
             lessons: lessonIds,
-             googleSheetUrl: googleSheetUrl.trim(),
         };
+
+        if (googleSheetUrl.trim()) {
+            chapterData.googleSheetUrl = googleSheetUrl.trim();
+            }
 
         try {
             const token = localStorage.getItem('token');
@@ -672,7 +675,6 @@ function AddChapter() {
                                     placeholder="Nhập tiêu đề bài tập (để tạo mới hoặc cập nhật)"
                                     value={excelExerciseTitle}
                                     onChange={(e) => setExcelExerciseTitle(e.target.value)}
-                                    required
                                     disabled={loading}
                                 />
                             </div>
@@ -685,7 +687,6 @@ function AddChapter() {
                                     placeholder="Ví dụ: https://docs.google.com/spreadsheets/d/.../export?format=csv"
                                     value={googleSheetUrl}
                                     onChange={handleGoogleSheetUrlChange}
-                                    required
                                     disabled={loading}
                                 />
                             </div>

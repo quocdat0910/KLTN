@@ -309,20 +309,19 @@ export const refreshToken = async (req, res, next) => {
 // @access Protected
 export const logout = async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    const userRole = req.user.role;
-
-    await RefreshToken.deleteMany({ user: userId });
-
-    const tokenCookieName = getTokenCookieName(userRole);
-
-    res.cookie(tokenCookieName, "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 0,
-    });
-
+    if (req.user) {
+      const userId = req.user.id;
+      const userRole = req.user.role;
+      await RefreshToken.deleteMany({ user: userId });
+      const tokenCookieName = getTokenCookieName(userRole);
+      res.cookie(tokenCookieName, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 0,
+      });
+    }
+    // Dù có user hay không, vẫn trả về thành công
     res.json({ message: "Đăng xuất thành công" });
   } catch (error) {
     console.error("Lỗi đăng xuất:", error.message);

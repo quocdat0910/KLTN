@@ -141,7 +141,7 @@ export const getUserEnrollments = async (req, res, next) => {
     const userId = req.user._id;
 
     const enrollments = await Enrollment.find({ userId })
-      .populate("courseId", "title shortDescription")
+      .populate("courseId", "title shortDescription thumbnail")
       .select("courseId status enrolledAt paymentDetails");
 
     res.status(200).json({
@@ -217,7 +217,7 @@ export const getEnrollmentsByUser = async (req, res, next) => {
 
     const enrollments = await Enrollment.find({ userId })
       .populate("courseId", "title shortDescription")
-      .select("courseId status enrolledAt paymentDetails");
+      .select("courseId status thumbnail enrolledAt paymentDetails");
 
     res.status(200).json({
       message: "Lấy danh sách đăng ký của người dùng thành công",

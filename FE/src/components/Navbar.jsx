@@ -17,6 +17,7 @@ const Navbar = () => {
 
     // Ref để phát hiện click bên ngoài dropdown người dùng, đóng dropdown khi click ra ngoài
     const dropdownRef = useRef(null);
+    const discoverRef = useRef(null);
 
     // Hàm xử lý khi chọn một mục trong menu "Khám phá"
     const handleSelect = (category) => {
@@ -29,35 +30,38 @@ const Navbar = () => {
     // Hàm xử lý đăng xuất người dùng
     const handleLogout = async () => {
         try {
-            const res = await axios.post("http://localhost:4000/api/v1/users/logout", {}, {
-                withCredentials: true, // Cho phép gửi cookie
+            await axios.post("http://localhost:4000/api/v1/users/logout", {}, {
+                withCredentials: true,
                 headers: { "Content-Type": "application/json" },
             });
-            toast.success(res.data.message); // Hiển thị thông báo thành công
-            setIsAuthenticated(false); // Cập nhật trạng thái xác thực trong Context
-
-            // Khi đăng xuất, reset thông tin user về trạng thái mặc định của người dùng chưa đăng nhập.
-            // Điều này đảm bảo avatar hiển thị `/user.png` NGAY LẬP TỨC sau khi logout.
-            // Khi người dùng đăng nhập lại, logic trong `main.jsx` (Context) sẽ fetch profile
-            // và cấp lại `user.avatar` đúng từ CSDL hoặc `user.png` nếu CSDL không có.
-            setUser({
-                firstName: '',
-                lastName: '',
-                email: '',
-                fullName: 'Người dùng', // Tên mặc định khi chưa đăng nhập
-                avatar: '/user.png'     // Avatar mặc định khi chưa đăng nhập
-            });
-            setDropdownOpen(false); // Đóng dropdown người dùng
-            navigate("/login");     // Điều hướng về trang đăng nhập
+            toast.success("Đăng xuất thành công");
         } catch (error) {
-            // Xử lý lỗi khi đăng xuất
-            toast.error(error.response?.data?.message || "Đăng xuất thất bại");
+            if (error.response && error.response.status === 401) {
+                // Nếu lỗi 401 thì vẫn coi là đăng xuất thành công
+            } else {
+                toast.error(error.response?.data?.message || "Đăng xuất thất bại");
+            }
         }
+        setIsAuthenticated(false);
+        setUser({
+            firstName: '',
+            lastName: '',
+            email: '',
+            fullName: 'Người dùng',
+            avatar: '/user.png'
+        });
+        setDropdownOpen(false);
+        navigate("/login");
     };
 
     // Hàm điều hướng đến trang quản lý tài khoản
     const handleManageAccount = () => {
         navigate("/myaccount");
+        setDropdownOpen(false); // Đóng dropdown người dùng
+    };
+
+    const handleManageCourse = () => {
+        navigate("/mycourse");
         setDropdownOpen(false); // Đóng dropdown người dùng
     };
 
@@ -67,6 +71,10 @@ const Navbar = () => {
             // Nếu dropdown đang mở và click không phải bên trong dropdown
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setDropdownOpen(false);
+            }
+            // Nếu discover dropdown đang mở và click không phải bên trong
+            if (discoverRef.current && !discoverRef.current.contains(event.target)) {
+                setDiscoverDropdownOpen(false);
             }
         };
         // Thêm event listener khi component mount
@@ -86,9 +94,9 @@ const Navbar = () => {
             />
 
             {/* Nút "Khám phá" với dropdown menu */}
-            <div
-                className="discovery-button"
-                // Sử dụng onMouseEnter/onMouseLeave để mở/đóng dropdown khi hover
+            <div 
+                className="discovery-button" 
+                ref={discoverRef}
                 onMouseEnter={() => setDiscoverDropdownOpen(true)}
                 onMouseLeave={() => setDiscoverDropdownOpen(false)}
             >
@@ -144,7 +152,7 @@ const Navbar = () => {
                         <div className="dropdown-menu">
                             <div className="dropdown-item" onClick={handleManageAccount}>Quản lý tài khoản</div>
                             <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
-                            <div className="dropdown-item" >Khóa học của tôi</div>
+                            <div className="dropdown-item" onClick={handleManageCourse}>Khóa học của tôi</div>
                         </div>
                     )}
                 </div>

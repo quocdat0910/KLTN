@@ -27,6 +27,8 @@ import Homework from "./pages/Homework";
 import MyCourse from "./pages/MyCourse";
 import PracticeTest from "./pages/PracticeTest";
 import TestPage from "./components/TestPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
@@ -35,6 +37,8 @@ const App = () => {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 {/* Các Route dành cho Admin Layout */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<Dashboard />} />
@@ -62,7 +66,7 @@ const App = () => {
           <Route path="/testpage" element={<TestPage />} />
           <Route path="/practicetest" element={<PracticeTest />} />
           <Route path="/productcat" element={<ProductCat />} />
-          <Route path="/course/:id" element={<ProductDetail />} />
+          <Route path="/course/:id" element={<ProductDetail />} />4
         </Route>
 
             {/* Homework Layout Routes */}

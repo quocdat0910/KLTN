@@ -1,20 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useParams và useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import '../main.css';
-import PaymentForm from '../components/PaymentForm';
+import '../main.css'; // Đảm bảo đường dẫn đúng đến file CSS của bạn
+import PaymentForm from '../components/PaymentForm'; // Đảm bảo đường dẫn đúng
 
 const ProductDetail = () => {
-    const { id: courseId } = useParams(); // Lấy courseId từ URL, đổi tên thành courseId
-    const navigate = useNavigate(); // Dùng để điều hướng nếu có lỗi
+    const { id: courseId } = useParams();
+    const navigate = useNavigate();
 
     const [courseDetail, setCourseDetail] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showPaymentForm, setShowPaymentForm] = useState(false);
-    // State để quản lý chương nào đang được mở rộng
-    const [openChapterId, setOpenChapterId] = useState(null); 
+    const [openChapterIds, setOpenChapterIds] = useState(new Set());
+    const [loadedChapterDetails, setLoadedChapterDetails] = useState({});
+    const [totalDuration, setTotalDuration] = useState(0); // Thêm state cho tổng thời lượng
+
+    // Hàm tính tổng thời lượng từ tất cả lessons
+    const calculateTotalDuration = (chapters, loadedDetails = {}) => {
+        if (!chapters || chapters.length === 0) return 0;
+        
+        let totalSeconds = 0;
+        chapters.forEach(chapter => {
+            // Kiểm tra xem chapter này đã được load chi tiết chưa
+            const chapterDetails = loadedDetails[chapter._id];
+            if (chapterDetails && chapterDetails.lessons) {
+                // Sử dụng dữ liệu đã load
+                chapterDetails.lessons.forEach(lesson => {
+                    if (lesson.videoDuration) {
+                        totalSeconds += lesson.videoDuration;
+                    }
+                });
+            } else if (chapter.lessons && chapter.lessons.length > 0) {
+                // Sử dụng dữ liệu từ course detail
+                chapter.lessons.forEach(lesson => {
+                    if (lesson.videoDuration) {
+                        totalSeconds += lesson.videoDuration;
+                    }
+                });
+            }
+        });
+        
+        return totalSeconds;
+    };
+
+    // Hàm format thời gian từ giây sang giờ và phút
+    const formatDuration = (totalSeconds) => {
+        if (totalSeconds === 0) return 'Chưa rõ';
+        
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        
+        if (hours > 0 && minutes > 0) {
+            return `${hours} giờ ${minutes} phút`;
+        } else if (hours > 0) {
+            return `${hours} giờ`;
+        } else if (minutes > 0) {
+            return `${minutes} phút`;
+        } else {
+            return 'Dưới 1 phút';
+        }
+    };
 
     useEffect(() => {
         const fetchCourseDetail = async () => {
@@ -29,20 +76,14 @@ const ProductDetail = () => {
                 setLoading(true);
                 setError(null);
 
-                // Lấy token từ localStorage (nếu API getCourseById yêu cầu)
-                // Theo router đã sửa, getCourseById công khai không cần token
-                // Tuy nhiên, nếu bạn có logic khác yêu cầu xác thực, hãy thêm vào
                 const token = localStorage.getItem('token');
                 const headers = {};
                 if (token) {
                     headers.Authorization = `Bearer ${token}`;
                 }
 
-
                 console.log(`Attempting to fetch course details for ID: ${courseId}`);
-                // Gửi request với headers nếu có
                 const response = await axios.get(`http://localhost:4000/api/v1/courses/${courseId}`, { headers });
-
 
                 console.log("Course API Response received:", response.data);
 
@@ -54,16 +95,15 @@ const ProductDetail = () => {
                 }
             } catch (err) {
                 console.error("Error fetching course details:", err);
-                // Xử lý các loại lỗi cụ thể từ backend
                 if (err.response) {
                     if (err.response.status === 404) {
                         setError("Không tìm thấy khóa học này.");
                         toast.error("Không tìm thấy khóa học.");
-                        navigate('/'); // Quay về trang chủ nếu khóa học không tồn tại
+                        navigate('/');
                     } else if (err.response.status === 403) {
                         setError("Bạn không có quyền truy cập khóa học này.");
                         toast.error("Không có quyền truy cập.");
-                        navigate('/'); // Quay về trang chủ nếu không có quyền
+                        navigate('/');
                     } else {
                         setError(err.response.data?.message || "Lỗi khi tải chi tiết khóa học.");
                         toast.error(err.response.data?.message || "Lỗi tải chi tiết khóa học!");
@@ -78,7 +118,46 @@ const ProductDetail = () => {
         };
 
         fetchCourseDetail();
-    }, [courseId, navigate]); // Dependency array: Re-run when courseId changes
+    }, [courseId, navigate]);
+
+    // Tính lại tổng thời lượng khi loadedChapterDetails thay đổi
+    useEffect(() => {
+        if (courseDetail && courseDetail.chapters) {
+            setTotalDuration(calculateTotalDuration(courseDetail.chapters, loadedChapterDetails));
+        }
+    }, [loadedChapterDetails, courseDetail]);
+
+    const fetchChapterDetails = async (chapterId) => {
+        if (loadedChapterDetails[chapterId]) {
+            return; // Already loaded, no need to fetch again
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const headers = {};
+            if (token) {
+                headers.Authorization = `Bearer ${token}`;
+            }
+            const response = await axios.get(`http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}`, { headers });
+
+            if (response.data && response.data.chapter) {
+                const newChapterDetails = {
+                    ...loadedChapterDetails,
+                    [chapterId]: {
+                        lessons: response.data.chapter.lessons || [],
+                        exercises: response.data.chapter.exercises || []
+                    }
+                };
+                
+                setLoadedChapterDetails(newChapterDetails);
+            } else {
+                toast.error("Không tìm thấy chi tiết cho chương này.");
+            }
+        } catch (err) {
+            console.error("Error fetching chapter details:", err);
+            toast.error("Lỗi khi tải chi tiết chương.");
+        }
+    };
 
     const handleBuyClick = () => {
         if (!courseDetail) {
@@ -92,12 +171,23 @@ const ProductDetail = () => {
         setShowPaymentForm(false);
     };
 
-    // Hàm để đóng/mở chương
     const toggleChapter = (chapterId) => {
-        setOpenChapterId(prevId => (prevId === chapterId ? null : chapterId));
+        setOpenChapterIds(prevIds => {
+            const newIds = new Set(prevIds);
+            if (newIds.has(chapterId)) {
+                newIds.delete(chapterId); // Đóng chương
+            } else {
+                newIds.add(chapterId); // Mở chương
+                fetchChapterDetails(chapterId);
+            }
+            return newIds;
+        });
     };
 
-    // --- Conditional Rendering for Loading, Error, No Course ---
+    const getChapterContent = (chapterId) => {
+        return loadedChapterDetails[chapterId];
+    };
+
     if (loading) {
         return (
             <div className="detail-container flex items-center justify-center min-h-screen">
@@ -127,12 +217,16 @@ const ProductDetail = () => {
         );
     }
 
-    // --- Render Course Details ---
+    // Lọc và sắp xếp các chương
+    const sortedChapters = courseDetail.chapters
+        ? [...courseDetail.chapters].sort((a, b) => a.order - b.order)
+        : [];
+
     return (
         <div className="detail-container">
-            <div className="detail-bg" /> {/* Background element */}
+            {/* Background element, adjust its size if the main container is fixed */}
+            <div className="detail-bg" />
 
-            {/* Title and main image section */}
             <div className="detail-main-title">{courseDetail.title}</div>
             <div className="detail-description">
                 {courseDetail.description}
@@ -145,64 +239,53 @@ const ProductDetail = () => {
                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/800x450/E0E0E0/333333?text=No+Image'; }}
             />
 
-            {/* Static icons (if not dynamic from backend) */}
-            <img className="detail-icon-img2" src="/video.png" alt="Icon Video" />
-            <img className="detail-icon-img" src="/homework.png" alt="Icon Homework" />
-            <div className="detail-subtitle">Bài tập</div>
-
-
-            {/* Course Info */}
-            <div className="detail-info detail-info-chapter">{courseDetail.chapters?.length || 0} chương</div>
-            <div className="detail-info detail-info-duration">Thời lượng: {courseDetail.duration ? `${courseDetail.duration} giờ` : 'Chưa rõ'}</div>
             <div className="detail-price">
                 {courseDetail.price === 0 ? 'Miễn phí' : `${courseDetail.price?.toLocaleString('vi-VN') || 'N/A'} VNĐ`}
             </div>
-            {courseDetail.enrolledCount !== undefined && (
-                <div className="detail-info detail-info-enrolled">
-                    {courseDetail.enrolledCount} học viên đã đăng ký
-                </div>
-            )}
 
-
-            {/* Buy button */}
             <div className="detail-buy-button" onClick={handleBuyClick}>
                 <div className="detail-buy-button-text">Mua khóa học</div>
             </div>
 
-            {/* Static features. If these should be dynamic, they need to be in your Course model */}
-            <div className="detail-feature detail-feature-1">- Trình độ: {courseDetail.level || 'Chưa rõ'}</div>
-            <div className="detail-feature detail-feature-2">- Loại: {courseDetail.type || 'Chưa rõ'}</div>
-            <div className="detail-feature detail-feature-3">- Ngôn ngữ: {courseDetail.language || 'Chưa rõ'}</div>
+            {/* Các tính năng khóa học */}
+            <div className="detail-feature detail-feature-1">- Loại khóa học: {courseDetail.courseType || 'Chưa rõ'}</div>
+            <div className="detail-feature detail-feature-2">- Tổng: {courseDetail.chapters?.length || 0} chương</div> {/* Cập nhật số chương thực tế */}
+            <div className="detail-feature detail-feature-3">- Thời lượng: {formatDuration(totalDuration)}</div>
             <div className="detail-feature detail-feature-4">- Học mọi lúc mọi nơi</div>
 
-            {/* Content Sections */}
-            <div className="detail-section-title">Giới thiệu</div>
+            {/* Phần "Nội dung khóa học" và danh sách chương */}
             <div className="detail-content-title">Nội dung khóa học</div>
 
-            {/* Chapter List - DYNAMICALLY RENDERED */}
-            {courseDetail.chapters && courseDetail.chapters.length > 0 ? (
+            <div className="detail-chapter-info-summary">
+                <span className="chapter-count">{courseDetail.chapters?.length || 0} chương</span>
+                <span className="duration-info">Thời lượng: {formatDuration(totalDuration)}</span>
+            </div>
+
+            {sortedChapters.length > 0 ? (
                 <div className="chapter-list-section">
-                    {courseDetail.chapters
-                        .sort((a, b) => a.order - b.order) // Sắp xếp các chương theo thứ tự
-                        .map(chapter => (
-                        <div key={chapter._id} className="chapter-item">
-                            <div 
-                                className="detail-chapter-box" 
-                                onClick={() => toggleChapter(chapter._id)}
-                            >
-                                <div className="detail-chapter-title">
-                                    {openChapterId === chapter._id ? '-' : '+'} Chương {chapter.order}: {chapter.title}
+                    {sortedChapters.map(chapter => {
+                        const chapterContent = getChapterContent(chapter._id);
+                        const isChapterOpen = openChapterIds.has(chapter._id);
+
+                        return (
+                            <div key={chapter._id} className="chapter-item">
+                                <div
+                                    className={`detail-chapter-box ${isChapterOpen ? 'open' : ''}`}
+                                    onClick={() => toggleChapter(chapter._id)}
+                                >
+                                    <div className="detail-chapter-title">
+                                        Chương {chapter.order}: {chapter.title}
+                                    </div>
+                                    <span className="toggle-icon">{isChapterOpen ? '-' : '+'}</span>
                                 </div>
-                            </div>
-                            {/* Hiển thị nội dung chi tiết của chương khi mở rộng */}
-                            {openChapterId === chapter._id && (
-                                <div className="chapter-content">
+                                <div className={`chapter-content ${isChapterOpen ? 'open' : 'closed'}`}>
+                                    {/* Hiển thị description, videoUrl, fileUrl của chapter (từ courseDetail ban đầu) */}
                                     {chapter.description && <p>{chapter.description}</p>}
                                     {chapter.videoUrl && (
                                         <div className="video-container">
                                             <iframe
                                                 src={chapter.videoUrl}
-                                                title={`Video bài học ${chapter.title}`}
+                                                title={`Video chương ${chapter.title}`}
                                                 frameBorder="0"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                 allowFullScreen
@@ -210,29 +293,61 @@ const ProductDetail = () => {
                                         </div>
                                     )}
                                     {chapter.fileUrl && (
-                                        <p>Tài liệu đính kèm: <a href={chapter.fileUrl} target="_blank" rel="noopener noreferrer">Tải về</a></p>
+                                        <p>Tài liệu đính kèm chương: <a href={chapter.fileUrl} target="_blank" rel="noopener noreferrer">Tải về</a></p>
                                     )}
-                                    {/* Bạn có thể thêm hiển thị quizzes tại đây nếu populate chúng */}
+
+                                    {isChapterOpen && !chapterContent && (
+                                        <p className="loading-content-message">Đang tải nội dung chi tiết chương...</p>
+                                    )}
+
+                                    {isChapterOpen && chapterContent && (
+                                        <>
+                                            {/* HIỂN THỊ LESSONS */}
+                                           {chapterContent.lessons && chapterContent.lessons.filter(lesson => lesson.isPublished).length > 0 && (
+                                                <div className="chapter-sub-list">
+                                                    {chapterContent.lessons
+                                                    .filter(lesson => lesson.isPublished)
+                                                    .map(lesson => (
+                                                        <div key={lesson._id} className="lesson-item">
+                                                        <img src="/video.png" alt="Video Icon" className="inline-icon" />
+                                                        <span className="lesson-title">{lesson.title}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                )}
+                                            {/* {(!chapterContent.lessons || chapterContent.lessons.length === 0) && (
+                                                <p className="no-content-message">Chưa có bài học nào cho chương này.</p>
+                                            )} */}
+
+                                           {chapterContent.exercises && chapterContent.exercises.filter(ex => ex.isPublished).length > 0 && (
+                                        <div className="chapter-sub-list">
+                                            {chapterContent.exercises
+                                            .filter(ex => ex.isPublished)
+                                            .map(exercise => (
+                                                <div key={exercise._id} className="lesson-item">
+                                                <img src="/homework.png" alt="Homework Icon" className="inline-icon" />
+                                                <span className="lesson-title">{exercise.title}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        )}
+                                        </>
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                    ))}
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
                 <div className="detail-no-chapters">Chưa có chương nào cho khóa học này.</div>
             )}
 
-            {/* Payment form - TRUYỀN PROPS Ở ĐÂY */}
             {showPaymentForm && (
                 <div className="payment-overlay">
-                    <PaymentForm 
-                        course={courseDetail}     
-                        onClose={handleClosePaymentForm} 
+                    <PaymentForm
+                        course={courseDetail}
+                        onClose={handleClosePaymentForm}
                     />
-                    {/* Nút đóng này đã được di chuyển vào bên trong PaymentForm, nên có thể bỏ đi */}
-                    <button className="payment-close-button" onClick={handleClosePaymentForm}>
-                        Đóng
-                    </button>
                 </div>
             )}
         </div>
