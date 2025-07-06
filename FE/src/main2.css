@@ -784,3 +784,135 @@ body {
     line-height: 1.5;
     color: #555; /* Màu xám cho giải thích */
 }
+
+/* Completion status styles */
+.completed-badge {
+    background-color: #27ae60;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+.chapter-completed-badge {
+    background-color: #27ae60;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    margin-left: 8px;
+    font-weight: normal;
+}
+
+.lesson-completed-badge {
+    background-color: #27ae60;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    margin-left: 8px;
+    font-weight: normal;
+}
+
+.lesson-score {
+    color: #3498db;
+    font-size: 0.8em;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.homework-lesson-item.completed {
+    background-color: #f8f9fa;
+    border-left: 3px solid #27ae60;
+}
+
+.homework-lesson-item.completed .homework-lesson-icon {
+    color: #27ae60;
+}
+
+/* Loading and error states */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+.error-container h2 {
+    color: #e74c3c;
+    margin: 0;
+}
+
+.error-container button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.error-container button:hover {
+    background-color: #2980b9;
+}
+
+.not-enrolled-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+.not-enrolled-container h2 {
+    color: #f39c12;
+    margin: 0;
+}
+
+.not-enrolled-container button {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.not-enrolled-container button:hover {
+    background-color: #d35400;
+}

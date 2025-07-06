@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../main2.css'; // Đảm bảo đường dẫn CSS là chính xác
 
-const AddNoteForm = ({ timestamp, onSave, onCancel }) => {
+const AddNoteForm = ({ timestamp, onSave, onCancel, currentTimeInSeconds }) => {
   const [noteContent, setNoteContent] = useState('');
 
   // Cập nhật nội dung input khi timestamp thay đổi (nếu muốn)
@@ -14,7 +14,7 @@ const AddNoteForm = ({ timestamp, onSave, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (noteContent.trim()) {
-      onSave(noteContent, timestamp); // Gọi hàm lưu từ component cha
+      onSave(noteContent, currentTimeInSeconds); // Truyền số giây thực tế
     } else {
       alert("Vui lòng nhập nội dung ghi chú.");
     }

@@ -1,11 +1,13 @@
 /* === LOGIN STYLE === */
 .login-container {
- height: 1100px;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
   justify-content: center;
   align-items: center;
-  display:flex;
+  display: flex;
   background-color: rgba(229, 245, 255, 0.8);
+  padding: 20px;
+  box-sizing: border-box;
 }
 .login-box {
   width: 90%;
@@ -16,7 +18,8 @@
   display: flex;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 160px;
+  margin-bottom: 100px;
+  margin-right: 100px;
 }
 
 .login-left {
@@ -142,12 +145,14 @@
 
 /* === REGISTER STYLE === */
 .register-wrapper {
-  height: 1100px;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
   justify-content: center;
   align-items: center;
-  display:flex;
+  display: flex;
   background-color: rgba(229, 245, 255, 0.8);
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .register-box {
@@ -464,6 +469,8 @@
 /* Second row */
 .navbar-bottom {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   z-index: 998;
   background-color: white;
@@ -471,7 +478,8 @@
   display: flex;
   align-items: center;
   padding: 0 40px;
-  margin-bottom: 1040px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .user-dropdown {
@@ -746,6 +754,8 @@ footer {
   border-top: 1px solid #93c5fd; /* Blue-300 */
   font-family: 'Segoe UI', sans-serif;
   font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 footer .content {
@@ -753,7 +763,7 @@ footer .content {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 30px;
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   padding-bottom: 30px;
 }
 
@@ -828,11 +838,13 @@ Banner */
   align-items: center;
   background-color: rgba(229, 245, 255, 0.8);
   font-family: 'Segoe UI', sans-serif;
-  width: 100vw;
-  height: 40vw;
-  overflow: hidden; /* Quan trọng nếu có con tràn */
+  width: 100%;
+  min-height: 400px;
+  max-height: 600px;
+  overflow: hidden;
   box-sizing: border-box;
   margin: 0;
+  padding: 20px;
 }
 
 
@@ -880,14 +892,16 @@ Banner */
 
 /* Component1 */
 .component1-container {
-  width: 100vw;
+  width: 100%;
   height: 240px;
   position: relative;
   margin: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component1-background {
-  width: 99vw;
+  width: 100%;
   height: 240px;
   position: absolute;
   top: 0;
@@ -909,27 +923,30 @@ Banner */
 }
 
 .component1-image {
-  width: 100vw;
+  width: 100%;
   height: 130px;
   position: absolute;
   top: 100px;
   left: 0;
   padding-left: 10px;
-  padding-bottom:-10px;
-  object-fit: cover; /* ✅ giữ tỉ lệ hình, cắt nếu cần để lấp đầy */
+  object-fit: cover;
 }
 /* 
 Component2 */
 
 .component2-container {
-  width: 1540px;
+  width: 100%;
+  max-width: 1690px;
   height: 300px;
   position: relative;
   background: white;
+  margin: 0 auto;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .component2-background {
-  width: 1540px;
+  width: 100%;
   height: 330px;
   position: absolute;
   left: 0;
@@ -984,14 +1001,16 @@ Component2 */
 
 /* Component3 */
 .component3-container {
-  width: 100vw;
+  width: 100%;
   height: 360px;
   position: relative;
   font-family: 'Roboto', sans-serif;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component3-background {
-  width: 100vw;
+  width: 100%;
   height: 360px;
   position: absolute;
   left: 0;
@@ -1082,16 +1101,20 @@ Component2 */
 
 /* Component4 */
 .component4-container {
-  width: 1584px;
+  width: 100%;
+  max-width: 1684px;
   height: 787px;
-  margin-top: 20px;
+  margin: 20px auto 0;
   position: relative;
+  background-color: rgba(229, 245, 255, 0.8);
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component4-background {
   width: 100%;
   height: 100%;
-  background: rgba(229, 245, 255, 0.7);
+  background-color: rgba(229, 245, 255, 0.8);
   border-radius: 40px;
   position: absolute;
   left: 0;
@@ -1211,11 +1234,13 @@ Component2 */
 
 /* Component5 */
 .component5-container {
-  width: 796px;
+  width: 100%;
+  max-width: 796px;
   height: 124px;
   position: relative;
-  margin-left: 350px;
-  margin-top: 30px;
+  margin: 30px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component5-title {
@@ -1315,17 +1340,18 @@ Component2 */
 }
  /* Component6 */
 .component6-container {
-  width: 1247px;
+  width: 100%;
+  max-width: 1247px;
   height: 220px;
   position: relative;
-  margin-left: 350px;
-  margin-top: 100px;
+  margin: 100px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component6-title {
   position: absolute;
   left: 0;
-  margin-left: -220px;
   top: 0;
   color: black;
   font-size: 32px;
@@ -1343,7 +1369,6 @@ Component2 */
   background: white;
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.20);
-  margin-left: -220px;
 }
 
 .component6-avatar {
@@ -1380,12 +1405,14 @@ Component2 */
 
 /* Component7 */
 .faq-wrapper {
-  width: 1247px;
+  width: 100%;
+  max-width: 1247px;
   height: 387px;
   position: relative;
   font-family: Roboto, sans-serif;
-  margin-top: 100px ;
-  margin-left: 130px;
+  margin: 100px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 /* Title */
@@ -1546,10 +1573,13 @@ Component2 */
 
 /* Component8 */
 .component8-container {
-  width: 1600px;
+  width: 100%;
+  max-width: 1600px;
   height: 332px;
   position: relative;
-  margin-top: 100px;
+  margin: 100px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component8-subtitle {
@@ -1566,7 +1596,7 @@ Component2 */
 } 
 
 .component8-background {
-  width: 100vw;
+  width: 100%;
   height: 324px;
   position: absolute;
   left: 0;
@@ -1625,14 +1655,18 @@ Component2 */
 
 /* Component9 */
 .component9 {
-  width: 1449px;
+  width: 100%;
+  max-width: 1449px;
   height: 1229px;
   position: relative;
   background: white;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .component9-background {
-  width: 100vw;
+  width: 100%;
   height: 1229px;
   position: absolute;
   left: 0;
@@ -1704,15 +1738,15 @@ Component2 */
 
 /* Contact */
 .contact-img {
-  width: 100vw;
+  width: 100%;
   height: 693px;
-  left: 6px;
+  left: 0;
   top: 0;
   position: absolute;
 }
 
 .contact-bg {
-  width: 100vw;
+  width: 100%;
   height: 720px;
   left: 0;
   top: 0px;
@@ -1721,7 +1755,9 @@ Component2 */
 }
 
 .contact-container {
-  width: 100vw;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .contact-heading {
@@ -2134,6 +2170,55 @@ Component2 */
         padding: 14px;
         font-size: 15px;
     }
+    
+    /* Responsive cho các component */
+    .component1-container,
+    .component2-container,
+    .component3-container,
+    .component4-container,
+    .component5-container,
+    .component6-container,
+    .faq-wrapper,
+    .component8-container,
+    .component9,
+    .detail-container,
+    .homework-container,
+    .practice-test-container {
+        padding: 0 10px;
+    }
+    
+    .banner-container {
+        padding: 10px;
+        min-height: 300px;
+    }
+    
+    .banner-title {
+        font-size: 28px;
+    }
+    
+    .banner-subtitle {
+        font-size: 16px;
+    }
+    
+    .my-course-grid,
+    .productCat-list,
+    .result-list,
+    .result-list2,
+    .result-list3 {
+        padding: 0 10px;
+        gap: 16px;
+    }
+    
+    .course-card,
+    .result-card {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .my-course-title {
+        font-size: 2rem;
+        padding: 0 10px;
+    }
 }
 
 /* ChangePasswordForm */
@@ -2224,26 +2309,25 @@ Component2 */
 
  /* ProductCatComponent  */
 .productCat-wrapper {
-  width: 100vw;
-  height: 1759px;
-  position: relative;
+  width: 100%;
+  /* Đã xóa height cố định để chiều cao tự động */
 }
 
 .productCat-background {
-  width: 100vw;
-  height: 1759px;
-  background-color: #e0f2fe; /* sky-100 */
-  position: absolute;
-  top: 0;
-  left: 0;
+  width: 100%;
+  background: #e9f5ff;
+  padding-bottom: 50px;
+  /* Đã xóa height cố định để chiều cao tự động */
 }
 
 .productCat-topBanner {
-  width: 100vw;
-  height: 960px;
-  position: absolute;
-  top: 0;
-  left: 0;
+  width: 100%;
+  height: auto; /* Để giữ tỉ lệ gốc */
+  max-height: 1200px; /* hoặc lớn hơn nếu muốn */
+  object-fit: cover;
+  display: block;
+  margin-bottom: 32px;
+  image-rendering: auto; /* Đảm bảo trình duyệt render mượt */
 }
 
 .productCat-card {
@@ -2262,12 +2346,12 @@ Component2 */
 }
 
 .productCat-mainImage {
-  width: 240px;
+  width: 230px;
   height: 128px;
   border-radius: 10px;
   position: absolute;
-  top: 0.5px;
-  left: 0px;
+  top: 10px;
+  left: 5px;
 }
 
 .productCat-iconImage {
@@ -2326,11 +2410,15 @@ Component2 */
 
 /* General Layout & Positioning */
 .detail-container {
-    width: 1690px; /* Chiều rộng cố định cho toàn bộ trang */
-    height: 900px; /* QUAN TRỌNG: Chiều cao cố định để không bị tràn xuống footer */
-    position: relative; /* Container cho các phần tử absolute */
-    background: white; /* Nền trắng */
-    overflow: hidden; /* Ẩn bất kỳ nội dung nào tràn ra khỏi container chính */
+    width: 100%;
+    max-width: 1690px;
+    height: 900px;
+    position: relative;
+    background: white;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .detail-bg {
@@ -2497,7 +2585,7 @@ Component2 */
 
 .detail-chapter-box {
     padding: 15px 20px;
-    background-color: #f8f8f8;
+    background-color: #b8aeee;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -2903,11 +2991,15 @@ Component2 */
 
 /* Homework */
 .homework-container {
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
   height: 730px;
   position: relative;
   background-color: white;
   overflow: hidden;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .header-bar {
@@ -2943,16 +3035,6 @@ Component2 */
   left: -15px;
   width: 100px;
   height: 100px;
-}
-
-.course-title {
-  position: absolute;
-  top: 33px;
-  left: 107px;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .circle-progress {
@@ -3251,7 +3333,9 @@ Component2 */
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   text-align: center;
-  margin-top: 80px;
+  margin: 80px auto 0;
+  max-width: 1200px;
+  padding: 0 20px;
 }
 
 .my-course-grid {
@@ -3260,6 +3344,8 @@ Component2 */
   gap: 22px;
   width: 100%;
   max-width: 1200px;
+  margin: 40px auto 0;
+  justify-content: center;
 }
 
 .course-card {
@@ -3323,13 +3409,17 @@ Component2 */
 /* PracticeTest.css */
 
 .practice-test-container {
-    width: 1440px;
+    width: 100%;
+    max-width: 1440px;
     height: 669px;
     position: relative;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .practice-background-div {
-    width: 1530px;
+    width: 100%;
     height: 669px;
     position: absolute;
     left: 0;
@@ -3338,13 +3428,15 @@ Component2 */
 }
 
 .practice-main-card {
-    width: 622px;
-    height: 444px; /* Vẫn giữ nguyên chiều cao này */
-    left: 404px;
+    width: 100%;
+    max-width: 622px;
+    height: 444px;
+    left: 50%;
     top: 150px;
+    transform: translateX(-50%);
     background: white;
     border-radius: 20px;
-    position: relative; /* Quan trọng để các phần tử con định vị tương đối */
+    position: relative;
 }
 
 /* Main title */
@@ -3489,15 +3581,6 @@ Component2 */
     top: 131px;
 }
 
-.my-course-grid {
-  display: flexbox;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 32px;
-  justify-items: center;
-  padding: 0 20px;
-  margin-right:400px;
-  margin-top:50px;
-}
 
 .course-card {
   background: #fff;
@@ -3581,6 +3664,155 @@ Component2 */
   transition: width 0.3s ease;
 }
 
+.productCat-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin: 42px auto 0;
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.productCat-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2176ae;
+  margin-top: 8px;
+}
+
+/* SearchResults styles */
+.result-wrapper {
+  width: 100%;
+  background: #E5F5FF;
+  padding-bottom: 20px;
+  padding-top: 30px;
+}
+
+.result-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 42px 16px 0 16px;
+}
+
+.result-title-main {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.result-loading,
+.result-error,
+.result-empty {
+  text-align: left;
+  margin: 40px 0;
+  font-size: 1.1rem;
+}
+
+.result-error {
+  color: #d32f2f;
+}
+
+.result-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin: 42px auto 0;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.result-list2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin: 42px auto 0;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.result-list3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin: 42px auto 0;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.result-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(80,120,200,0.08);
+  width: 260px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s;
+}
+.result-card:hover {
+  box-shadow: 0 6px 24px rgba(80,120,200,0.18);
+}
+
+.result-card-inner {
+  padding: 16px 16px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.result-main-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.result-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.result-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #222;
+}
+
+.result-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.result-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2176ae;
+  margin-bottom: 8px;
+}
+
+.result-description {
+  font-size: 0.97rem;
+  color: #444;
+  min-height: 36px;
+  margin-bottom: 0;
+  text-align: left; 
+}
 
 
 

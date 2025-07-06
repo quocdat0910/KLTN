@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import '../main.css';
 
 const PaymentForm = ({ course, onClose }) => {
+  const navigate = useNavigate();
   const [loadingPaypal, setLoadingPaypal] = useState(false);
   const [paypalError, setPaypalError] = useState(null);
 
@@ -83,6 +85,8 @@ const PaymentForm = ({ course, onClose }) => {
           toast.success("Đăng ký khóa học miễn phí thành công!");
           setLoadingPaypal(false);
           onClose();
+          // Chuyển hướng đến trang học tập
+          navigate(`/learn/${course._id}`);
         }
       }).render('#paypal-button-container');
       return;
@@ -118,6 +122,8 @@ const PaymentForm = ({ course, onClose }) => {
             toast.success("Thanh toán thành công!");
             setLoadingPaypal(false);
             onClose();
+            // Chuyển hướng đến trang học tập
+            navigate(`/learn/${course._id}`);
           } else {
             throw new Error(response.data?.message || "Thanh toán không thành công.");
           }

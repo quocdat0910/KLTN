@@ -29,6 +29,7 @@ import PracticeTest from "./pages/PracticeTest";
 import TestPage from "./components/TestPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SearchResults from "./pages/SearchResults";
 
 const App = () => {
   return (
@@ -65,13 +66,14 @@ const App = () => {
           <Route path="/mycourse" element={<MyCourse />} />
           <Route path="/testpage" element={<TestPage />} />
           <Route path="/practicetest" element={<PracticeTest />} />
-          <Route path="/productcat" element={<ProductCat />} />
-          <Route path="/course/:id" element={<ProductDetail />} />4
+          <Route path="/product-cat" element={<ProductCat />} />
+          <Route path="/course/:id" element={<ProductDetail />} />
+          <Route path="/search-results" element={<SearchResults />} />
         </Route>
 
-            {/* Homework Layout Routes */}
         <Route element={<HomeworkLayout />}>
-        <Route path="/homework" element={<Homework />} />
+          <Route path="/homework" element={<Homework />} />
+          <Route path="/learn/:courseId" element={<Homework />} />
         </Route>
       </Routes>
 

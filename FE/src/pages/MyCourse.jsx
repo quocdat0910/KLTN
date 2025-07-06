@@ -47,7 +47,7 @@ const MyCourse = () => {
   }, [navigate]);
 
   const handleCourseClick = (courseId) => {
-    navigate(`/course/${courseId}`);
+    navigate(`/course/${courseId}`, { state: { fromMyCourse: true } });
   };
 
   const formatDate = (dateString) => {

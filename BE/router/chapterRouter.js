@@ -5,13 +5,15 @@ import {
     deleteChapter,
     publishChapter,
     getAllChaptersByCourse,
-    getChapterDetails       
+    getChapterDetails,
+    getChaptersWithContent
 } from "../controller/chapterController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router({ mergeParams: true }); // Cho phép truy cập :courseId từ courseRouter
 
 router.get("/", getAllChaptersByCourse);
+router.get("/with-content", protect, getChaptersWithContent); // Lấy chương với nội dung cho học viên đã đăng ký
 router.get("/:chapterId", getChapterDetails); // Lấy chi tiết một chương cụ thể
 
 // Admin routes

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import '../main.css'; // Đảm bảo đường dẫn đúng đến file CSS của bạn
 import PaymentForm from '../components/PaymentForm'; // Đảm bảo đường dẫn đúng
@@ -8,6 +8,7 @@ import PaymentForm from '../components/PaymentForm'; // Đảm bảo đường d
 const ProductDetail = () => {
     const { id: courseId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [courseDetail, setCourseDetail] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,6 +17,11 @@ const ProductDetail = () => {
     const [openChapterIds, setOpenChapterIds] = useState(new Set());
     const [loadedChapterDetails, setLoadedChapterDetails] = useState({});
     const [totalDuration, setTotalDuration] = useState(0); // Thêm state cho tổng thời lượng
+    const [isEnrolled, setIsEnrolled] = useState(false);
+    const [enrollmentLoading, setEnrollmentLoading] = useState(true);
+
+    // Kiểm tra xem user có đến từ trang MyCourse không
+    const isFromMyCourse = location.state?.fromMyCourse || false;
 
     // Hàm tính tổng thời lượng từ tất cả lessons
     const calculateTotalDuration = (chapters, loadedDetails = {}) => {
@@ -117,7 +123,34 @@ const ProductDetail = () => {
             }
         };
 
+        const checkEnrollment = async () => {
+            try {
+                setEnrollmentLoading(true);
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setIsEnrolled(false);
+                    return;
+                }
+
+                const response = await axios.get(`http://localhost:4000/api/v1/enrollments`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const userEnrollment = response.data.enrollments.find(
+                    enrollment => enrollment.courseId._id === courseId
+                );
+                
+                setIsEnrolled(!!userEnrollment);
+            } catch (error) {
+                console.error("Error checking enrollment:", error);
+                setIsEnrolled(false);
+            } finally {
+                setEnrollmentLoading(false);
+            }
+        };
+
         fetchCourseDetail();
+        checkEnrollment();
     }, [courseId, navigate]);
 
     // Tính lại tổng thời lượng khi loadedChapterDetails thay đổi
@@ -164,7 +197,26 @@ const ProductDetail = () => {
             toast.warn("Chưa tải xong thông tin khóa học.");
             return;
         }
+
+        // Nếu đến từ MyCourse và đã đăng ký, chuyển đến trang học
+        if (isFromMyCourse && isEnrolled) {
+            navigate(`/learn/${courseId}`);
+            return;
+        }
+
+        // Nếu không đến từ MyCourse, kiểm tra enrollment
+        if (!isFromMyCourse) {
+            if (isEnrolled) {
+                toast.info("Bạn đã mua khóa học này rồi!");
+                return;
+            }
+        }
+
         setShowPaymentForm(true);
+    };
+
+    const handleStartLearning = () => {
+        navigate(`/learn/${courseId}`);
     };
 
     const handleClosePaymentForm = () => {
@@ -222,6 +274,15 @@ const ProductDetail = () => {
         ? [...courseDetail.chapters].sort((a, b) => a.order - b.order)
         : [];
 
+    // Xác định text và action cho button
+    let buttonText = "Mua khóa học";
+    let buttonAction = handleBuyClick;
+
+    if (isFromMyCourse && isEnrolled) {
+        buttonText = "Bắt đầu học";
+        buttonAction = handleStartLearning;
+    }
+
     return (
         <div className="detail-container">
             {/* Background element, adjust its size if the main container is fixed */}
@@ -243,9 +304,13 @@ const ProductDetail = () => {
                 {courseDetail.price === 0 ? 'Miễn phí' : `${courseDetail.price?.toLocaleString('vi-VN') || 'N/A'} VNĐ`}
             </div>
 
-            <div className="detail-buy-button" onClick={handleBuyClick}>
-                <div className="detail-buy-button-text">Mua khóa học</div>
-            </div>
+            {!enrollmentLoading && (
+                <div className="detail-buy-button" onClick={buttonAction}>
+                    <div className="detail-buy-button-text">
+                        {buttonText}
+                    </div>
+                </div>
+            )}
 
             {/* Các tính năng khóa học */}
             <div className="detail-feature detail-feature-1">- Loại khóa học: {courseDetail.courseType || 'Chưa rõ'}</div>

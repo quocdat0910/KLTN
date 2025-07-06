@@ -15,7 +15,6 @@ const Home = () => {
       <Component3 />
       <Component2 />
       <Component4 />
-      <Component5 />
       <Component6 />
       <Component7 />
       <Component8 />

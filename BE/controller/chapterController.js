@@ -284,6 +284,49 @@ export const getAllChaptersByCourse = async (req, res, next) => {
   }
 };
 
+// @route GET /api/v1/courses/:courseId/chapters-with-content
+// @desc Get all chapters with lessons and exercises for enrolled users
+// @access Protected
+export const getChaptersWithContent = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user._id;
+
+    // Validate courseId
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "ID khóa học không hợp lệ" });
+    }
+
+    // Check if user is enrolled in this course
+    const enrollment = await Enrollment.findOne({ userId, courseId });
+    if (!enrollment) {
+      return res.status(403).json({ message: "Bạn chưa đăng ký khóa học này" });
+    }
+
+    // Find all chapters with lessons and exercises
+    const chapters = await Chapter.find({ courseId })
+      .populate({
+        path: 'lessons',
+        select: 'title videoUrl videoDuration order isPublished',
+        match: { isPublished: true }
+      })
+      .populate({
+        path: 'exercises',
+        select: 'title description questions order isPublished',
+        match: { isPublished: true }
+      })
+      .sort({ order: 1 });
+
+    res.status(200).json({
+      message: "Lấy danh sách chương với nội dung thành công",
+      chapters
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chương với nội dung:", error.message);
+    next(error);
+  }
+};
+
 // @route GET /api/v1/courses/:courseId/chapters/:chapterId
 // @desc Get details of a single chapter (and its lessons/exercises)
 // @access Public (or adjust based on your needs, e.g., Admin for full details, or if it's for an enrolled user)

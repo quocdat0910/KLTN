@@ -19,11 +19,24 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
     const discoverRef = useRef(null);
 
+    // Ô tìm kiếm
+    const [searchValue, setSearchValue] = useState("");
+    const handleSearch = () => {
+        if (searchValue.trim()) {
+            navigate(`/search-results?q=${encodeURIComponent(searchValue.trim())}`);
+        }
+    };
+    const handleSearchKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
+
     // Hàm xử lý khi chọn một mục trong menu "Khám phá"
     const handleSelect = (category) => {
-        console.log("Bạn đã chọn:", category);
-        // Có thể thêm logic điều hướng hoặc lọc nội dung ở đây
-        // Ví dụ: navigate(`/courses?category=${category}`);
+        // Chuyển hướng sang ProductCat với courseType phù hợp
+        const type = category.toUpperCase();
+        navigate(`/product-cat?courseType=${type}`);
         setDiscoverDropdownOpen(false); // Đóng dropdown sau khi chọn
     };
 
@@ -42,6 +55,7 @@ const Navbar = () => {
                 toast.error(error.response?.data?.message || "Đăng xuất thất bại");
             }
         }
+        localStorage.removeItem('token');
         setIsAuthenticated(false);
         setUser({
             firstName: '',
@@ -109,8 +123,8 @@ const Navbar = () => {
                     {discoverDropdownOpen && (
                         <div className="discovery-menu">
                             <ul>
-                                <li onClick={() => handleSelect('Toeic')}>Toeic</li>
-                                <li onClick={() => handleSelect('Ielts')}>Ielts</li>
+                                <li onClick={() => handleSelect('TOEIC')}>TOEIC</li>
+                                <li onClick={() => handleSelect('IELTS')}>IELTS</li>
                                 {/* Thêm các mục khám phá khác ở đây */}
                             </ul>
                         </div>
@@ -124,8 +138,11 @@ const Navbar = () => {
                     type="text"
                     className="search-input"
                     placeholder="Bạn muốn học gì ?"
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
                 />
-                <div className="search-icon">
+                <div className="search-icon" onClick={handleSearch} style={{ cursor: 'pointer' }}>
                     <img src="/search.png" alt="Search" />
                 </div>
             </div>

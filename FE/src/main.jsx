@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import axios from "axios";
 import { ToastContainer } from "react-toastify"; // Đảm bảo đã import ToastContainer và styles
 import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Tạo Context
 export const Context = createContext({
@@ -78,6 +79,10 @@ const AppWrapper = () => {
         fetchUserProfile,
       }}
     >
+      <Router>
+        <Routes>
+        </Routes>
+      </Router>
       <App />
       <ToastContainer position="bottom-right" theme="dark" /> {/* Đảm bảo ToastContainer được render */}
     </Context.Provider>
