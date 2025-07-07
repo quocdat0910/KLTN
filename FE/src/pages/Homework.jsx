@@ -112,6 +112,7 @@ const Homework = () => {
 
                 if (exercisesResponse.ok) {
                   const exercisesData = await exercisesResponse.json();
+                  console.log('exercisesData:', exercisesData);
                   const exercises = exercisesData.exercises.map(exercise => ({
                     id: exercise._id,
                     name: exercise.title,

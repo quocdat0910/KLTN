@@ -93,7 +93,9 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
                     id: String(optIndex),
                     text: opt
                   })) : [],
-                  correctAnswer: String(q.correctAnswer || 0),
+                  correctAnswer: q.correctAnswer !== undefined && q.correctAnswer !== null
+                    ? String(q.correctAnswer)
+                    : "0",
                   explanation: q.explanation || 'Không có giải thích cho câu hỏi này.'
                 }))
               };

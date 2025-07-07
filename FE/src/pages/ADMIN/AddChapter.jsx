@@ -31,68 +31,76 @@ function AddChapter() {
     const [googleSheetUrl, setGoogleSheetUrl] = useState('');
     // State for the exercise title when importing from Google Sheet
     const [excelExerciseTitle, setExcelExerciseTitle] = useState('');
- const handleUpdateExerciseFromSheet = async (exercise) => {
-  if (
-    !exercise.googleSheetUrl ||
-    !exercise.googleSheetUrl.includes("export?format=csv")
-  ) {
-    toast.error(`Bài tập "${exercise.title}" chưa có URL Google Sheet hợp lệ.`);
-    console.log("exercise.googleSheetUrl:", exercise.googleSheetUrl);
 
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error("Vui lòng đăng nhập lại.");
-      navigate("/login");
-      return;
+    // Hàm chuẩn hóa link Google Sheet sang export CSV
+    function normalizeGoogleSheetUrl(url) {
+        const match = url.match(/https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+        if (match) {
+            return `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
+        }
+        return url;
     }
 
-    // Fetch CSV content from Google Sheet
-    const response = await axios.get(exercise.googleSheetUrl, {
-      responseType: 'arraybuffer', // Important for binary CSV
-    });
+    const handleUpdateExerciseFromSheet = async (exercise) => {
+        const normalizedUrl = normalizeGoogleSheetUrl(exercise.googleSheetUrl || '');
+        if (!normalizedUrl || !normalizedUrl.includes("export?format=csv")) {
+            toast.error(`Bài tập "${exercise.title}" chưa có URL Google Sheet hợp lệ.`);
+            console.log("exercise.googleSheetUrl:", exercise.googleSheetUrl);
+            return;
+        }
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error("Vui lòng đăng nhập lại.");
+                navigate("/login");
+                return;
+            }
+            // Fetch CSV content from Google Sheet
+            const response = await axios.get(normalizedUrl, {
+                responseType: 'arraybuffer', // Important for binary CSV
+            });
 
-    const data = new Uint8Array(response.data); // Convert to binary format
-    const workbook = XLSX.read(data, { type: 'array' }); // Parse workbook
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(worksheet);
+            const data = new Uint8Array(response.data); // Convert to binary format
+            const workbook = XLSX.read(data, { type: 'array' }); // Parse workbook
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
 
-    // Transform data into your expected question format
-    const transformed = transformExcelDataToQuestions(json);
-    const updatedData = {
-      title: exercise.title,
-      type: transformed.inferredType,
-      questions: transformed.questions,
+            // Transform data into your expected question format
+            const transformed = transformExcelDataToQuestions(json);
+            const updatedData = {
+                title: exercise.title,
+                type: transformed.inferredType,
+                questions: transformed.questions,
+                googleSheetUrl: normalizedUrl,
+            };
+
+            console.log("Dữ liệu gửi lên update:", updatedData);
+
+            // Update to backend
+            const res = await axios.put(
+                `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
+                updatedData,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
+                }
+            );
+
+            // Update local state
+            setExercises((prev) =>
+                prev.map((ex) => (ex._id === exercise._id ? res.data.exercise : ex))
+            );
+
+            toast.success(`Cập nhật bài tập "${exercise.title}" từ Google Sheet thành công!`);
+        } catch (error) {
+            console.error("Lỗi cập nhật bài tập:", error, error.stack);
+            toast.error("Không thể cập nhật bài tập từ Google Sheet.");
+        } finally {
+            setLoading(false);
+        }
     };
-
-    // Update to backend
-    const res = await axios.put(
-      `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
-      updatedData,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      }
-    );
-
-    // Update local state
-    setExercises((prev) =>
-      prev.map((ex) => (ex._id === exercise._id ? res.data.exercise : ex))
-    );
-
-    toast.success(`Cập nhật bài tập "${exercise.title}" từ Google Sheet thành công!`);
-  } catch (error) {
-    console.error(error);
-    toast.error("Không thể cập nhật bài tập từ Google Sheet.");
-  } finally {
-    setLoading(false);
-  }
-};
 
     // Handle "Delete Exercise" click
     const handleDeleteExercise = useCallback(async (exerciseId, exerciseTitle) => {
@@ -187,74 +195,75 @@ function AddChapter() {
     }, [chapterId, navigate, courseId]);
 
     const handleUpdateExerciseFromGoogleSheet = async (exercise) => {
-    if (!googleSheetUrl.trim()) {
-        toast.error("Vui lòng nhập URL Google Sheet.");
-        return;
-    }
-
-    setLoading(true);
-    try {
-       const response = await axios.get(googleSheetUrl, { responseType: 'arraybuffer' });
-        const data = new Uint8Array(response.data);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet);
-
-        if (!json || json.length === 0) {
-            toast.error("Google Sheet trống hoặc không có dữ liệu hợp lệ.");
-            setLoading(false);
+        if (!googleSheetUrl.trim()) {
+            toast.error("Vui lòng nhập URL Google Sheet.");
             return;
         }
 
-        const transformedData = transformExcelDataToQuestions(json);
-        const questionsFromSheet = transformedData.questions;
-        const typeFromSheet = transformedData.inferredType;
+        setLoading(true);
+        try {
+            const response = await axios.get(normalizeGoogleSheetUrl(googleSheetUrl), { responseType: 'arraybuffer' });
+            const data = new Uint8Array(response.data);
+            const workbook = XLSX.read(data, { type: 'array' });
 
-        if (questionsFromSheet.length === 0) {
-            toast.error("Không có câu hỏi hợp lệ.");
-            setLoading(false);
-            return;
-        }
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-            toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
-            navigate("/login");
-            return;
-        }
-
-        const updatedExerciseData = {
-            title: exercise.title,
-            type: typeFromSheet,
-            questions: questionsFromSheet,
-        };
-
-        const res = await axios.put(
-            `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
-            updatedExerciseData,
-            {
-                headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true,
+            if (!json || json.length === 0) {
+                toast.error("Google Sheet trống hoặc không có dữ liệu hợp lệ.");
+                setLoading(false);
+                return;
             }
-        );
 
-        // Update local state
-        setExercises(prev =>
-            prev.map(ex => (ex._id === exercise._id ? { ...ex, ...res.data.exercise } : ex))
-        );
+            const transformedData = transformExcelDataToQuestions(json);
+            const questionsFromSheet = transformedData.questions;
+            const typeFromSheet = transformedData.inferredType;
 
-        toast.success(`Cập nhật bài tập "${exercise.title}" thành công từ Google Sheet!`);
-    } catch (error) {
-        console.error("Lỗi cập nhật từ Google Sheet:", error);
-        toast.error("Không thể cập nhật bài tập: " + (error.response?.data?.message || "Lỗi không xác định."));
-    } finally {
-        setLoading(false);
-    }
-};
+            if (questionsFromSheet.length === 0) {
+                toast.error("Không có câu hỏi hợp lệ.");
+                setLoading(false);
+                return;
+            }
 
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+                navigate("/login");
+                return;
+            }
 
+            const updatedExerciseData = {
+                title: exercise.title,
+                type: typeFromSheet,
+                questions: questionsFromSheet,
+                googleSheetUrl: normalizeGoogleSheetUrl(exercise.googleSheetUrl || ''),
+            };
+
+            console.log("Dữ liệu gửi lên update:", updatedExerciseData);
+
+            const res = await axios.put(
+                `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
+                updatedExerciseData,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
+                }
+            );
+
+            // Update local state
+            setExercises(prev =>
+                prev.map(ex => (ex._id === exercise._id ? { ...ex, ...res.data.exercise } : ex))
+            );
+
+            toast.success(`Cập nhật bài tập "${exercise.title}" thành công từ Google Sheet!`);
+        } catch (error) {
+            console.error("Lỗi cập nhật từ Google Sheet:", error);
+            toast.error("Không thể cập nhật bài tập: " + (error.response?.data?.message || "Lỗi không xác định."));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Function to fetch chapter details, exercises, and lessons
     const fetchChapterDetails = useCallback(async () => {
@@ -289,9 +298,14 @@ function AddChapter() {
                     withCredentials: true,
                 }
             );
-            console.log(exercisesRes.data.exercises);
+            console.log('exercises:', exercisesRes.data.exercises);
             if (Array.isArray(exercisesRes.data.exercises)) {
-                setExercises(exercisesRes.data.exercises);
+                setExercises((prevExercises) =>
+                    exercisesRes.data.exercises.map((ex, idx) => ({
+                        ...ex,
+                        googleSheetUrl: ex.googleSheetUrl || (prevExercises && prevExercises[idx] && prevExercises[idx].googleSheetUrl) || '',
+                    }))
+                );
             } else {
                 setExercises([]);
             }
@@ -393,8 +407,8 @@ function AddChapter() {
         };
 
         if (googleSheetUrl.trim()) {
-            chapterData.googleSheetUrl = googleSheetUrl.trim();
-            }
+            chapterData.googleSheetUrl = normalizeGoogleSheetUrl(googleSheetUrl.trim());
+        }
 
         try {
             const token = localStorage.getItem('token');
@@ -437,7 +451,6 @@ function AddChapter() {
         }
     };
 
-
     const handleCloseLessonForm = useCallback(() => {
         setShowLessonForm(false);
         setEditingLesson(null);
@@ -445,7 +458,9 @@ function AddChapter() {
 
     // Handle Google Sheet URL change
     const handleGoogleSheetUrlChange = (e) => {
-        setGoogleSheetUrl(e.target.value);
+        let url = e.target.value;
+        url = normalizeGoogleSheetUrl(url);
+        setGoogleSheetUrl(url);
     };
 
     // Function to parse Google Sheet and directly create/update Exercise
@@ -467,7 +482,7 @@ function AddChapter() {
         setLoading(true);
         try {
             // Fetch data from Google Sheet URL
-            const response = await axios.get(googleSheetUrl);
+            const response = await axios.get(normalizeGoogleSheetUrl(googleSheetUrl), { responseType: 'arraybuffer' });
             const sheetData = response.data; // Assuming the URL points to a published CSV/TSV
 
             // Use XLSX to parse the fetched data (it can handle CSV/TSV strings)
@@ -487,7 +502,7 @@ function AddChapter() {
             const typeFromSheet = transformedData.inferredType;
 
             if (questionsFromSheet.length === 0) {
-                toast.error("Không tìm thấy câu hỏi hợp lệ trong Google Sheet sau khi xử lý.");
+                toast.error("Không tìm thấy câu hỏi hợp lệ.");
                 setLoading(false);
                 return;
             }
@@ -510,20 +525,22 @@ function AddChapter() {
                 timeLimit: null,
                 isPublished: false,
                 questions: questionsFromSheet,
-                googleSheetUrl: googleSheetUrl.trim(),
-                };
+                googleSheetUrl: normalizeGoogleSheetUrl(googleSheetUrl.trim()),
+            };
 
-                const res = await axios.post(
+            console.log("Dữ liệu gửi lên update:", newExerciseData);
+
+            const res = await axios.post(
                 `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises`,
                 newExerciseData,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true,
                 }
-                );
+            );
 
-                setExercises(prevExercises => [...prevExercises, res.data.exercise]);
-                toast.success(res.data.message || `Tạo bài tập "${excelExerciseTitle}" từ Google Sheet thành công!`);
+            setExercises(prevExercises => [...prevExercises, res.data.exercise]);
+            toast.success(res.data.message || `Tạo bài tập "${excelExerciseTitle}" từ Google Sheet thành công!`);
 
             // Clear form fields after successful operation
             setGoogleSheetUrl('');
@@ -574,7 +591,6 @@ function AddChapter() {
         }
         return { questions: transformedQuestions, inferredType };
     };
-
 
     if (contextLoading) {
         return (

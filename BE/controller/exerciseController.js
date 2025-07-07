@@ -207,10 +207,6 @@ export const createExercise = async (req, res, next) => {
         }
         exerciseDoc.order = parsedOrder; // Cập nhật thứ tự
       }
-
-      if (googleSheetUrl !== undefined) {
-            exerciseDoc.googleSheetUrl = googleSheetUrl?.trim() || '';
-          }
       // Cập nhật các trường khác
       exerciseDoc.title = title.trim();
       exerciseDoc.type = type;
@@ -221,6 +217,7 @@ export const createExercise = async (req, res, next) => {
       if (isPublished !== undefined) exerciseDoc.isPublished = isPublished;
       exerciseDoc.questions = questions; // Cập nhật mảng câu hỏi
 
+      console.log("Exercise object trước khi save:", JSON.stringify(exerciseDoc, null, 2));
       await exerciseDoc.save();
 
       res.status(200).json({
@@ -278,6 +275,7 @@ export const createExercise = async (req, res, next) => {
         googleSheetUrl: googleSheetUrl?.trim() || ''
       });
 
+      console.log("Exercise object trước khi save:", JSON.stringify(exerciseDoc, null, 2));
       await exerciseDoc.save();
 
       // Cập nhật Chapter.exercises
@@ -319,9 +317,9 @@ export const updateExercise = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(chapterId) || !mongoose.Types.ObjectId.isValid(exerciseId)) {
       return res.status(400).json({ message: "ID khóa học, chương hoặc bài tập không hợp lệ" });
     }
-    if (googleSheetUrl !== undefined) {
-          exercise.googleSheetUrl = googleSheetUrl?.trim() || '';
-        }
+    // if (googleSheetUrl !== undefined) {
+    //   exercise.googleSheetUrl = googleSheetUrl?.trim() || '';
+    // }
     if (title && !validator.isLength(title, { min: 3, max: 100 })) {
       return res.status(400).json({ message: "Tiêu đề phải có từ 3 đến 100 ký tự" });
     }
@@ -356,7 +354,7 @@ export const updateExercise = async (req, res, next) => {
         if (type === "multiple-choice" && (!q.options || !Array.isArray(q.options) || q.options.length < 2)) {
           return res.status(400).json({ message: "Câu hỏi trắc nghiệm phải có ít nhất 2 đáp án" });
         }
-        if (!q.correctAnswer) {
+        if (q.correctAnswer === undefined || q.correctAnswer === null) {
           return res.status(400).json({ message: "Đáp án đúng là bắt buộc" });
         }
         if (type === "multiple-choice" && (!Number.isInteger(Number(q.correctAnswer)) || q.correctAnswer < 0 || q.correctAnswer >= q.options.length)) {
@@ -397,7 +395,9 @@ export const updateExercise = async (req, res, next) => {
     if (timeLimit !== undefined) exercise.timeLimit = timeLimit || null;
     if (questions) exercise.questions = questions;
     if (isPublished !== undefined) exercise.isPublished = isPublished;
+    if (googleSheetUrl !== undefined) exercise.googleSheetUrl = googleSheetUrl?.trim() || '';
 
+    console.log("Exercise object trước khi save:", JSON.stringify(exercise, null, 2));
     exercise.updatedAt = Date.now();
     await exercise.save();
 
@@ -412,7 +412,7 @@ export const updateExercise = async (req, res, next) => {
       }
     });
   } catch (error) {
-    console.error("Lỗi cập nhật bài tập:", error.message);
+    console.error("Lỗi cập nhật bài tập:", error, error.stack);
     next(error);
   }
 };
