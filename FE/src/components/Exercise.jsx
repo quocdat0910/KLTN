@@ -89,6 +89,8 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
                 questions: data.exercise.questions.map((q, index) => ({
                   id: `q${index + 1}`,
                   text: q.questionText || q.text || `Question ${index + 1}`,
+                  questionAudio: q.questionAudio,
+                  questionImage: q.questionImage,
                   options: q.options ? q.options.map((opt, optIndex) => ({
                     id: String(optIndex),
                     text: opt
@@ -176,6 +178,9 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
 
   const currentQuestion = exerciseData.questions[currentQuestionIndex];
 
+  // Log dữ liệu câu hỏi hiện tại để kiểm tra đủ trường chưa
+  console.log('Current question:', currentQuestion);
+
   if (!currentQuestion) {
     return <div className="exercise-container">Không tìm thấy câu hỏi hiện tại.</div>;
   }
@@ -232,6 +237,24 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
       <div className="question-counter">Question {currentQuestionIndex + 1} of {exerciseData.questions.length}</div>
 
       <div className="question-card">
+        {/* Hiển thị questionText nếu có */}
+        {currentQuestion.questionText && (
+          <p className="question-text">{currentQuestion.questionText}</p>
+        )}
+        {/* Hiển thị hình ảnh nếu có */}
+        {currentQuestion.questionImage && (
+          <div className="question-image-wrapper">
+            <img src={currentQuestion.questionImage} alt="Question" className="question-image" style={{maxWidth: '100%', maxHeight: 250, margin: '10px 0'}} />
+          </div>
+        )}
+        {/* Hiển thị audio nếu có */}
+        {currentQuestion.questionAudio && (
+          <div className="question-audio-wrapper" style={{margin: '10px 0'}}>
+            <audio controls src={currentQuestion.questionAudio} style={{width: '100%'}}>
+              Trình duyệt của bạn không hỗ trợ audio.
+            </audio>
+          </div>
+        )}
         <p className="question-text">{currentQuestion.text}</p>
         <div className="options-list">
           {currentQuestion.options && currentQuestion.options.map((option, index) => (

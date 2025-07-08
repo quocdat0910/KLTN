@@ -12,6 +12,7 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
     const [answers, setAnswers] = useState({ A: '', B: '', C: '', D: '' }); // Các lựa chọn đáp án
     const [correctAnswerKey, setCorrectAnswerKey] = useState('A'); // Đáp án đúng (A, B, C, D)
     const [loading, setLoading] = useState(false); // Trạng thái loading
+    const [isPublished, setIsPublished] = useState(false); // Trạng thái xuất bản
 
     // useEffect để điền dữ liệu vào form khi ở chế độ chỉnh sửa hoặc reset khi tạo mới
     useEffect(() => {
@@ -20,6 +21,11 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
             setTitle(editingExercise.title || '');
             setDescription(editingExercise.description || ''); // 'description' từ quiz model có thể là nội dung câu hỏi
             setOrder(editingExercise.order || '');
+            setIsPublished(
+                typeof editingExercise.isPublished === 'boolean'
+                    ? editingExercise.isPublished
+                    : false
+            );
 
             // Xử lý các lựa chọn đáp án từ questions[0].options
             if (editingExercise.questions && editingExercise.questions.length > 0) {
@@ -42,7 +48,7 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
 
                 // Đảm bảo luôn có đủ 4 key A, B, C, D trong loadedAnswers
                 ['A', 'B', 'C', 'D'].forEach(key => {
-                    if (!loadedAnswers.hasOwnProperty(key)) {
+                    if (!Object.prototype.hasOwnProperty.call(loadedAnswers, key)) {
                         loadedAnswers[key] = '';
                     }
                 });
@@ -61,6 +67,7 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
             setOrder(suggestedOrder || ''); // Sử dụng suggestedOrder khi tạo mới
             setAnswers({ A: '', B: '', C: '', D: '' });
             setCorrectAnswerKey('A');
+            setIsPublished(false);
         }
     }, [editingExercise, suggestedOrder]); // Dependencies: chạy lại khi editingExercise hoặc suggestedOrder thay đổi
 
@@ -142,6 +149,7 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
             order: parseInt(order),
             type: 'multiple-choice', // Giả định luôn là trắc nghiệm với form này
             questions: questionsArray,
+            isPublished: isPublished,
             // chapter: chapterId, // Không cần gửi chapterId trong body khi PUT/POST vì nó có trong URL
         };
 
@@ -222,6 +230,21 @@ const CreateExerciseForm = ({ onClose, chapterId, suggestedOrder, onQuizCreated,
                         disabled={loading}
                         required
                     />
+
+                    {/* Thêm trường xuất bản */}
+                    <div className="chapter-form-group">
+                        <label htmlFor="isPublishedExercise" className="chapter-toggle-label">
+                            <input
+                                type="checkbox"
+                                id="isPublishedExercise"
+                                checked={isPublished}
+                                onChange={(e) => setIsPublished(e.target.checked)}
+                                disabled={loading}
+                            />
+                            <span className="chapter-toggle-slider"></span>
+                            Xuất bản bài tập này?
+                        </label>
+                    </div>
 
                     {['A', 'B', 'C', 'D'].map((optionKey) => (
                         <div key={optionKey} className="answer-row">

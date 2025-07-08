@@ -1,5 +1,5 @@
 // src/components/CreateLessonForm.jsx
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 // import { Context } from '../../main'; // Đảm bảo đường dẫn đúng
@@ -63,7 +63,7 @@ function CreateLessonForm({ onClose, courseId, chapterId, suggestedOrder, onLess
             toast.error("Tiêu đề bài học phải từ 3 đến 100 ký tự.");
             setLoading(false); return;
         }
-        if (!videoUrl || !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(videoUrl)) { // Basic URL regex
+        if (!videoUrl || !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(videoUrl)) { // Basic URL regex
             toast.error("URL video không hợp lệ.");
             setLoading(false); return;
         }
@@ -85,7 +85,7 @@ function CreateLessonForm({ onClose, courseId, chapterId, suggestedOrder, onLess
                 toast.error("Tên tài liệu phải từ 1 đến 100 ký tự.");
                 setLoading(false); return;
             }
-            if (!res.url || !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(res.url)) {
+            if (!res.url || !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(res.url)) {
                 toast.error("URL tài liệu không hợp lệ.");
                 setLoading(false); return;
             }
@@ -288,14 +288,17 @@ function CreateLessonForm({ onClose, courseId, chapterId, suggestedOrder, onLess
                     </div>
 
                     <div className="chapter-form-group">
-                        <input
-                            type="checkbox"
-                            id="isPublishedLesson"
-                            checked={isPublished}
-                            onChange={(e) => setIsPublished(e.target.checked)}
-                            disabled={loading}
-                        />
-                        <label htmlFor="isPublishedLesson" className="checkbox-label">Xuất bản bài học này?</label>
+                        <label htmlFor="isPublishedLesson" className="chapter-toggle-label">
+                            <input
+                                type="checkbox"
+                                id="isPublishedLesson"
+                                checked={isPublished}
+                                onChange={(e) => setIsPublished(e.target.checked)}
+                                disabled={loading}
+                            />
+                            <span className="chapter-toggle-slider"></span>
+                            Xuất bản bài học này?
+                        </label>
                     </div>
 
                     <div className="action-buttons2">

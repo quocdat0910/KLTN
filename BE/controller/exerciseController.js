@@ -37,7 +37,7 @@ export const getAllExercises = async (req, res, next) => {
 
     // Lấy danh sách bài tập
     const exercises = await Exercise.find(req.user.role === "admin" ? { chapterId } : { chapterId, isPublished: true })
-      .select("title type passingScore timeLimit googleSheetUrl")
+      .select("title type order passingScore timeLimit googleSheetUrl isPublished questions")
       .sort({ order: 1 });
 
     res.status(200).json({
@@ -400,6 +400,7 @@ export const updateExercise = async (req, res, next) => {
     console.log("Exercise object trước khi save:", JSON.stringify(exercise, null, 2));
     exercise.updatedAt = Date.now();
     await exercise.save();
+    console.log("Exercise object SAU KHI SAVE:", JSON.stringify(exercise, null, 2));
 
     res.status(200).json({
       message: "Cập nhật bài tập thành công",
@@ -409,6 +410,8 @@ export const updateExercise = async (req, res, next) => {
         passingScore: exercise.passingScore,
         timeLimit: exercise.timeLimit,
         googleSheetUrl: exercise.googleSheetUrl,
+        isPublished: exercise.isPublished, // thêm trường này
+        _id: exercise._id, // nên trả về cả _id
       }
     });
   } catch (error) {

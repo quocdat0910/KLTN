@@ -15,13 +15,11 @@ function AddChapter() {
 
     const [chapterName, setChapterName] = useState('');
     const [order, setOrder] = useState('');
-    const [isLocked, setIsLocked] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [exercises, setExercises] = useState([]); // Vẫn cần state này để tính suggestedOrder và quản lý ID cho chapter.exercises
-    const [editingExercise, setEditingExercise] = useState(null);
 
     const [showLessonForm, setShowLessonForm] = useState(false);
     const [lessons, setLessons] = useState([]);
@@ -31,6 +29,7 @@ function AddChapter() {
     const [googleSheetUrl, setGoogleSheetUrl] = useState('');
     // State for the exercise title when importing from Google Sheet
     const [excelExerciseTitle, setExcelExerciseTitle] = useState('');
+    const [excelExerciseIsPublished, setExcelExerciseIsPublished] = useState(false);
 
     // Hàm chuẩn hóa link Google Sheet sang export CSV
     function normalizeGoogleSheetUrl(url) {
@@ -74,26 +73,36 @@ function AddChapter() {
                 type: transformed.inferredType,
                 questions: transformed.questions,
                 googleSheetUrl: normalizedUrl,
+                isPublished: exercise.isPublished !== undefined ? exercise.isPublished : false,
             };
 
-            console.log("Dữ liệu gửi lên update:", updatedData);
+            // Log dữ liệu trước khi gửi lên backend
+            console.log('Exercise data gửi lên backend:', updatedData);
 
             // Update to backend
-            const res = await axios.put(
-                `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
-                updatedData,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                }
-            );
+            try {
+                const res = await axios.put(
+                    `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
+                    updatedData,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        withCredentials: true,
+                    }
+                );
+                // Log toàn bộ response
+                console.log('Full response:', res);
+                // Log response exercise sau khi cập nhật thành công
+                console.log('Exercise data SAU KHI SAVE (response):', res.data.exercise);
+                // Update local state
+                setExercises((prev) =>
+                    prev.map((ex) => (ex._id === exercise._id ? res.data.exercise : ex))
+                );
+                toast.success(`Cập nhật bài tập "${exercise.title}" từ Google Sheet thành công!`);
+            } catch (err) {
+                // Log lỗi chi tiết
+                console.error('Lỗi khi cập nhật exercise:', err, err?.response);
+            }
 
-            // Update local state
-            setExercises((prev) =>
-                prev.map((ex) => (ex._id === exercise._id ? res.data.exercise : ex))
-            );
-
-            toast.success(`Cập nhật bài tập "${exercise.title}" từ Google Sheet thành công!`);
         } catch (error) {
             console.error("Lỗi cập nhật bài tập:", error, error.stack);
             toast.error("Không thể cập nhật bài tập từ Google Sheet.");
@@ -194,77 +203,6 @@ function AddChapter() {
         }
     }, [chapterId, navigate, courseId]);
 
-    const handleUpdateExerciseFromGoogleSheet = async (exercise) => {
-        if (!googleSheetUrl.trim()) {
-            toast.error("Vui lòng nhập URL Google Sheet.");
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const response = await axios.get(normalizeGoogleSheetUrl(googleSheetUrl), { responseType: 'arraybuffer' });
-            const data = new Uint8Array(response.data);
-            const workbook = XLSX.read(data, { type: 'array' });
-
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const json = XLSX.utils.sheet_to_json(worksheet);
-
-            if (!json || json.length === 0) {
-                toast.error("Google Sheet trống hoặc không có dữ liệu hợp lệ.");
-                setLoading(false);
-                return;
-            }
-
-            const transformedData = transformExcelDataToQuestions(json);
-            const questionsFromSheet = transformedData.questions;
-            const typeFromSheet = transformedData.inferredType;
-
-            if (questionsFromSheet.length === 0) {
-                toast.error("Không có câu hỏi hợp lệ.");
-                setLoading(false);
-                return;
-            }
-
-            const token = localStorage.getItem('token');
-            if (!token) {
-                toast.error("Không tìm thấy token. Vui lòng đăng nhập lại.");
-                navigate("/login");
-                return;
-            }
-
-            const updatedExerciseData = {
-                title: exercise.title,
-                type: typeFromSheet,
-                questions: questionsFromSheet,
-                googleSheetUrl: normalizeGoogleSheetUrl(exercise.googleSheetUrl || ''),
-            };
-
-            console.log("Dữ liệu gửi lên update:", updatedExerciseData);
-
-            const res = await axios.put(
-                `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${exercise._id}`,
-                updatedExerciseData,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true,
-                }
-            );
-
-            // Update local state
-            setExercises(prev =>
-                prev.map(ex => (ex._id === exercise._id ? { ...ex, ...res.data.exercise } : ex))
-            );
-
-            toast.success(`Cập nhật bài tập "${exercise.title}" thành công từ Google Sheet!`);
-        } catch (error) {
-            console.error("Lỗi cập nhật từ Google Sheet:", error);
-            toast.error("Không thể cập nhật bài tập: " + (error.response?.data?.message || "Lỗi không xác định."));
-        } finally {
-            setLoading(false);
-        }
-    };
-
     // Function to fetch chapter details, exercises, and lessons
     const fetchChapterDetails = useCallback(async () => {
         setLoading(true);
@@ -286,7 +224,6 @@ function AddChapter() {
             const chapterData = chapterRes.data.chapter;
             setChapterName(chapterData.title || '');
             setOrder(chapterData.order || '');
-            setIsLocked(chapterData.isLocked !== undefined ? chapterData.isLocked : true);
             setIsPublished(chapterData.isPublished !== undefined ? chapterData.isPublished : false);
             setGoogleSheetUrl(chapterData.googleSheetUrl || '');
 
@@ -298,7 +235,7 @@ function AddChapter() {
                     withCredentials: true,
                 }
             );
-            console.log('exercises:', exercisesRes.data.exercises);
+            console.log('exercises:', exercisesRes.data.exercises); // kiểm tra giá trị isPublished
             if (Array.isArray(exercisesRes.data.exercises)) {
                 setExercises((prevExercises) =>
                     exercisesRes.data.exercises.map((ex, idx) => ({
@@ -359,16 +296,15 @@ function AddChapter() {
             setIsEditMode(false);
             setChapterName('');
             setOrder(1);
-            setIsLocked(true);
             setIsPublished(false);
             setExercises([]);
-            setEditingExercise(null);
             setLessons([]);
             setEditingLesson(null);
             setLoading(false);
             // Clear Google Sheet import related states on new chapter
             setGoogleSheetUrl('');
             setExcelExerciseTitle(''); // Reset title for new chapter
+            setExcelExerciseIsPublished(false);
         }
 
     }, [courseId, chapterId, isAuthenticated, user, contextLoading, navigate, fetchChapterDetails]);
@@ -400,7 +336,6 @@ function AddChapter() {
         const chapterData = {
             title: chapterName.trim(),
             order: parsedOrder,
-            isLocked: isLocked,
             isPublished: isPublished,
             exercises: exerciseIds,
             lessons: lessonIds,
@@ -523,7 +458,7 @@ function AddChapter() {
                 order: generatedOrder,
                 passingScore: 0,
                 timeLimit: null,
-                isPublished: false,
+                isPublished: excelExerciseIsPublished,
                 questions: questionsFromSheet,
                 googleSheetUrl: normalizeGoogleSheetUrl(googleSheetUrl.trim()),
             };
@@ -545,6 +480,7 @@ function AddChapter() {
             // Clear form fields after successful operation
             setGoogleSheetUrl('');
             setExcelExerciseTitle('');
+            setExcelExerciseIsPublished(false);
 
         } catch (error) {
             console.error("Lỗi khi đọc, xử lý Google Sheet hoặc tạo/cập nhật bài tập:", error.response?.data?.message || error.message);
@@ -647,19 +583,6 @@ function AddChapter() {
                         />
                     </div>
                     <div className="chapter-form-group">
-                        <label htmlFor="isLocked" className="chapter-toggle-label">
-                            <input
-                                type="checkbox"
-                                id="isLocked"
-                                checked={isLocked}
-                                onChange={(e) => setIsLocked(e.target.checked)}
-                                disabled={loading}
-                            />
-                            <span className="chapter-toggle-slider"></span>
-                            Chương này bị khóa?
-                        </label>
-                    </div>
-                    <div className="chapter-form-group">
                         <label htmlFor="isPublished" className="chapter-toggle-label">
                             <input
                                 type="checkbox"
@@ -706,6 +629,20 @@ function AddChapter() {
                                     disabled={loading}
                                 />
                             </div>
+                            {/* Toggle xuất bản cho bài tập import */}
+                            <div className="chapter-form-group">
+                                <label htmlFor="isPublishedImportExercise" className="chapter-toggle-label">
+                                    <input
+                                        type="checkbox"
+                                        id="isPublishedImportExercise"
+                                        checked={excelExerciseIsPublished}
+                                        onChange={e => setExcelExerciseIsPublished(e.target.checked)}
+                                        disabled={loading}
+                                    />
+                                    <span className="chapter-toggle-slider"></span>
+                                    Xuất bản bài tập này?
+                                </label>
+                            </div>
                         </div>
 
                         <button
@@ -745,7 +682,7 @@ function AddChapter() {
                                 .sort((a, b) => a.order - b.order)
                                 .map((lesson) => (
                                     <li key={lesson._id} className="ex-item-display">
-                                        <div className="lesson-info">
+                                        <div className="ex-info">
                                             <span className="ex-order">Bài học {lesson.order}:</span>
                                             <span className="ex-title">{lesson.title}</span>
                                         </div>
@@ -778,36 +715,67 @@ function AddChapter() {
                                 {exercises.length > 0 && (
                     <div className="ex-list-container">
                         <h4>Danh sách bài tập:</h4>
-                            {exercises
-                                .sort((a, b) => a.order - b.order)
-                                .map((ex) => (
-                                    <li key={ex._id} className="ex-item-display">
-                                        <div className="ex-info">
-                                            <span className="ex-order">Bài tập {ex.order}:</span>
-                                            <span className="ex-title">{ex.title}</span>
-                                        </div>
-                                        <div className="ex-actions">
-                                           <button
-                                                type="button"
-                                                className="lesson-icon-btn lesson-edit-icon"
-                                                onClick={() => handleUpdateExerciseFromSheet(ex)}
-                                                title="Cập nhật bài tập từ Google Sheet"
+                        {exercises
+                            .filter(ex => ex._id) // chỉ lấy những bài tập có _id hợp lệ
+                            .sort((a, b) => a.order - b.order)
+                            .map((ex) => (
+                                <li key={ex._id} className="ex-item-display">
+                                    <div className="ex-info">
+                                        <span className="ex-order">Bài tập {ex.order}:</span>
+                                        <span className="ex-title">{ex.title}</span>
+                                    </div>
+                                    <div className="ex-actions">
+                                        {/* Toggle xuất bản */}
+                                        <label className="chapter-toggle-label" style={{marginRight: 8}}>
+                                            <input
+                                                type="checkbox"
+                                                checked={ex.isPublished === true}
+                                                onChange={async (e) => {
+                                                    if (!ex._id) return; // không thao tác nếu không có _id
+                                                    try {
+                                                        setLoading(true);
+                                                        const token = localStorage.getItem('token');
+                                                        await axios.put(
+                                                            `http://localhost:4000/api/v1/courses/${courseId}/chapters/${chapterId}/exercises/${ex._id}`,
+                                                            { isPublished: e.target.checked },
+                                                            {
+                                                                headers: { Authorization: `Bearer ${token}` },
+                                                                withCredentials: true,
+                                                            }
+                                                        );
+                                                        await fetchChapterDetails();
+                                                        toast.success("Cập nhật trạng thái xuất bản thành công!");
+                                                    } catch {
+                                                        toast.error("Cập nhật trạng thái xuất bản thất bại!");
+                                                    } finally {
+                                                        setLoading(false);
+                                                    }
+                                                }}
                                                 disabled={loading}
-                                                >
-                                                🔄
-                                                </button>
-                                            <button
-                                                type="button"
-                                                className="lesson-icon-btn lesson-delete-icon"
-                                                onClick={() => handleDeleteExercise(ex._id, ex.title)}
-                                                title="Xóa bài tập"
-                                                disabled={loading}
-                                            >
-                                                🗑️
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
+                                            />
+                                            <span className="chapter-toggle-slider"></span>
+                                        </label>
+                                        <button
+                                            type="button"
+                                            className="lesson-icon-btn lesson-edit-icon"
+                                            onClick={() => handleUpdateExerciseFromSheet(ex)}
+                                            title="Cập nhật bài tập từ Google Sheet"
+                                            disabled={loading}
+                                        >
+                                            🔄
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="lesson-icon-btn lesson-delete-icon"
+                                            onClick={() => handleDeleteExercise(ex._id, ex.title)}
+                                            title="Xóa bài tập"
+                                            disabled={loading}
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
                     </div>
                 )}
                                 {/* Các nút hành động chính của form chương */}
