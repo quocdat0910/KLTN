@@ -459,8 +459,8 @@ function AddCourse() {
             <div className="dashboard-header">
                 <h2 className="h2">{isEditMode ? 'Chỉnh sửa khóa học' : 'Thêm khóa học'}</h2>
             </div>
-            <form onSubmit={handleSubmitCourse}>
-                <div className="form-row">
+            <form onSubmit={handleSubmitCourse} className="add-course-grid-form">
+                <div className="add-course-grid">
                     {/* --- Phần Upload Thumbnail --- */}
                     <div className="upload-box">
                         <div className="upload-header">
@@ -499,250 +499,141 @@ function AddCourse() {
                     </div>
 
                     {/* --- Phần Form Fields --- */}
-                    <div className="form-fields">
-                        <div className="form-group">
-                            <label htmlFor="courseName">Tên khóa học *</label>
-                            <input
-                                id="courseName"
-                                type="text"
-                                className="input"
-                                placeholder="Nhập tên khóa học"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                                disabled={loading}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="shortDesc">Mô tả ngắn *</label>
-                            <input
-                                id="shortDesc"
-                                className="input"
-                                placeholder="Nhập mô tả ngắn gọn về khóa học (dưới 100 ký tự)"
-                                value={shortDescription}
-                                onChange={(e) => setShortDescription(e.target.value)}
-                                required
-                                rows="2"
-                                maxLength="100"
-                                disabled={loading}
-                            ></input>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="courseDesc">Mô tả khóa học *</label>
-                            <input
-                                id="courseDesc"
-                                className="input"
-                                placeholder="Nhập mô tả chi tiết khóa học"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                required
-                                rows="5"
-                                disabled={loading}
-                            ></input>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="courseType">Loại khóa học *</label>
-                            <select
-                                id="courseType"
-                                className="input"
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                                required
-                                disabled={loading}
-                            >
-                                <option value="TOEIC">TOEIC</option>
-                                <option value="IELTS">IELTS</option>
-                            </select>
-                        </div>
-
-                        {/* Dropdown Dải điểm mục tiêu */}
-                        <div className="form-group">
-                            <label htmlFor="targetScoreRange">Dải điểm mục tiêu *</label>
-                            <select
-                                id="targetScoreRange"
-                                className="input"
-                                value={targetScoreRange}
-                                onChange={(e) => setTargetScoreRange(e.target.value)}
-                                required
-                                disabled={loading}
-                            >
-                                <option value="">Chọn dải điểm</option>
-                                {getTargetScoreRangeOptions().map(range => (
-                                    <option key={range} value={range}>{range}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Checkboxes for Skills */}
-                        <div className="form-group">
-                            <label>Kỹ năng liên quan</label>
-                            <div className="checkbox-group">
-                                {["Listening", "Speaking", "Reading", "Writing", "General"].map(skillOption => (
-                                    <label key={skillOption} className="checkbox-label">
-                                        <input
-                                            type="checkbox"
-                                            value={skillOption}
-                                            checked={skills.includes(skillOption)}
-                                            onChange={handleSkillChange}
-                                            disabled={loading}
-                                        />
-                                        {skillOption}
-                                    </label>
-                                ))}
+                    <div className="grid-fields">
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="courseName">Tên khóa học *</label>
+                                <input id="courseName" type="text" className="input" placeholder="Nhập tên khóa học" value={title} onChange={(e) => setTitle(e.target.value)} required disabled={loading} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="shortDesc">Mô tả ngắn *</label>
+                                <input id="shortDesc" className="input" placeholder="Mô tả ngắn (<100 ký tự)" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} required maxLength="100" disabled={loading} />
                             </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="courseLevel">Cấp độ</label>
-                            <select
-                                id="courseLevel"
-                                className="input"
-                                value={level}
-                                onChange={(e) => setLevel(e.target.value)}
-                                disabled={loading}
-                            >
-                                <option value="Beginner">Beginner</option>
-                                <option value="Intermediate">Intermediate</option>
-                                <option value="Advanced">Advanced</option>
-                            </select>
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="courseType">Loại *</label>
+                                <select id="courseType" className="input" value={type} onChange={(e) => setType(e.target.value)} required disabled={loading}>
+                                    <option value="TOEIC">TOEIC</option>
+                                    <option value="IELTS">IELTS</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="targetScoreRange">Dải điểm *</label>
+                                <select id="targetScoreRange" className="input" value={targetScoreRange} onChange={(e) => setTargetScoreRange(e.target.value)} required disabled={loading}>
+                                    <option value="">Chọn dải điểm</option>
+                                    {getTargetScoreRangeOptions().map(range => (<option key={range} value={range}>{range}</option>))}
+                                </select>
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="courseLanguage">Ngôn ngữ</label>
-                            <select
-                                id="courseLanguage"
-                                className="input"
-                                value={language}
-                                onChange={(e) => setLanguage(e.target.value)}
-                                disabled={loading}
-                            >
-                                <option value="English">English</option>
-                                <option value="Vietnamese">Vietnamese</option>
-                            </select>
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="courseLevel">Cấp độ</label>
+                                <select id="courseLevel" className="input" value={level} onChange={(e) => setLevel(e.target.value)} disabled={loading}>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="courseLanguage">Ngôn ngữ</label>
+                                <select id="courseLanguage" className="input" value={language} onChange={(e) => setLanguage(e.target.value)} disabled={loading}>
+                                    <option value="English">English</option>
+                                    <option value="Vietnamese">Vietnamese</option>
+                                </select>
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="coursePrice">Giá khóa học *</label>
-                            <input
-                                id="coursePrice"
-                                type="number"
-                                className="input"
-                                placeholder="Nhập giá khóa học"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                required
-                                min="0"
-                                disabled={loading}
-                            />
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="coursePrice">Giá *</label>
+                                <input id="coursePrice" type="number" className="input" placeholder="Giá" value={price} onChange={(e) => setPrice(e.target.value)} required min="0" disabled={loading} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="originalPrice">Giá gốc</label>
+                                <input id="originalPrice" type="number" className="input" placeholder="Giá gốc" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} min="0" disabled={loading} />
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="originalPrice">Giá gốc (nếu có giảm giá)</label>
-                            <input
-                                id="originalPrice"
-                                type="number"
-                                className="input"
-                                placeholder="Nhập giá gốc"
-                                value={originalPrice}
-                                onChange={(e) => setOriginalPrice(e.target.value)}
-                                min="0"
-                                disabled={loading}
-                            />
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="discountPercentage">% Giảm</label>
+                                <input id="discountPercentage" type="number" className="input" placeholder="% Giảm" value={discountPercentage} onChange={(e) => setDiscountPercentage(e.target.value)} min="0" max="100" disabled={loading} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="discountExpiresAt">HSD giảm</label>
+                                <input id="discountExpiresAt" type="date" className="input" value={discountExpiresAt} onChange={(e) => setDiscountExpiresAt(e.target.value)} disabled={loading} />
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="discountPercentage">Phần trăm giảm giá (%)</label>
-                            <input
-                                id="discountPercentage"
-                                type="number"
-                                className="input"
-                                placeholder="Nhập phần trăm giảm giá (0-100)"
-                                value={discountPercentage}
-                                onChange={(e) => setDiscountPercentage(e.target.value)}
-                                min="0"
-                                max="100"
-                                disabled={loading}
-                            />
+                        <div className="grid-row">
+                            <div className="form-group skill-group">
+                                <label>Kỹ năng liên quan</label>
+                                <div className="checkbox-group">
+                                    <div className="checkbox-row">
+                                        {['Listening', 'Speaking', 'Reading'].map(skillOption => (
+                                            <label key={skillOption} className="checkbox-label">
+                                                <input type="checkbox" value={skillOption} checked={skills.includes(skillOption)} onChange={handleSkillChange} disabled={loading} />
+                                                {skillOption}
+                                            </label>
+                                        ))}
+                                    </div>
+                                    <div className="checkbox-row">
+                                        <label className="checkbox-label">
+                                            <input type="checkbox" value="Writing" checked={skills.includes('Writing')} onChange={handleSkillChange} disabled={loading} />
+                                            Writing
+                                        </label>
+                                        <div className="checkbox-label" style={{ visibility: 'hidden' }}></div>
+                                        <label className="checkbox-label">
+                                            <input type="checkbox" value="General" checked={skills.includes('General')} onChange={handleSkillChange} disabled={loading} />
+                                            General
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="objectives">Mục tiêu *</label>
+                                <input id="objectives" className="input" placeholder="Mục tiêu 1, Mục tiêu 2, ..." value={objectives} onChange={(e) => setObjectives(e.target.value)} required disabled={loading} />
+                                <small>Nhập các mục tiêu, cách nhau bởi dấu phẩy (,)</small>
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="discountExpiresAt">Ngày hết hạn giảm giá</label>
-                            <input
-                                id="discountExpiresAt"
-                                type="date"
-                                className="input"
-                                value={discountExpiresAt}
-                                onChange={(e) => setDiscountExpiresAt(e.target.value)}
-                                disabled={loading}
-                            />
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="requirements">Yêu cầu</label>
+                                <input id="requirements" className="input" placeholder="Yêu cầu 1, Yêu cầu 2, ..." value={requirements} onChange={(e) => setRequirements(e.target.value)} disabled={loading} />
+                                <small>Nhập các yêu cầu, cách nhau bởi dấu phẩy (,)</small>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="tags">Tags</label>
+                                <input id="tags" type="text" className="input" placeholder="Tag1, Tag2, Tag3" value={tags} onChange={(e) => setTags(e.target.value)} disabled={loading} />
+                                <small>Nhập các từ khóa, cách nhau bởi dấu phẩy (,)</small>
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="objectives">Mục tiêu khóa học *</label>
-                            <input
-                                id="objectives"
-                                className="input"
-                                placeholder="Mục tiêu 1, Mục tiêu 2, ..."
-                                value={objectives}
-                                onChange={(e) => setObjectives(e.target.value)}
-                                required
-                                rows="3"
-                                disabled={loading}
-                            ></input>
-                            <small>Nhập các mục tiêu, cách nhau bởi dấu phẩy (,)</small>
+                        <div className="grid-row">
+                            <div className="form-group">
+                                <label htmlFor="status">Trạng thái</label>
+                                <select id="status" className="input" value={status} onChange={(e) => setStatus(e.target.value)} disabled={loading}>
+                                    <option value="draft">Bản nháp</option>
+                                    <option value="published">Đã xuất bản</option>
+                                    <option value="archived">Lưu trữ</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="description">Mô tả chi tiết</label>
+                                <textarea 
+                                    id="description" 
+                                    className="input" 
+                                    placeholder="Mô tả chi tiết về khóa học..." 
+                                    value={description} 
+                                    onChange={(e) => setDescription(e.target.value)} 
+                                    disabled={loading}
+                                    rows="4"
+                                    style={{ resize: 'vertical', minHeight: '100px' }}
+                                />
+                            </div>
                         </div>
-
-                        <div className="form-group">
-                            <label htmlFor="requirements">Yêu cầu khóa học</label>
-                            <input
-                                id="requirements"
-                                className="input"
-                                placeholder="Yêu cầu 1, Yêu cầu 2, ..."
-                                value={requirements}
-                                onChange={(e) => setRequirements(e.target.value)}
-                                rows="3"
-                                disabled={loading}
-                            ></input>
-                            <small>Nhập các yêu cầu, cách nhau bởi dấu phẩy (,)</small>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="tags">Tags (Từ khóa)</label>
-                            <input
-                                id="tags"
-                                type="text"
-                                className="input"
-                                placeholder="Tag1, Tag2, Tag3"
-                                value={tags}
-                                onChange={(e) => setTags(e.target.value)}
-                                disabled={loading}
-                            />
-                            <small>Nhập các từ khóa, cách nhau bởi dấu phẩy (,)</small>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="status">Trạng thái</label>
-                            <select
-                                id="status"
-                                className="input"
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                disabled={loading}
-                            >
-                                <option value="draft">Bản nháp</option>
-                                <option value="published">Đã xuất bản</option>
-                                <option value="archived">Lưu trữ</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" className="create-btn" disabled={loading}>
-                            {loading ? (isEditMode ? 'Đang cập nhật...' : 'Đang tạo...') : (isEditMode ? 'Cập nhật khóa học' : 'Tạo khóa học')}
-                        </button>
                     </div>
                 </div>
+                <button type="submit" className="create-btn" disabled={loading} style={{ marginTop: 16 }}>
+                    {loading ? (isEditMode ? 'Đang cập nhật...' : 'Đang tạo...') : (isEditMode ? 'Cập nhật khóa học' : 'Tạo khóa học')}
+                </button>
             </form>
 
              {/* --- PHẦN QUẢN LÝ CHƯƠNG (Chỉ hiển thị khi đã có courseId) --- */}
@@ -770,7 +661,7 @@ function AddCourse() {
                                     .map((chapter) => (
                                         <li key={chapter._id} className="chapter-item-display">
                                             <div className="chapter-info">
-                                                <span className="chapter-order">Chương {chapter.order}:</span>
+                                                <span className="chapter-order2">Chương {chapter.order}:</span>
                                                 <span className="chapter-order">{chapter.title}</span>
                                             </div>
                                             <div className="chapter-actions">

@@ -22,14 +22,14 @@ const enrollLimiter = rateLimit({
 
 router.post("/courses/:courseId/enroll", protect, enrollLimiter, enrollCourse);
 
-// Protected routes
-router.get("/", protect, getUserEnrollments);
-router.get("/:enrollmentId", protect, getEnrollmentById);
-
 // Admin routes
 router.get("/all", protect, restrictTo("admin"), getAllEnrollments);
 router.get("/user/:userId", protect, restrictTo("admin"), getEnrollmentsByUser);
 router.get("/course/:courseId", protect, restrictTo("admin"), getEnrollmentsByCourse);
 router.put("/:enrollmentId", protect, restrictTo("admin"), updateEnrollment);
+
+// Protected routes
+router.get("/", protect, getUserEnrollments);
+router.get("/:enrollmentId", protect, getEnrollmentById);
 
 export default router;

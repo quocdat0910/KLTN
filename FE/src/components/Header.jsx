@@ -38,7 +38,9 @@ const Header = () => {
 
         {/* Avatar + Dropdown */}
         <div className="avatar-wrapper" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          <img src="/avatar2.jpg" alt="avatar" className="avatar-image" />
+          <div className="avatar-image-wrapper">
+            <img src="/avatar2.jpg" alt="avatar" className="avatar-image" />
+          </div>
           {dropdownOpen && (
             <div className="dropdown-menu">
               <button onClick={handleLogout}>Đăng xuất</button>

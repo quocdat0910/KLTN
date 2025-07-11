@@ -176,7 +176,7 @@ const Course = () => {
                                 <td>{course.shortDescription ? course.shortDescription.substring(0, 50) + (course.shortDescription.length > 50 ? '...' : '') : 'N/A'}</td>
                                 <td>{course.price.toLocaleString('vi-VN')} VNĐ</td>
                                 <td>{course.courseType}</td>
-                                <td>{course.status}</td>
+                                <td>{course.status === 'published' ? 'Đã xuất bản' : course.status === 'draft' ? 'Nháp' : course.status}</td>
                                 <td className="action-icons">
                                     <FaEdit className="icon edit" onClick={() => handleEditCourse(course._id)} title="Sửa khóa học" />
                                     <FaTrash className="icon delete" onClick={() => handleDeleteCourse(course._id)} title="Xóa khóa học" />

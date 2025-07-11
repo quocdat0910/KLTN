@@ -29,6 +29,10 @@ const Sidebar = () => {
           <i className="fas fa-book"></i>
           <span>Khóa học</span>
         </li>
+        <li onClick={() => navigateTo("/admin/orders")} className={isActive("/admin/orders") ? "active" : ""}>
+          <i className="fas fa-shopping-cart"></i>
+          <span>Đơn hàng</span>
+        </li>
       </ul>
     </div>
   );

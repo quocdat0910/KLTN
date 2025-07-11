@@ -552,111 +552,108 @@ function AddChapter() {
             <div className="dashboard-header">
                 <h2 className="h2">{isEditMode ? 'Chỉnh sửa chương' : 'Thêm chương mới'}</h2>
             </div>
-
             <form onSubmit={handleSubmitChapter}>
-                <div className="form-fields">
-                    <div className="form-group">
-                        <label htmlFor="chapterName">Tiêu đề chương</label>
-                        <input
-                            id="chapterName"
-                            type="text"
-                            className="input"
-                            placeholder="Nhập tiêu đề chương"
-                            value={chapterName}
-                            onChange={(e) => setChapterName(e.target.value)}
-                            required
-                            disabled={loading}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="chapterOrder">Thứ tự chương</label>
-                        <input
-                            id="chapterOrder"
-                            type="number"
-                            className="input"
-                            placeholder="Thứ tự hiển thị"
-                            value={order}
-                            onChange={(e) => setOrder(e.target.value)}
-                            required
-                            min="1"
-                            disabled={loading}
-                        />
-                    </div>
-                    <div className="chapter-form-group">
-                        <label htmlFor="isPublished" className="chapter-toggle-label">
-                            <input
-                                type="checkbox"
-                                id="isPublished"
-                                checked={isPublished}
-                                onChange={(e) => setIsPublished(e.target.checked)}
-                                disabled={loading}
-                            />
-                            <span className="chapter-toggle-slider"></span>
-                            Xuất bản chương này?
-                        </label>
-                    </div>
-                </div>
-
-                {/* NEW: Google Sheet Import section for Exercises */}
-                {chapterId && chapterId !== 'new' && ( // Only show if chapter is saved
-                    <div className="excel-exercise-import-box upload-box mt-4">
-                        <div className="upload-header">
-                            <h3>Import câu hỏi bài tập từ Google Sheet</h3>
+                <div className="add-chapter-grid">
+                    <div className="chapter-upload">
+                        <div className="excel-exercise-import-box upload-box mt-4">
+                            <div className="upload-header">
+                                <h3>Import câu hỏi bài tập từ Google Sheet</h3>
+                            </div>
+                            <div className="form-fields">
+                                <div className="chapter-form-group">
+                                    <label htmlFor="chapter-toggle-label">Tiêu đề bài tập</label>
+                                    <input
+                                        id="excelExerciseTitle"
+                                        type="text"
+                                        className="input"
+                                        placeholder="Nhập tiêu đề bài tập (để tạo mới hoặc cập nhật)"
+                                        value={excelExerciseTitle}
+                                        onChange={(e) => setExcelExerciseTitle(e.target.value)}
+                                        disabled={loading}
+                                    />
+                                </div>
+                                <div className="chapter-form-group">
+                                    <label htmlFor="chapter-toggle-label">URL bài tập    </label>
+                                    <input
+                                        id="googleSheetUrl"
+                                        type="text"
+                                        className="input"
+                                        placeholder="Ví dụ: https://docs.google.com/spreadsheets/d/.../export?format=csv"
+                                        value={googleSheetUrl}
+                                        onChange={handleGoogleSheetUrlChange}
+                                        disabled={loading}
+                                    />
+                                </div>
+                                <div className="chapter-form-group">
+                                    <label htmlFor="isPublishedImportExercise" className="chapter-toggle-label">
+                                        <input
+                                            type="checkbox"
+                                            id="isPublishedImportExercise"
+                                            checked={excelExerciseIsPublished}
+                                            onChange={e => setExcelExerciseIsPublished(e.target.checked)}
+                                            disabled={loading}
+                                        />
+                                        <span className="chapter-toggle-slider"></span>
+                                        Xuất bản bài tập này?
+                                    </label>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                className="create-btn"
+                                onClick={handleProcessGoogleSheet}
+                                disabled={loading || !googleSheetUrl.trim() || !excelExerciseTitle.trim()}
+                            >
+                                Xử lý Google Sheet và tạo bài tập
+                            </button>
                         </div>
-                        {/* Input field for Exercise Title for identifying existing exercise or new one */}
+                    </div>
+                    <div className="chapter-fields">
                         <div className="form-fields">
-                            <div className="chapter-form-group">
-                                <label htmlFor="chapter-toggle-label">Tiêu đề bài tập</label>
+                            <div className="form-group">
+                                <label htmlFor="chapterName">Tiêu đề chương</label>
                                 <input
-                                    id="excelExerciseTitle"
+                                    id="chapterName"
                                     type="text"
                                     className="input"
-                                    placeholder="Nhập tiêu đề bài tập (để tạo mới hoặc cập nhật)"
-                                    value={excelExerciseTitle}
-                                    onChange={(e) => setExcelExerciseTitle(e.target.value)}
+                                    placeholder="Nhập tiêu đề chương"
+                                    value={chapterName}
+                                    onChange={(e) => setChapterName(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="chapterOrder">Thứ tự chương</label>
+                                <input
+                                    id="chapterOrder"
+                                    type="number"
+                                    className="input"
+                                    placeholder="Thứ tự hiển thị"
+                                    value={order}
+                                    onChange={(e) => setOrder(e.target.value)}
+                                    required
+                                    min="1"
                                     disabled={loading}
                                 />
                             </div>
                             <div className="chapter-form-group">
-                                <label htmlFor="chapter-toggle-label">URL bài tập    </label>
-                                <input
-                                    id="googleSheetUrl"
-                                    type="text"
-                                    className="input"
-                                    placeholder="Ví dụ: https://docs.google.com/spreadsheets/d/.../export?format=csv"
-                                    value={googleSheetUrl}
-                                    onChange={handleGoogleSheetUrlChange}
-                                    disabled={loading}
-                                />
-                            </div>
-                            {/* Toggle xuất bản cho bài tập import */}
-                            <div className="chapter-form-group">
-                                <label htmlFor="isPublishedImportExercise" className="chapter-toggle-label">
+                                <label htmlFor="isPublished" className="chapter-toggle-label">
                                     <input
                                         type="checkbox"
-                                        id="isPublishedImportExercise"
-                                        checked={excelExerciseIsPublished}
-                                        onChange={e => setExcelExerciseIsPublished(e.target.checked)}
+                                        id="isPublished"
+                                        checked={isPublished}
+                                        onChange={(e) => setIsPublished(e.target.checked)}
                                         disabled={loading}
                                     />
                                     <span className="chapter-toggle-slider"></span>
-                                    Xuất bản bài tập này?
+                                    Xuất bản chương này?
                                 </label>
                             </div>
                         </div>
-
-                        <button
-                            type="button"
-                            className="create-btn"
-                            onClick={handleProcessGoogleSheet}
-                            disabled={loading || !googleSheetUrl.trim() || !excelExerciseTitle.trim()}
-                        >
-                            Xử lý Google Sheet và tạo/cập nhật bài tập
-                        </button>
                     </div>
-                )}
-
-                {/* Buttons for "Thêm bài tập" and "Thêm bài học" */}
+                </div>
+                {/* Các phần còn lại: nút, danh sách bài học, bài tập... */}
                 {chapterId && chapterId !== 'new' && (
                     <div className="d-flex justify-content-between align-items-center mt-4">
                         <button
@@ -672,12 +669,10 @@ function AddChapter() {
                         </button>
                     </div>
                 )}
-
-                {/* Danh sách bài học đã thêm (giữ nguyên UI của bạn) */}
                 {lessons.length > 0 && (
                     <div className="ex-list-container">
                         <h4>Danh sách bài học:</h4>
-                        <ul className="lesson-items-list">
+                        <ul className="ex-items-list">
                             {lessons
                                 .sort((a, b) => a.order - b.order)
                                 .map((lesson) => (
@@ -711,12 +706,12 @@ function AddChapter() {
                         </ul>
                     </div>
                 )}
-
-                                {exercises.length > 0 && (
+                {exercises.length > 0 && (
                     <div className="ex-list-container">
                         <h4>Danh sách bài tập:</h4>
+                        <ul className="ex-items-list">
                         {exercises
-                            .filter(ex => ex._id) // chỉ lấy những bài tập có _id hợp lệ
+                            .filter(ex => ex._id)
                             .sort((a, b) => a.order - b.order)
                             .map((ex) => (
                                 <li key={ex._id} className="ex-item-display">
@@ -725,13 +720,12 @@ function AddChapter() {
                                         <span className="ex-title">{ex.title}</span>
                                     </div>
                                     <div className="ex-actions">
-                                        {/* Toggle xuất bản */}
                                         <label className="chapter-toggle-label" style={{marginRight: 8}}>
                                             <input
                                                 type="checkbox"
                                                 checked={ex.isPublished === true}
                                                 onChange={async (e) => {
-                                                    if (!ex._id) return; // không thao tác nếu không có _id
+                                                    if (!ex._id) return;
                                                     try {
                                                         setLoading(true);
                                                         const token = localStorage.getItem('token');
@@ -776,9 +770,9 @@ function AddChapter() {
                                     </div>
                                 </li>
                             ))}
+                            </ul>
                     </div>
                 )}
-                                {/* Các nút hành động chính của form chương */}
                 <div className="action-buttons">
                     <button
                         type="submit"

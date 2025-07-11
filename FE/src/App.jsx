@@ -30,6 +30,7 @@ import TestPage from "./components/TestPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SearchResults from "./pages/SearchResults";
+import Order from "./pages/ADMIN/Order";
 
 const App = () => {
   return (
@@ -49,6 +50,7 @@ const App = () => {
 
           {/* Các Route quản lý Khóa học */}
           <Route path="/admin/courses" element={<Course />} />
+          <Route path="/admin/orders" element={<Order />} />
           <Route path="/admin/courses/new" element={<AddCourse />} />
           <Route path="/admin/courses/:id" element={<AddCourse />} /> 
           <Route path="/admin/courses/:courseId/chapters/new" element={<AddChapter />} />
