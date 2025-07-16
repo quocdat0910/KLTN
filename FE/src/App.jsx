@@ -32,6 +32,7 @@ import ResetPassword from "./pages/ResetPassword";
 import SearchResults from "./pages/SearchResults";
 import Order from "./pages/ADMIN/Order";
 import OrderHistory from "./pages/OrderHistory";
+import AssessmentResult from "./pages/AssessmentResult";
 
 const App = () => {
   return (
@@ -73,6 +74,7 @@ const App = () => {
           <Route path="/product-cat" element={<ProductCat />} />
           <Route path="/course/:id" element={<ProductDetail />} />
           <Route path="/search-results" element={<SearchResults />} />
+          <Route path="/assessment-result" element={<AssessmentResult />} />
         </Route>
 
         <Route element={<HomeworkLayout />}>
