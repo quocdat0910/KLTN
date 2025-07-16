@@ -2,6 +2,7 @@ import React from 'react';
 import '../main.css';
 
 const Component1 = () => {
+  
   return (
     <div className="component1-container">
       <div className="component1-background" />

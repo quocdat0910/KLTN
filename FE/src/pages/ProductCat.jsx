@@ -1,4 +1,4 @@
-import ProductCatComponent from "../components/ProductCatComponent";
+import Component4 from "../components/Component4";
 import { useLocation } from "react-router-dom";
 
 const ProductCat = () => {
@@ -8,8 +8,8 @@ const ProductCat = () => {
   const courseType = queryParams.get("courseType") || "TOEIC"; // Mặc định TOEIC nếu không có
 
   return (
-    <div>
-      <ProductCatComponent courseType={courseType} />
+    <div style={{marginTop: 80}}>
+      <Component4 courseType={courseType} />
     </div>
   );
 };

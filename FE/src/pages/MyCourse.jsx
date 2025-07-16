@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../main.css'; // Import the CSS file
+import '../main.css';
 
 const MyCourse = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -25,10 +25,8 @@ const MyCourse = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data && response.data.enrollments) {
-          // Lọc chỉ các khóa học đã thanh toán hoặc trạng thái active/completed
           const paidCourses = response.data.enrollments.filter(e => (e.paymentDetails?.amount > 0) || ['active','completed'].includes(e.status));
           setEnrollments(paidCourses);
-          console.log("Số lượng khóa học đã thanh toán:", paidCourses.length);
         } else {
           setError('Không tìm thấy dữ liệu đăng ký khóa học');
         }
@@ -91,29 +89,25 @@ const MyCourse = () => {
           <button className="blue-btn" onClick={() => navigate('/productcat')}>Khám phá khóa học</button>
         </div>
       ) : (
-        <div className="my-course-grid">
+        <div className="course-grid">
           {enrollments.map((enrollment) => (
-            <div className="course-card" key={enrollment._id} onClick={() => handleCourseClick(enrollment.courseId._id)}>
-              <img className="course-image" src={enrollment.courseId.thumbnail} alt={enrollment.courseId.title} onError={e => { e.target.onerror = null; e.target.src = '/Component4a.jpg'; }} />
-              <div className="course-card-content">
-                <div>
-                  <div className="course-title">{enrollment.courseId.title}</div>
-                  <div className="course-level">{enrollment.courseId.shortDescription || 'Chưa có mô tả'}</div>
-                </div>
-                <div className="status-row">
-                  <span className={`status-text status-${enrollment.status}`}>{getStatusText(enrollment.status)}</span>
-                  <span className="enrollment-date">Đăng ký: {formatDate(enrollment.enrolledAt)}</span>
-                </div>
-                <div className="progress-bar-track">
-                  <div className="progress-bar-fill"></div>
-                </div>
-                <div className="payment-row">
-                  <span>Thanh toán: {enrollment.paymentDetails?.paymentMethod === 'paypal' ? 'PayPal' : 'Miễn phí'}</span>
-                  {enrollment.paymentDetails?.amount > 0 && (
-                    <span>{enrollment.paymentDetails.amount.toLocaleString('vi-VN')} VNĐ</span>
-                  )}
-                </div>
+            <div className="course-card" key={enrollment._id}>
+              <div className="course-image-wrapper">
+                <img className="course-image" src={enrollment.courseId.thumbnail} alt={enrollment.courseId.title} onError={e => { e.target.onerror = null; e.target.src = '/Component4a.jpg'; }} />
+                <img className="course-avatar" src={'/Component4b.jpg'} alt="Instructor Avatar" />
               </div>
+              <div className="course-title">{enrollment.courseId.title}</div>
+              <div className="course-type">{enrollment.courseId.shortDescription || 'Chưa có mô tả'}</div>
+              <div className="course-price">
+                {enrollment.paymentDetails?.amount > 0 ? `${enrollment.paymentDetails.amount.toLocaleString('vi-VN')} VNĐ` : 'Miễn phí'}
+              </div>
+              <div className="course-description">
+                Trạng thái: <span className={`status-text status-${enrollment.status}`}>{getStatusText(enrollment.status)}</span><br />
+                Ngày đăng ký: <span className="enrollment-date">{formatDate(enrollment.enrolledAt)}</span>
+              </div>
+              <button className="course-detail-btn" onClick={() => handleCourseClick(enrollment.courseId._id)}>
+                Xem chi tiết <i className="fa fa-arrow-right"></i>
+              </button>
             </div>
           ))}
         </div>

@@ -599,7 +599,7 @@ const Homework = () => {
             {courseData.reduce((total, chapter) => total + chapter.lessons.length, 0)} bài học
           </span>
         </div>
-        <button className="homework-notes-btn" onClick={handleOpenNoteList}>📝 Ghi chú</button>
+        <button className="homework-notes-btn" onClick={handleOpenNoteList}>Ghi chú</button>
       </div>
 
       {/* Content Area */}

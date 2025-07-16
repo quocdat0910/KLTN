@@ -2,6 +2,17 @@
 import React from 'react';
 import '../main2.css'; // Đảm bảo đường dẫn CSS là chính xác
 
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return [
+    h.toString().padStart(2, '0'),
+    m.toString().padStart(2, '0'),
+    s.toString().padStart(2, '0')
+  ].join(':');
+}
+
 const NoteList = ({ notes, onClose }) => {
   return (
     <div className="note-list-modal-content">
@@ -16,7 +27,7 @@ const NoteList = ({ notes, onClose }) => {
           <ul className="notes-display-list">
             {notes.map((note) => (
               <li key={note.id} className="note-item-display">
-                <div className="note-item-timestamp">{note.timestamp}</div>
+                <div className="note-item-timestamp">{formatTime(Number(note.timestamp))}</div>
                 <div className="note-item-content">{note.content}</div>
                 {/* Bạn có thể thêm thông tin chương/bài học tại đây nếu muốn */}
                 {/* <div className="note-item-context">{note.chapter} - {note.lesson}</div> */}

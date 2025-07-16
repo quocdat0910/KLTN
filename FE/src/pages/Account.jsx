@@ -1,164 +1,285 @@
 // src/pages/Account.jsx
-import React, { useState, useEffect } from 'react';
-import '../main.css';
-import ChangePassWordForm from '../components/ChangePasswordForm';
+import React, { useContext, useState } from 'react';
+import styles from './Account.module.css';
+import { Context } from '../main';
+import axios from 'axios';
+import AccountSidebar from '../components/AccountSidebar';
+import ChangePasswordForm from '../components/ChangePasswordForm';
+
+const SIDEBAR_ITEMS = [
+  { icon: 'fa-user', label: 'Tài khoản' },
+  { icon: 'fa-shopping-cart', label: 'Lịch sử đơn hàng' },
+  { icon: 'fa-credit-card', label: 'Lịch sử giao dịch' },
+  { icon: 'fa-lock', label: 'Mật khẩu và bảo mật' },
+  { icon: 'fa-comments', label: 'Bình luận của tôi' },
+  { icon: 'fa-heart', label: 'Sản phẩm yêu thích' },
+  { icon: 'fa-share-alt', label: 'Giới thiệu bạn bè' },
+];
 
 const Account = () => {
+  const { user, loading, fetchUserProfile } = useContext(Context);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '/user.png');
+  const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', dateOfBirth: '', gender: '', phone: '', address: ''
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    phone: user?.phone || '',
+    dateOfBirth: user?.dateOfBirth ? new Date(user.dateOfBirth).toISOString().slice(0,10) : '',
+    gender: user?.gender || '',
+    address: user?.address || '',
+    avatar: null, // file object
   });
-  const [avatar, setAvatar] = useState('/user.png'); // Vẫn giữ mặc định ban đầu
-  const [selectedAvatarFile, setSelectedAvatarFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const fetchUserProfile = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Không tìm thấy token. Vui lòng đăng nhập lại.');
+  // Khi user thay đổi (do fetch lại), cập nhật form
+  React.useEffect(() => {
+    setForm({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      dateOfBirth: user?.dateOfBirth ? new Date(user.dateOfBirth).toISOString().slice(0,10) : '',
+      gender: user?.gender || '',
+      address: user?.address || '',
+      avatar: null,
+    });
+    setAvatarPreview(user?.avatar || '/user.png');
+  }, [user]);
 
-      const res = await fetch('http://localhost:4000/api/v1/users/profile', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Không thể lấy thông tin người dùng.');
-      }
-
-      const { user } = await res.json();
-      setForm({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
-        gender: user.gender || '',
-        phone: user.phone || '',
-        address: user.address || ''
-      });
-
-      // ⭐⭐⭐ LOGIC ĐƯỢC SỬA ĐỔI TẠI ĐÂY ⭐⭐⭐
-      // Xác định URL avatar mặc định mà backend của bạn đang gửi từ Cloudinary.
-      // BẠN PHẢI THAY THẾ 'your_cloud_name' BẰNG TÊN CLOUD THỰC TẾ CỦA BẠN.
-      // Dựa trên hình ảnh bạn cung cấp: https://res.cloudinary.com/your_cloud_name/image/upload/v1/default_avatar.png
-      const defaultCloudinaryAvatarUrl = 'https://res.cloudinary.com/your_cloud_name/image/upload/v1/default_avatar.png'; 
-      // (Nếu bạn không chắc chắn về "your_cloud_name", hãy kiểm tra cấu hình Cloudinary trong backend của bạn hoặc log user.avatar khi nó trả về)
-
-      if (user.avatar && user.avatar !== defaultCloudinaryAvatarUrl) {
-        setAvatar(user.avatar); // Nếu có avatar và nó KHÁC với avatar mặc định của Cloudinary
-      } else {
-        setAvatar('/user.png'); // Nếu không có avatar, hoặc avatar là mặc định của Cloudinary, dùng avatar cục bộ
-      }
-      // ⭐⭐⭐ KẾT THÚC LOGIC SỬA ĐỔI ⭐⭐⭐
-
-    } catch (err) {
-      setError(err.message);
-      setAvatar('/user.png'); // Đảm bảo avatar về mặc định nếu có lỗi khi fetch profile
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchUserProfile(); }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e) => {
+  const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedAvatarFile(file);
+      setForm(f => ({ ...f, avatar: file }));
       const reader = new FileReader();
-      reader.onloadend = () => setAvatar(reader.result); // Hiển thị preview ảnh mới chọn
+      reader.onloadend = () => setAvatarPreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleEdit = () => {
+    setEditMode(true);
+    setError('');
+    setSuccess('');
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    setForm({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      dateOfBirth: user?.dateOfBirth ? new Date(user.dateOfBirth).toISOString().slice(0,10) : '',
+      gender: user?.gender || '',
+      address: user?.address || '',
+      avatar: null,
+    });
+    setAvatarPreview(user?.avatar || '/user.png');
+    setError('');
+    setSuccess('');
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setError('');
+    setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('Không tìm thấy token.');
-
-      const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => formData.append(key, value));
-      if (selectedAvatarFile) formData.append('avatar', selectedAvatarFile);
-
-      const res = await fetch('http://localhost:4000/api/v1/users/profile', {
-        method: 'PUT',
-        // KHÔNG CẦN Content-Type khi gửi FormData, trình duyệt sẽ tự đặt với boundary
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Cập nhật thông tin thất bại.');
+      let data;
+      let headers;
+      if (form.avatar) {
+        data = new FormData();
+        data.append('firstName', form.firstName);
+        data.append('lastName', form.lastName);
+        data.append('phone', form.phone);
+        data.append('dateOfBirth', form.dateOfBirth);
+        data.append('gender', form.gender);
+        data.append('address', form.address);
+        data.append('avatar', form.avatar);
+        headers = { 'Authorization': `Bearer ${token}` };
+      } else {
+        data = {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          phone: form.phone,
+          dateOfBirth: form.dateOfBirth,
+          gender: form.gender,
+          address: form.address,
+        };
+        headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
       }
-
-      const result = await res.json();
-      alert(result.message || 'Thông tin đã được cập nhật.');
-      fetchUserProfile(); // Lấy lại thông tin user sau khi cập nhật thành công
-      setSelectedAvatarFile(null); // Reset file đã chọn sau khi gửi thành công
-
+      await axios.put('http://localhost:4000/api/v1/users/profile', data, {
+        headers,
+        withCredentials: true,
+      });
+      setSuccess('Cập nhật thành công!');
+      setEditMode(false);
+      await fetchUserProfile();
     } catch (err) {
-      alert(`Lỗi: ${err.message}`);
+      setError(err.response?.data?.message || 'Cập nhật thất bại.');
+    } finally {
+      setSaving(false);
     }
   };
 
-  if (loading) return <div className="app-main-content-wrapper"><p>Đang tải thông tin người dùng...</p></div>;
-  if (error) return <div className="app-main-content-wrapper"><p style={{ color: 'red' }}>{error}</p></div>;
-
-  const formatGenderDisplay = (gender) => gender === 'male' ? 'Nam' : gender === 'female' ? 'Nữ' : 'Khác';
+  if (loading) return <div className={styles['account-loading']}>Đang tải thông tin...</div>;
+  if (!user) return <div className={styles['account-error']}>Không thể lấy thông tin người dùng.</div>;
 
   return (
-    <div className="app-main-content-wrapper">
-      <div className="account-wrapper">
-        {showChangePassword && <ChangePassWordForm onClose={() => setShowChangePassword(false)} />}
-
-        <div className="account-left">
-          <div className="avatar">
-            <img src={avatar} alt="avatar" />
+    <div className={styles['account-page-container']}>
+      <AccountSidebar activeIndex={0} />
+      <div className={styles['account-main-content']}>
+        <form className={styles['account-overview-grid']} onSubmit={handleSave}>
+          <div className={styles['account-overview-info']}>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Email</span>
+              <span className={styles['account-info-value']}>{user.email}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Họ</span>
+              <span className={styles['account-info-value']}>
+                {editMode ? (
+                  <input name="firstName" value={form.firstName} onChange={handleChange} required className={styles['account-input']} />
+                ) : (user.firstName || '-')}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Tên</span>
+              <span className={styles['account-info-value']}>
+                {editMode ? (
+                  <input name="lastName" value={form.lastName} onChange={handleChange} required className={styles['account-input']} />
+                ) : (user.lastName || '-')}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Số điện thoại</span>
+              <span className={styles['account-info-value']}>
+                {editMode ? (
+                  <input name="phone" value={form.phone} onChange={handleChange} required className={styles['account-input']} />
+                ) : (user.phone || '-')}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Ngày sinh</span>
+              <span className={styles['account-info-value']}>
+                {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : '-'}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Giới tính</span>
+              <span className={styles['account-info-value']}>
+                {user.gender === 'male' ? 'Nam' : user.gender === 'female' ? 'Nữ' : '-'}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Địa chỉ</span>
+              <span className={styles['account-info-value']}>
+                {editMode ? (
+                  <input name="address" value={form.address} onChange={handleChange} className={styles['account-input']} />
+                ) : (user.address || '-')}
+              </span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Vai trò</span>
+              <span className={styles['account-info-value']}>{user.role === 'student' ? 'Học viên' : user.role === 'teacher' ? 'Giáo viên' : user.role === 'admin' ? 'Quản trị viên' : '-'}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Trạng thái xác thực</span>
+              <span className={styles['account-info-value']} style={{ color: user.isVerified ? 'green' : 'red' }}>{user.isVerified ? 'Đã xác thực' : 'Chưa xác thực'}</span>
+            </div>
+            {/* Các trường không chỉnh sửa giữ nguyên */}
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>IELTS hiện tại</span>
+              <span className={styles['account-info-value']}>{user.currentScore?.ielts ?? '-'}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>TOEIC hiện tại</span>
+              <span className={styles['account-info-value']}>{user.currentScore?.toeic ?? '-'}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>IELTS mục tiêu</span>
+              <span className={styles['account-info-value']}>{user.targetScore?.ielts ?? '-'}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>TOEIC mục tiêu</span>
+              <span className={styles['account-info-value']}>{user.targetScore?.toeic ?? '-'}</span>
+            </div>
+            <div className={styles['account-info-row']}>
+              <span className={styles['account-info-label']}>Mục tiêu học tập</span>
+              <span className={styles['account-info-value']}>
+                {user.studyGoals && user.studyGoals.length > 0 ? user.studyGoals.join(', ') : '-'}
+              </span>
+            </div>
           </div>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <button className="blue-btn" onClick={handleSubmit}>Lưu thay đổi</button>
-
-          <div className="account-left2">
-            <h2>Đổi mật khẩu</h2>
-            <button className="blue-btn" onClick={() => setShowChangePassword(true)}>Đổi mật khẩu</button>
+          <div className={styles['account-overview-avatar-block']}>
+            <div className={styles['account-avatar-wrapper']}>
+              <img className={styles['account-avatar-img']} src={avatarPreview} alt="avatar" />
+            </div>
+            <label htmlFor="avatar-upload" className={styles['account-avatar-upload-btn']} style={{cursor: editMode ? 'pointer' : 'not-allowed'}}>
+              Sửa ảnh đại diện
+            </label>
+            <input
+              id="avatar-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={editMode ? handleAvatarChange : undefined}
+              disabled={!editMode}
+            />
+            <div className={styles['account-avatar-note']}>
+              Vui lòng chọn ảnh nhỏ hơn 5MB<br />
+              Chọn hình ảnh phù hợp, không phản cảm
+            </div>
+            {/* Nút đổi mật khẩu nằm ngay dưới avatar */}
+            <div style={{ marginTop: 24 }}>
+              {!showChangePassword ? (
+                <button
+                  className={styles['account-username-save-btn2']} style={{cursor: editMode ? 'pointer' : 'not-allowed'}}
+                  type="button"
+                  onClick={() => setShowChangePassword(true)}
+                  disabled={!editMode}
+                >
+                  Đổi mật khẩu
+                </button>
+              ) : (
+                <div>
+                  <h3 className={styles['account-section-title']}>Đổi mật khẩu</h3>
+                  <ChangePasswordForm onClose={() => setShowChangePassword(false)} />
+                  <button
+                    className={styles['account-username-save-btn2']}
+                    type="button"
+                    style={{marginTop: 12, background: '#ccc', color: '#333'}}
+                    onClick={() => setShowChangePassword(false)}
+                  >
+                    Hủy
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-
-        <div className="account-right">
-          <h1>Thông tin cá nhân</h1>
-          <div className="form-grid">
-            {[
-              { label: 'Họ', name: 'firstName', disabled: false },
-              { label: 'Tên', name: 'lastName', disabled: false },
-              { label: 'Email', name: 'email', disabled: true },
-              { label: 'SDT', name: 'phone', disabled: false },
-              { label: 'Ngày sinh', name: 'dateOfBirth', type: 'date', disabled: true },
-              { label: 'Giới tính', name: 'gender', value: formatGenderDisplay(form.gender), disabled: true },
-              { label: 'Địa chỉ', name: 'address', disabled: false }
-            ].map(({ label, name, type = 'text', disabled, value }) => (
-              <div className="form-group" key={name}>
-                <label>{label}</label>
-                <input
-                  name={name}
-                  type={type}
-                  value={value !== undefined ? value : form[name]}
-                  onChange={handleChange}
-                  disabled={disabled}
-                />
-              </div>
-            ))}
+          <div style={{gridColumn: '1/-1', marginTop: 16}}>
+            {error && <div className={styles['account-error']}>{error}</div>}
+            {success && <div className={styles['account-success']}>{success}</div>}
+            {editMode ? (
+              <>
+                <button className={styles['account-username-save-btn']} type="submit" disabled={saving}>Lưu</button>
+                <button className={styles['account-username-save-btn']} type="button" onClick={handleCancel} disabled={saving} style={{marginLeft: 8, background: '#ccc', color: '#333'}}>Hủy</button>
+              </>
+            ) : (
+              <button className={styles['account-username-save-btn']} type="button" onClick={handleEdit}>Chỉnh sửa</button>
+            )}
           </div>
-          <button className="blue-btn" onClick={handleSubmit}>Lưu thay đổi</button>
-        </div>
+        </form>
       </div>
     </div>
   );

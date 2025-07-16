@@ -168,8 +168,8 @@ const Navbar = () => {
                     {dropdownOpen && (
                         <div className="dropdown-menu">
                             <div className="dropdown-item" onClick={handleManageAccount}>Quản lý tài khoản</div>
-                            <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
                             <div className="dropdown-item" onClick={handleManageCourse}>Khóa học của tôi</div>
+                            <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
                         </div>
                     )}
                 </div>

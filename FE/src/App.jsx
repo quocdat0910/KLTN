@@ -31,6 +31,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SearchResults from "./pages/SearchResults";
 import Order from "./pages/ADMIN/Order";
+import OrderHistory from "./pages/OrderHistory";
 
 const App = () => {
   return (
@@ -66,6 +67,7 @@ const App = () => {
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/myaccount" element={<Account />} />
           <Route path="/mycourse" element={<MyCourse />} />
+          <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/testpage" element={<TestPage />} />
           <Route path="/practicetest" element={<PracticeTest />} />
           <Route path="/product-cat" element={<ProductCat />} />

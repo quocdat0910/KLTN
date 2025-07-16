@@ -19,12 +19,12 @@ body {
 .homework-header {
     display: flex;
     align-items: center;
-    padding: 15px 30px;
+    padding: 15px 5px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     gap: 20px;
     border-bottom: 1px solid #e0e0e0;
-    width: 1646px;
+    width: 1916px;
 }
 
 .homework-logo {
@@ -41,7 +41,7 @@ body {
     font-weight: bold;
     flex-grow: 1; /* Allows title to take available space */
     color: #555;
-    margin-right: 800px;
+    margin-right: 1000px;
 }
 
 .homework-progress {
@@ -76,6 +76,7 @@ body {
     white-space: nowrap; /* Prevent wrapping */
 }
 
+
 .homework-notes-btn {
     background-color: #f2f2f2;
     border: 1px solid #ccc;
@@ -85,6 +86,7 @@ body {
     font-size: 0.9em;
     color: #555;
     transition: background-color 0.2s;
+    margin-right: 400px;
 }
 
 .homework-notes-btn:hover {
@@ -153,7 +155,7 @@ body {
 .homework-sidebar-section {
     flex: 1; /* Takes 1 part of available space, e.g., ~33% */
     background-color: #ffffff;
-    padding: 110px;
+    padding: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     max-height: calc(100vh - 180px); /* Adjust based on header/footer height */
@@ -241,11 +243,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 30px;
+    padding: 15px;
     background-color: #ffffff;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
     border-top: 1px solid #e0e0e0;
-    width: 1646px;
+    width: 1533px;
 }
 
 .homework-btn {
@@ -280,8 +282,10 @@ body {
 }
 
 .homework-chapter-status {
-    font-size: 0.9em;
+    font-size: 1.0em;
     color: #666;
+    margin-right: 100px;
+    font-weight: bold;
 }
 
 /* Responsive adjustments (optional, but good practice) */
@@ -915,4 +919,23 @@ body {
 
 .not-enrolled-container button:hover {
     background-color: #d35400;
+}
+
+.homework-content-area {
+    align-items: stretch !important; /* Đảm bảo các con bằng chiều cao lớn nhất */
+  }
+  
+  .homework-video-section,
+  .homework-sidebar-section {
+    height: 100%;
+    min-height: 700px;
+    display: flex;
+    flex-direction: column;
+  }
+
+.homework-footer-buttons {
+  display: flex;
+  gap: 12px; /* hoặc 8px, 16px tùy ý */
+  align-items: center;
+  justify-content: center; /* căn giữa nếu muốn */
 }

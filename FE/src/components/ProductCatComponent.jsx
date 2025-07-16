@@ -24,22 +24,41 @@ const ProductCatComponent = ({ courseType }) => {
     fetchCourses();
   }, [courseType]);
 
-  const ProductCard = ({ _id, title, thumbnail, price, courseType, shortDescription }) => {
+  const ProductCard = ({ _id, title, thumbnail, price, courseType, shortDescription, enrolledCount }) => {
     return (
-      <Link 
-        to={`/course/${_id}`} 
-        className="result-card" 
-        style={{ textDecoration: 'none', color: 'inherit', margin: '0 12px 24px 0' }}
-      >
-        <div className="result-card-inner">
-          <img className="result-main-image" src={thumbnail || "Component4a.jpg"} alt="main" />
-          <img className="result-avatar" src={'Component4b.jpg'} alt="Instructor Avatar" />
-          <div className="result-title">{title}</div>
-          <div className="result-subtitle">{courseType}</div>
-          <div className="result-price">{price ? `${price.toLocaleString()} VNĐ` : "Miễn phí"}</div>
-          {shortDescription && <div className="result-description">{shortDescription}</div>}
+      <div className="course-card" key={_id}>
+        <div className="course-image-wrapper">
+          <img 
+            className="course-image" 
+            src={thumbnail || 'https://placehold.co/600x400/E0E0E0/333333?text=No+Image'} 
+            alt={title} 
+            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/E0E0E0/333333?text=No+Image'; }}
+          />
+          <img 
+            className="course-avatar" 
+            src={'Component4b.jpg'} 
+            alt="Instructor Avatar" 
+          />
         </div>
+        <div className="course-title">{title}</div>
+        <div className="course-type">{courseType || 'Chưa rõ loại'}</div>
+        {price !== undefined && (
+          <div className="course-price">
+            {price === 0 ? 'Miễn phí' : `${price?.toLocaleString('vi-VN') || 'N/A'} VNĐ`}
+          </div>
+        )}
+        {shortDescription && (
+          <div className="course-description">{shortDescription}</div>
+        )}
+        {enrolledCount !== undefined && (
+          <div className="course-enrolled">
+            <i className="fa fa-users" style={{marginRight: 4}}></i>{enrolledCount} học viên
+          </div>
+        )}
+        <Link to={`/course/${_id}`} className="course-detail-btn">
+          Xem chi tiết <i className="fa fa-arrow-right"></i>
       </Link>
+      </div>
     );
   };
 
@@ -60,7 +79,7 @@ const ProductCatComponent = ({ courseType }) => {
             Không có khóa học nào cho loại "{courseType}".
           </div>
         ) : (
-          <div className="result-list">
+          <div className="course-grid">
             {courses.map((course) => (
               <ProductCard key={course._id} {...course} />
             ))}
