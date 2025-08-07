@@ -6,6 +6,9 @@ import RefreshToken from "../models/RefreshToken.js";
 import crypto from "crypto";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
+import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
+import { PlacementTestResult } from "../models/placementTestSchema.js";
+import UserProgress from "../models/userProgressSchema.js";
 
 // Hàm hỗ trợ để tạo tên cookie dựa trên vai trò
 const getTokenCookieName = (role) => {
@@ -835,3 +838,109 @@ export const changeUserPasswordByAdmin = async (req, res, next) => {
     next(error);
   }
 };
+
+// Cập nhật AI analytics cho user
+export const updateAIAnalytics = catchAsyncErrors(async (req, res, next) => {
+  const { strengths, weaknesses, learningStyle, optimalPace } = req.body;
+  const userId = req.user.id;
+
+  const updateData = {};
+  if (strengths) updateData['aiAnalytics.strengths'] = strengths;
+  if (weaknesses) updateData['aiAnalytics.weaknesses'] = weaknesses;
+  if (learningStyle) updateData['aiAnalytics.learningStyle'] = learningStyle;
+  if (optimalPace) updateData['aiAnalytics.optimalPace'] = optimalPace;
+  
+  updateData['aiAnalytics.lastAnalyzedAt'] = new Date();
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    updateData,
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    data: {
+      aiAnalytics: user.aiAnalytics
+    }
+  });
+});
+
+// Cập nhật learning preferences
+export const updateLearningPreferences = catchAsyncErrors(async (req, res, next) => {
+  const { 
+    preferredTimeOfDay, 
+    preferredDuration, 
+    preferredContentType, 
+    preferredDifficulty 
+  } = req.body;
+  const userId = req.user.id;
+
+  const updateData = {};
+  if (preferredTimeOfDay) updateData['learningPreferences.preferredTimeOfDay'] = preferredTimeOfDay;
+  if (preferredDuration) updateData['learningPreferences.preferredDuration'] = preferredDuration;
+  if (preferredContentType) updateData['learningPreferences.preferredContentType'] = preferredContentType;
+  if (preferredDifficulty) updateData['learningPreferences.preferredDifficulty'] = preferredDifficulty;
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    updateData,
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    data: {
+      learningPreferences: user.learningPreferences
+    }
+  });
+});
+
+// Lấy AI insights cho user
+export const getAIInsights = catchAsyncErrors(async (req, res, next) => {
+  const userId = req.user.id;
+
+  // Lấy placement test result gần nhất
+  const latestPlacementResult = await PlacementTestResult.findOne({
+    userId,
+    isCompleted: true
+  }).sort({ createdAt: -1 });
+
+  // Lấy user progress
+  const userProgress = await UserProgress.find({ userId })
+    .populate('courseId', 'title targetScoreRange skills')
+    .sort({ updatedAt: -1 });
+
+  // Lấy user profile
+  const user = await User.findById(userId);
+
+  const insights = {
+    placementTest: latestPlacementResult ? {
+      testType: latestPlacementResult.testType,
+      estimatedLevel: latestPlacementResult.estimatedLevel,
+      aiAnalysis: latestPlacementResult.aiAnalysis,
+      detailedAnalysis: latestPlacementResult.detailedAnalysis,
+      performanceMetrics: latestPlacementResult.performanceMetrics
+    } : null,
+    userProfile: {
+      currentScore: user.currentScore,
+      studyGoals: user.studyGoals,
+      aiAnalytics: user.aiAnalytics,
+      learningPreferences: user.learningPreferences,
+      streak: user.streak
+    },
+    learningProgress: userProgress.map(progress => ({
+      courseId: progress.courseId._id,
+      courseTitle: progress.courseId.title,
+      completionPercentage: progress.completionPercentage,
+      totalWatchTime: progress.totalWatchTime,
+      isCourseCompleted: progress.isCourseCompleted,
+      aiInsights: progress.aiInsights
+    }))
+  };
+
+  res.status(200).json({
+    success: true,
+    data: insights
+  });
+});

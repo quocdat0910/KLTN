@@ -63,3 +63,11 @@ export const restrictTo = (...roles) => {
 export const admin = (req, res, next) => {
   return restrictTo('admin')(req, res, next);
 };
+
+// Alias for protect function to match router imports
+export const isAuthenticated = protect;
+
+// Function to check authorization for specific roles
+export const isAuthorized = (...roles) => {
+  return restrictTo(...roles);
+};

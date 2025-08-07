@@ -80,8 +80,6 @@ const AppWrapper = () => {
       }}
     >
       <Router>
-        <Routes>
-        </Routes>
       </Router>
       <App />
       <ToastContainer position="bottom-right" theme="dark" /> {/* Đảm bảo ToastContainer được render */}

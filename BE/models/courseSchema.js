@@ -130,6 +130,28 @@ const courseSchema = new mongoose.Schema(
       min: 0,
       max: 5
     },
+    aiMetadata: {
+      difficultyLevel: { 
+        type: String, 
+        enum: ['beginner', 'intermediate', 'advanced'],
+        required: [true, 'Độ khó khóa học là bắt buộc']
+      },
+      prerequisites: { type: [String], default: [] },
+      estimatedCompletionTime: { 
+        type: Number, 
+        default: 0, // giờ
+        min: [0, 'Thời gian hoàn thành không được nhỏ hơn 0']
+      },
+      successRate: { 
+        type: Number, 
+        default: 0, // phần trăm
+        min: [0, 'Tỷ lệ thành công không được nhỏ hơn 0'],
+        max: [100, 'Tỷ lệ thành công không được lớn hơn 100']
+      },
+      skillGaps: { type: [String], default: [] }, // Kỹ năng cần cải thiện
+      learningOutcomes: { type: [String], default: [] }, // Kết quả học tập mong đợi
+      aiTags: { type: [String], default: [] } // Tags cho AI recommendation
+    },
     createdAt: {
       type: Date,
       default: Date.now
