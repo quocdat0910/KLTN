@@ -1614,7 +1614,7 @@ input:checked + .slider:before {
   border: 1px solid #ddd;
   background-color: #fff;
   transition: all 0.2s ease;
-  width: 100%;
+  width: 80%;
   box-sizing: border-box;
 }
 

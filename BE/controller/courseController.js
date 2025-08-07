@@ -8,7 +8,7 @@ import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 
 // @route GET /api/v1/courses
-// @desc Get all courses (filtered by courseType, targetScoreRange, skills)
+// @desc Get all courses (filtered by courseType, targetScoreRange, skills, search)
 // @access Public
 export const getAllCourses = async (req, res, next) => {
   try {
@@ -16,6 +16,7 @@ export const getAllCourses = async (req, res, next) => {
       courseType,
       targetScoreRange,
       skills,
+      search,
       page = 1,
       limit = 10,
     } = req.query;
@@ -25,14 +26,25 @@ export const getAllCourses = async (req, res, next) => {
     if (courseType) query.courseType = courseType;
     if (targetScoreRange) query.targetScoreRange = targetScoreRange;
     if (skills) query.skills = { $in: skills.split(",") };
+    
+    // Thêm search functionality
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { shortDescription: { $regex: search, $options: "i" } },
+        { tags: { $in: [new RegExp(search, "i")] } }
+      ];
+    }
 
     // Truy vấn khóa học với phân trang
     const courses = await Course.find(query)
       .select(
-        "title shortDescription courseType targetScoreRange skills price thumbnail enrollmentCount status averageRating"
+        "title shortDescription courseType targetScoreRange skills price thumbnail enrollmentCount averageRating"
       )
       .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
 
     const total = await Course.countDocuments(query);
 
@@ -94,46 +106,71 @@ export const getCourseById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user?._id;
-    const isAdmin = req.user?.role === "admin";
 
-    // Tìm khóa học
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID khóa học không hợp lệ" });
+    }
+
     const course = await Course.findById(id).populate({
       path: "chapters",
-      match: isAdmin ? {} : { isPublished: true },
-      select: "title description order isPublished",
+      match: { isPublished: true },
+      select: "title description",
     });
 
-    if (!course || (!isAdmin && course.status !== "published")) {
+    if (!course || course.status !== "published") {
       return res.status(404).json({
         message: "Không tìm thấy khóa học hoặc khóa học chưa được xuất bản",
       });
     }
 
-    // Kiểm tra trạng thái đăng ký
-    const enrollment = userId
-      ? await Enrollment.findOne({ userId, courseId: id, status: "active" })
-      : null;
+    const isEnrolled = userId
+      ? await Enrollment.exists({ userId, courseId: id, status: "active" })
+      : false;
+    const isAdmin = req.user?.role === "admin";
 
-    // Nếu là admin hoặc đã đăng ký khóa học thì hiển thị tất cả bài học, bài tập
-    if (isAdmin || enrollment) {
+    if (isEnrolled || isAdmin) {
       await course.populate({
         path: "chapters",
         populate: [
           {
             path: "lessons",
-            match: isAdmin ? {} : { isPublished: true },
-            select: "title order isPublished",
+            match: { isPublished: true },
+            select: "title _id",
           },
           {
             path: "exercises",
-            match: isAdmin ? {} : { isPublished: true },
-            select: "title order isPublished",
+            match: { isPublished: true },
+            select: "title _id",
           },
         ],
       });
     }
 
-    res.status(200).json({ course });
+    const response = {
+      _id: course._id.toString(),
+      title: course.title,
+      shortDescription: course.shortDescription,
+      price: course.price || 0,
+      chapters: course.chapters.map((chapter) => ({
+        _id: chapter._id,
+        title: chapter.title,
+        description: chapter.description,
+        lessons: chapter.lessons
+          ? chapter.lessons.map((lesson) => ({
+              _id: lesson._id,
+              title: lesson.title,
+            }))
+          : [],
+        exercises: chapter.exercises
+          ? chapter.exercises.map((exercise) => ({
+              _id: exercise._id,
+              title: exercise.title,
+            }))
+          : [],
+      })),
+    };
+
+    res.status(200).json({ course: response });
   } catch (error) {
     console.error("Lỗi lấy chi tiết khóa học:", error.message);
     next(error);
@@ -326,27 +363,13 @@ export const updateCourse = async (req, res, next) => {
       status,
     } = req.body;
 
+    // Tìm khóa học
     const course = await Course.findById(id);
     if (!course) {
       return res.status(404).json({ message: "Không tìm thấy khóa học" });
     }
 
-    const finalCourseType = courseType !== undefined ? courseType : course.courseType;
-    const finalTargetScoreRange = targetScoreRange !== undefined ? targetScoreRange : course.targetScoreRange;
-
-    let validScoreRanges;
-    if (finalCourseType === "IELTS") {
-      validScoreRanges = ["4.0-5.0", "5.0-6.0", "5.5-6.5", "6.0-7.0", "7.0-8.0", "8.0+"];
-    } else if (finalCourseType === "TOEIC") {
-      validScoreRanges = ["250-350", "350-450", "450-550", "550-650", "650-850", "850+"];
-    } else {
-      return res.status(400).json({ message: "Loại khóa học không hợp lệ." });
-    }
-
-    if (!finalTargetScoreRange || !validScoreRanges.includes(finalTargetScoreRange)) {
-      return res.status(400).json({ message: "Dải điểm mục tiêu không hợp lệ với loại khóa học đã chọn." });
-    }
-
+    // Kiểm tra đầu vào
     if (title && !validator.isLength(title, { min: 5, max: 100 })) {
       return res
         .status(400)
@@ -379,10 +402,37 @@ export const updateCourse = async (req, res, next) => {
         .status(400)
         .json({ message: "Phần trăm giảm giá phải từ 0 đến 100" });
     }
+    if (courseType && !["TOEIC", "IELTS"].includes(courseType)) {
+      return res.status(400).json({ message: "Loại khóa học không hợp lệ" });
+    }
+    if (targetScoreRange) {
+      const validScoreRanges =
+        courseType || course.courseType === "IELTS"
+          ? ["4.0-5.0", "5.0-6.0", "5.5-6.5", "6.0-7.0", "7.0-8.0", "8.0+"]
+          : ["250-350", "350-450", "450-550", "550-650", "650-850", "850+"];
+      if (!validScoreRanges.includes(targetScoreRange)) {
+        return res
+          .status(400)
+          .json({ message: "Dải điểm mục tiêu không hợp lệ" });
+      }
+    }
+    if (
+      skills &&
+      !skills
+        .split(",")
+        .every((skill) =>
+          ["Listening", "Speaking", "Reading", "Writing", "General"].includes(
+            skill.trim()
+          )
+        )
+    ) {
+      return res.status(400).json({ message: "Kỹ năng không hợp lệ" });
+    }
     if (language && !["English", "Vietnamese"].includes(language)) {
       return res.status(400).json({ message: "Ngôn ngữ không hợp lệ" });
     }
 
+    // Xử lý file thumbnail với express-fileupload
     if (req.files && req.files.thumbnail) {
       const thumbnail = req.files.thumbnail;
       if (!thumbnail.mimetype.startsWith("image")) {
@@ -394,12 +444,14 @@ export const updateCourse = async (req, res, next) => {
           .json({ message: "Thumbnail không được lớn hơn 2MB" });
       }
 
+      // Xóa thumbnail cũ trên Cloudinary nếu tồn tại
       if (course.thumbnail) {
-        const publicId = course.thumbnail.split("/").slice(-1)[0].split(".")[0];
+        const publicId = course.thumbnail.split("/").slice(-1)[0].split(".")[0]; // Trích xuất public_id từ URL
         const folderPath = "ielts-toeic-platform/thumbnails";
         await cloudinary.v2.uploader.destroy(`${folderPath}/${publicId}`);
       }
 
+      // Tải thumbnail mới lên Cloudinary
       const result = await cloudinary.v2.uploader.upload(
         thumbnail.tempFilePath,
         {
@@ -412,26 +464,27 @@ export const updateCourse = async (req, res, next) => {
       course.thumbnail = result.secure_url;
     }
 
-    if (title !== undefined) course.title = title;
-    if (description !== undefined) course.description = description;
-    if (shortDescription !== undefined) course.shortDescription = shortDescription;
+    // Cập nhật các trường
+    if (title) course.title = title;
+    if (description) course.description = description;
+    if (shortDescription) course.shortDescription = shortDescription;
     if (price !== undefined) course.price = price;
     if (originalPrice !== undefined) course.originalPrice = originalPrice;
     if (discountPercentage !== undefined)
       course.discountPercentage = discountPercentage;
     if (discountExpiresAt)
       course.discountExpiresAt = new Date(discountExpiresAt);
-    if (courseType !== undefined) course.courseType = courseType;
-    if (targetScoreRange !== undefined) course.targetScoreRange = targetScoreRange;
-    if (skills !== undefined) course.skills = Array.isArray(skills) ? skills : skills.split(",").map((skill) => skill.trim()).filter(Boolean);
-    if (language !== undefined) course.language = language;
-    if (requirements !== undefined)
-      course.requirements = Array.isArray(requirements) ? requirements : requirements.split(",").map((req) => req.trim()).filter(Boolean);
-    if (objectives !== undefined)
-      course.objectives = Array.isArray(objectives) ? objectives : objectives.split(",").map((obj) => obj.trim()).filter(Boolean);
-    if (tags !== undefined) course.tags = Array.isArray(tags) ? tags : tags.split(",").map((tag) => tag.trim()).filter(Boolean);
-    if (instructor !== undefined) course.instructor = instructor;
-    if (status !== undefined) course.status = status;
+    if (courseType) course.courseType = courseType;
+    if (targetScoreRange) course.targetScoreRange = targetScoreRange;
+    if (skills) course.skills = skills.split(",").map((skill) => skill.trim());
+    if (language) course.language = language;
+    if (requirements)
+      course.requirements = requirements.split(",").map((req) => req.trim());
+    if (objectives)
+      course.objectives = objectives.split(",").map((obj) => obj.trim());
+    if (tags) course.tags = tags.split(",").map((tag) => tag.trim());
+    if (instructor) course.instructor = instructor;
+    if (status) course.status = status;
 
     course.updatedAt = new Date();
     await course.save();

@@ -8,7 +8,8 @@ import {
   deleteLesson,
   publishLesson,
   addLessonResource,
-  deleteLessonResource
+  deleteLessonResource,
+  updateLessonProgress
 } from "../controller//lessonController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
@@ -24,11 +25,7 @@ const noteLimiter = rateLimit({
 // Protected routes
 router.get("/", protect, getAllLessons); // Xem danh sách bài học của chương
 router.get("/:lessonId", protect, getLessonById); // Xem chi tiết bài học (video, resources, notes)
-/* router.post("/:lessonId/notes", protect, noteLimiter, addLessonNote); // Thêm ghi chú vào bài học
-router.put("/:lessonId/notes/:noteId", protect, updateLessonNote); // Cập nhật ghi chú
-router.delete("/:lessonId/notes/:noteId", protect, deleteLessonNote); // Xóa ghi chú
 router.post("/:lessonId/progress", protect, updateLessonProgress); // Cập nhật tiến độ xem bài học
- */
 
 // Admin routes
 router.post("/", protect, restrictTo("admin"), createLesson); // Tạo bài học mới

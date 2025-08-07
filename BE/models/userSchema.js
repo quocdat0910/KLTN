@@ -90,7 +90,7 @@ const userSchema = new mongoose.Schema(
         default: null,
       },
     },  
-    targetScore: {
+    /* targetScore: {
       ielts: {
         type: Number,
         min: 0,
@@ -103,7 +103,7 @@ const userSchema = new mongoose.Schema(
         max: 990,
         default: null,
       },
-    },
+    }, */
     studyGoals: {
       type: [String],
       enum: ["Listening", "Speaking", "Reading", "Writing", "General"],
@@ -120,25 +120,6 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-    paymentHistory: [
-      {
-        course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-        paymentId: String, // ID giao dịch PayPal
-        amount: Number,
-        currency: String,
-        paymentMethod: {
-          type: String,
-          enum: ["paypal", "free"],
-          default: "paypal",
-        },
-        status: {
-          type: String,
-          enum: ["pending", "completed", "failed"],
-          default: "pending",
-        },
-        createdAt: { type: Date, default: Date.now },
-      },
-    ],
     /* totalStudyTime: {
       type: Number,
       default: 0, // Tổng thời gian học (phút)
@@ -153,6 +134,44 @@ const userSchema = new mongoose.Schema(
       dailyReminder: { type: Boolean, default: true },
       weeklyProgress: { type: Boolean, default: true },
       courseUpdates: { type: Boolean, default: true },
+    },
+    aiAnalytics: {
+      strengths: { type: [String], default: [] },
+      weaknesses: { type: [String], default: [] },
+      learningStyle: { 
+        type: String, 
+        enum: ['visual', 'auditory', 'kinesthetic', 'mixed'],
+        default: null 
+      },
+      optimalPace: { 
+        type: String, 
+        enum: ['slow', 'moderate', 'fast'],
+        default: 'moderate'
+      },
+      lastAnalyzedAt: { type: Date, default: null },
+    },
+    learningPreferences: {
+      preferredTimeOfDay: { 
+        type: String, 
+        enum: ['morning', 'afternoon', 'evening', 'night'],
+        default: 'afternoon'
+      },
+      preferredDuration: { 
+        type: Number, 
+        default: 30, // phút
+        min: 15,
+        max: 120
+      },
+      preferredContentType: { 
+        type: String, 
+        enum: ['video', 'text', 'audio', 'interactive'],
+        default: 'video'
+      },
+      preferredDifficulty: { 
+        type: String, 
+        enum: ['easy', 'moderate', 'challenging'],
+        default: 'moderate'
+      }
     },
     /* aiAnalytics: {
       strengths: { type: [String], default: [] },

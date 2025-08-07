@@ -7,7 +7,8 @@ import {
   updateExercise,
   deleteExercise,
   publishExercise,
-  syncQuizzesFromGoogleSheet
+  submitExercise,
+  getExerciseResults
 } from "../controller/exerciseController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
@@ -23,15 +24,13 @@ const submitLimiter = rateLimit({
 // Protected routes
 router.get("/", protect, getAllExercises); // Xem danh sách bài tập của chương
 router.get("/:exerciseId", protect, getExerciseById); // Xem chi tiết bài tập
-/*router.post("/:exerciseId/submit", protect, submitLimiter, submitExercise); // Nộp bài tập
+router.post("/:exerciseId/submit", protect, submitLimiter, submitExercise); // Nộp bài tập
 router.get("/:exerciseId/results", protect, getExerciseResults); // Xem kết quả bài tập
- */
 
 // Admin routes
 router.post("/", protect, restrictTo("admin"), createExercise); // Tạo bài tập mới
 router.put("/:exerciseId", protect, restrictTo("admin"), updateExercise); // Cập nhật bài tập
 router.delete("/:exerciseId", protect, restrictTo("admin"), deleteExercise); // Xóa bài tập
 router.put("/:exerciseId/publish", protect, restrictTo("admin"), publishExercise); // Xuất bản hoặc hủy xuất bản bài tập
-router.post('/sync-from-sheet', protect, restrictTo('admin'), syncQuizzesFromGoogleSheet);
 
 export default router;

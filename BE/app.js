@@ -12,6 +12,9 @@ import exerciseRouter from "./router/exerciseRouter.js";
 import noteRouter from "./router/noteRouter.js";
 import userProgressRouter from "./router/userProgressRouter.js";
 import enrollmentRouter from "./router/enrollmentRouter.js";
+import placementTestRouter from "./router/placementTestRouter.js";
+import courseRecommendationRouter from "./router/courseRecommendationRouter.js";
+import questionBankRouter from "./router/questionBankRouter.js";
 
 const app = express();
 config({ path: "./config/config.env" });
@@ -43,7 +46,9 @@ app.use("/api/v1/courses/:courseId/chapters", chapterRouter);
 app.use("/api/v1/courses/:courseId/chapters/:chapterId/lessons", lessonRouter);
 app.use("/api/v1/courses/:courseId/chapters/:chapterId/exercises", exerciseRouter);
 app.use("/api/v1/courses/:courseId/chapters/:chapterId/lessons/:lessonId/notes", noteRouter);
-
+app.use("/api/v1/placement-tests", placementTestRouter);
+app.use("/api/v1/recommendations", courseRecommendationRouter);
+app.use("/api/v1/question-bank", questionBankRouter);
 
 dbConnection();
 

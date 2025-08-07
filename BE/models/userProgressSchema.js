@@ -58,7 +58,7 @@ const userProgressSchema = new mongoose.Schema(
               ref: "Exercise",
               required: [true, "Bài tập là bắt buộc"],
             },
-            score: {
+            bestScore: {
               type: Number,
               default: 0,
               min: [0, "Điểm không được nhỏ hơn 0"],
@@ -76,27 +76,25 @@ const userProgressSchema = new mongoose.Schema(
               type: Boolean,
               default: false,
             },
-            timeSpent: {
-              type: Number,
-              default: 0, // Thời gian làm bài (giây)
-              min: [0, "Thời gian làm bài không được nhỏ hơn 0"],
-            },
-            attempts: {
-              type: Number,
-              default: 1,
-              min: [1, "Số lần thử phải lớn hơn hoặc bằng 1"],
-            },
+            attempts: [
+              {
+                attemptNumber: { type: Number, required: true },
+                answers: [
+                  {
+                    questionIndex: Number,
+                    userAnswer: String,
+                    isCorrect: Boolean,
+                  },
+                ],
+                score: { type: Number, default: 0 },
+                submittedAt: { type: Date, default: Date.now },
+                timeSpent: { type: Number, default: 0 },
+              },
+            ],
             lastAttemptAt: {
               type: Date,
               default: Date.now,
             },
-            answers: [
-              {
-                questionIndex: Number,
-                userAnswer: String,
-                isCorrect: Boolean,
-              },
-            ],
           },
         ],
       },
@@ -119,6 +117,26 @@ const userProgressSchema = new mongoose.Schema(
     completedAt: {
       type: Date,
       default: null,
+    },
+    aiInsights: {
+      learningPattern: { 
+        type: String, 
+        enum: ['consistent', 'sporadic', 'intensive', 'gradual'],
+        default: null 
+      },
+      recommendedNextSteps: { type: [String], default: [] },
+      difficultyAdjustment: { 
+        type: String, 
+        enum: ['increase', 'decrease', 'maintain'],
+        default: 'maintain'
+      },
+      optimalStudyTime: { 
+        type: String, 
+        enum: ['morning', 'afternoon', 'evening'],
+        default: null 
+      },
+      focusAreas: { type: [String], default: [] },
+      lastAnalyzedAt: { type: Date, default: null }
     },
     createdAt: {
       type: Date,
