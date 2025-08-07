@@ -120,7 +120,7 @@ const Students = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2 className='h2'>Quản lý Khách hàng</h2> {/* Đổi tiêu đề cho rõ ràng hơn */}
+        <h2 className='h2'>Quản lý Tài khoản</h2> {/* Đổi tiêu đề cho rõ ràng hơn */}
       </div>
 
       <div className="search-add">

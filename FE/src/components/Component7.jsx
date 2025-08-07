@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const faqs = [
   {
@@ -51,51 +51,39 @@ function getRandomFaqs(arr, n) {
 const Component7 = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const randomFaqs = getRandomFaqs(faqs, 6);
+  const faqRef = useRef(null);
 
   const handleToggle = (idx) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };
 
+  useEffect(() => {
+    if (faqRef.current) {
+      const yOffset = -80; // offset cho navbar (80px)
+      const y = faqRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, []);
+
   return (
-    <div style={{
-      maxWidth: 1540,
-      // margin: '20px auto',
-      padding: '50px 22px',
-      height: '100%',
-      background: 'rgba(229, 245, 255, 0.8)',
-      borderRadius: 40,
-      boxSizing: 'border-box',
-    }}>
-      <h2 style={{textAlign: 'center', marginBottom: 32}}>Câu hỏi thường gặp về TOEIC & IELTS</h2>
-      {randomFaqs.map((faq, idx) => (
-        <div key={idx} style={{marginBottom: 18, borderRadius: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', background: '#fff'}}>
-          <button
-            onClick={() => handleToggle(idx)}
-            style={{
-              width: '100%',
-              textAlign: 'left',
-              background: 'none',
-              border: 'none',
-              outline: 'none',
-              padding: '18px 24px',
-              fontSize: 17,
-              fontWeight: 600,
-              cursor: 'pointer',
-              borderRadius: 10,
-              color: '#1a237e',
-              transition: 'background 0.18s',
-            }}
-          >
-            {faq.question}
-            <span style={{float: 'right', fontWeight: 400}}>{openIndex === idx ? '▲' : '▼'}</span>
-          </button>
-          {openIndex === idx && (
-            <div style={{padding: '0 24px 18px 24px', color: '#333', fontSize: 16, animation: 'fadeIn 0.3s'}}>
-              {faq.answer}
-            </div>
-          )}
-        </div>
-      ))}
+    <div className="faq-container" ref={faqRef}>
+      <h2 className="faq-title">Câu hỏi thường gặp về TOEIC & IELTS</h2>
+      <div className="faq-list">
+        {randomFaqs.map((faq, idx) => (
+          <div key={idx} className={`faq-item${openIndex === idx ? ' open' : ''}`}> 
+            <button
+              className="faq-question-btn"
+              onClick={() => handleToggle(idx)}
+            >
+              {faq.question}
+              <span className="faq-arrow">{openIndex === idx ? '\u25b2' : '\u25bc'}</span>
+            </button>
+            {openIndex === idx && (
+              <div className="faq-answer">{faq.answer}</div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -33,6 +33,14 @@ const Sidebar = () => {
           <i className="fas fa-shopping-cart"></i>
           <span>Đơn hàng</span>
         </li>
+        <li onClick={() => navigateTo("/admin/question-bank")} className={isActive("/admin/question-bank") ? "active" : ""}>
+          <i className="fas fa-question-circle"></i>
+          <span>Ngân hàng câu hỏi</span>
+        </li>
+        <li onClick={() => navigateTo("/admin/placement-tests")} className={isActive("/admin/placement-tests") ? "active" : ""}>
+          <i className="fas fa-clipboard-check"></i>
+          <span>Placement Tests</span>
+        </li>
       </ul>
     </div>
   );

@@ -7,6 +7,27 @@ import AddNoteForm from '../components/AddNoteForm'
 import NoteList from '../components/NoteList';
 import Exercise from '../components/Exercise';
 
+const FINAL_EXAM_QUESTIONS = [
+  {
+    question: 'Đâu là thủ đô của nước Anh?',
+    options: ['London', 'Paris', 'Berlin', 'Madrid'],
+    correct: 'A',
+    explanation: 'London là thủ đô của nước Anh.'
+  },
+  {
+    question: 'Which tense is used for actions happening right now?',
+    options: ['Present Simple', 'Present Continuous', 'Past Simple', 'Future Simple'],
+    correct: 'B',
+    explanation: 'Present Continuous is used for actions happening at the moment.'
+  },
+  {
+    question: 'Chọn từ đồng nghĩa với "happy"',
+    options: ['Sad', 'Angry', 'Joyful', 'Tired'],
+    correct: 'C',
+    explanation: 'Joyful là từ đồng nghĩa với happy.'
+  }
+];
+
 const Homework = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -22,6 +43,11 @@ const Homework = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [showFinalExam, setShowFinalExam] = useState(false);
+  const [finalExamStep, setFinalExamStep] = useState(0);
+  const [finalExamAnswers, setFinalExamAnswers] = useState({});
+  const [finalExamSubmitted, setFinalExamSubmitted] = useState(false);
+  const [finalExamScore, setFinalExamScore] = useState(null);
 
   const playerRef = useRef(null);
 
@@ -523,6 +549,40 @@ const Homework = () => {
     }
   };
 
+  // Final Exam logic
+  const handleShowFinalExam = () => {
+    setShowFinalExam(true);
+    setFinalExamStep(0);
+    setFinalExamAnswers({});
+    setFinalExamSubmitted(false);
+    setFinalExamScore(null);
+  };
+
+  const handleFinalExamAnswer = (index, value) => {
+    setFinalExamAnswers(prev => ({ ...prev, [index]: value }));
+  };
+
+  const handleFinalExamNext = () => {
+    if (finalExamStep < FINAL_EXAM_QUESTIONS.length - 1) {
+      setFinalExamStep(finalExamStep + 1);
+    }
+  };
+
+  const handleFinalExamPrev = () => {
+    if (finalExamStep > 0) {
+      setFinalExamStep(finalExamStep - 1);
+    }
+  };
+
+  const handleFinalExamSubmit = () => {
+    let score = 0;
+    FINAL_EXAM_QUESTIONS.forEach((q, idx) => {
+      if (finalExamAnswers[idx] === q.correct) score++;
+    });
+    setFinalExamScore(score);
+    setFinalExamSubmitted(true);
+  };
+
   if (loading) {
     return (
       <div className="homework-page-wrapper">
@@ -604,37 +664,92 @@ const Homework = () => {
 
       {/* Content Area */}
       <div className="homework-content-area">
-        {/* Video / Exercise Section */}
+        {/* Video / Exercise Section hoặc Final Exam */}
         <div className="homework-video-section">
-          {selectedLesson.type === 'video' ? (
-            <>
-              <div className="homework-video-player-container">
-                <YouTube
-                  videoId={currentVideoId}
-                  opts={youtubeOpts}
-                  onReady={onPlayerReady}
-                  onStateChange={onPlayerStateChange}
-                  onEnd={handleVideoEnd}
-                />
-              </div>
-              <h2 className="homework-video-title">
-                Chương {expandedChapter + 1}: {currentChapterTitle}
-                {selectedLesson.isCompleted && <span className="completed-badge">✓ Hoàn thành</span>}
-              </h2>
-              <p className="homework-video-note-link" onClick={handleOpenNoteForm}>
-                + Thêm ghi chú tại <span className="current-video-time">{currentVideoTime}</span>
-              </p>
-            </>
+          {!showFinalExam ? (
+            selectedLesson.type === 'video' ? (
+              <>
+                <div className="homework-video-player-container">
+                  <YouTube
+                    videoId={currentVideoId}
+                    opts={youtubeOpts}
+                    onReady={onPlayerReady}
+                    onStateChange={onPlayerStateChange}
+                    onEnd={handleVideoEnd}
+                  />
+                </div>
+                <h2 className="homework-video-title">
+                  Chương {expandedChapter + 1}: {currentChapterTitle}
+                  {selectedLesson.isCompleted && <span className="completed-badge">✓ Hoàn thành</span>}
+                </h2>
+                <p className="homework-video-note-link" onClick={handleOpenNoteForm}>
+                  + Thêm ghi chú tại <span className="current-video-time">{currentVideoTime}</span>
+                </p>
+              </>
+            ) : (
+              <Exercise 
+                exerciseId={selectedLesson.exerciseId}
+                courseId={courseId}
+                chapterId={courseData[expandedChapter].id}
+                onComplete={handleExerciseComplete}
+                isCompleted={selectedLesson.isCompleted}
+              />
+            )
           ) : (
-            <Exercise 
-              exerciseId={selectedLesson.exerciseId}
-              courseId={courseId}
-              chapterId={courseData[expandedChapter].id}
-              onComplete={handleExerciseComplete}
-              isCompleted={selectedLesson.isCompleted}
-            />
+            // Final Exam UI
+            <div className="final-exam-container">
+              <h2 className="final-exam-title">Bài thi cuối khóa</h2>
+              {!finalExamSubmitted ? (
+                <>
+                  <div className="final-exam-question">
+                    <div className="final-exam-qtext">
+                      Câu {finalExamStep + 1}/{FINAL_EXAM_QUESTIONS.length}: {FINAL_EXAM_QUESTIONS[finalExamStep].question}
+                    </div>
+                    <div className="final-exam-options">
+                      {FINAL_EXAM_QUESTIONS[finalExamStep].options.map((opt, idx) => (
+                        <label key={idx} className={`final-exam-option ${finalExamAnswers[finalExamStep] === String.fromCharCode(65+idx) ? 'selected' : ''}`}>
+                          <input
+                            type="radio"
+                            name={`final-exam-q${finalExamStep}`}
+                            value={String.fromCharCode(65+idx)}
+                            checked={finalExamAnswers[finalExamStep] === String.fromCharCode(65+idx)}
+                            onChange={e => handleFinalExamAnswer(finalExamStep, e.target.value)}
+                          />
+                          <span className="final-exam-option-label">{String.fromCharCode(65+idx)}.</span> {opt}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="final-exam-nav">
+                    <button onClick={handleFinalExamPrev} disabled={finalExamStep === 0} className="final-exam-btn">Câu trước</button>
+                    {finalExamStep < FINAL_EXAM_QUESTIONS.length - 1 ? (
+                      <button onClick={handleFinalExamNext} className="final-exam-btn">Câu tiếp</button>
+                    ) : (
+                      <button onClick={handleFinalExamSubmit} className="final-exam-btn final-exam-submit">Nộp bài</button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="final-exam-result">
+                  <h3>Kết quả bài thi</h3>
+                  <p>Điểm: {finalExamScore} / {FINAL_EXAM_QUESTIONS.length}</p>
+                  <ul className="final-exam-review-list">
+                    {FINAL_EXAM_QUESTIONS.map((q, idx) => (
+                      <li key={idx} className="final-exam-review-item">
+                        <div><b>Câu {idx+1}:</b> {q.question}</div>
+                        <div>
+                          Đáp án của bạn: <b>{finalExamAnswers[idx] || 'Chưa chọn'}</b> {finalExamAnswers[idx] === q.correct ? <span style={{color: 'green'}}>✓</span> : <span style={{color: 'red'}}>✗</span>}
+                        </div>
+                        <div>Đáp án đúng: <b>{q.correct}</b> - {q.options[q.correct.charCodeAt(0)-65]}</div>
+                        <div className="final-exam-explanation">{q.explanation}</div>
+                      </li>
+                    ))}
+                  </ul>
+                  <button onClick={() => setShowFinalExam(false)} className="final-exam-btn">Quay lại học</button>
+                </div>
+              )}
+            </div>
           )}
-
           {showNoteForm && (
             <div className="note-form-overlay">
               <AddNoteForm
@@ -685,6 +800,15 @@ const Homework = () => {
               )}
             </div>
           ))}
+          <div className="homework-chapter-item">
+            <div
+              className={`homework-chapter-title ${showFinalExam ? 'expanded' : ''} final-exam-sidebar-item`}
+              onClick={handleShowFinalExam}
+              style={{cursor: 'pointer', color: showFinalExam ? '#2563eb' : '#374151', fontWeight: 600}}
+            >
+              🏆 Bài thi cuối khóa
+            </div>
+          </div>
         </div>
       </div>
 

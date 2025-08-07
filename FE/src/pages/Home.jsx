@@ -9,16 +9,32 @@ import Component7 from "../components/Component7";
 import Component8 from "../components/Component8";
 const Home = () => {
   return (
-    <div>
-      <Banner />
-      <Component1 />
-      <Component3 />
-      <Component2 />
-      <Component4 />
-      <Component6 />
-      <Component7 />
-      <Component8 />
-    </div>
+    <main className="home-main">
+      <section className="home-hero-section">
+        <Banner />
+      </section>
+      <section className="home-partner-section">
+        <Component1 />
+      </section>
+      <section className="home-benefit-section">
+        <Component3 />
+      </section>
+      <section className="home-career-section">
+        <Component2 />
+      </section>
+      <section className="home-courses-section">
+        <Component4 />
+      </section>
+      <section className="home-testimonial-section">
+        <Component6 />
+      </section>
+      <section className="home-faq-section">
+        <Component7 />
+      </section>
+      <section className="home-cta-section">
+        <Component8 />
+      </section>
+    </main>
   );
 };
 export default Home;

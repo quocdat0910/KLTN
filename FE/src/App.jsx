@@ -13,6 +13,8 @@ import Category from "./pages/ADMIN/Category";
 import Course from "./pages/ADMIN/Course";
 import AddCourse from "./pages/ADMIN/AddCourse";
 import AddChapter from "./pages/ADMIN/AddChapter";
+import QuestionBank from './pages/ADMIN/QuestionBank';
+import PlacementTests from './pages/ADMIN/PlacementTests';
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -33,6 +35,8 @@ import SearchResults from "./pages/SearchResults";
 import Order from "./pages/ADMIN/Order";
 import OrderHistory from "./pages/OrderHistory";
 import AssessmentResult from "./pages/AssessmentResult";
+import PlacementTest from "./pages/PlacementTest";
+import PlacementTestResult from "./pages/PlacementTestResult";
 
 const App = () => {
   return (
@@ -58,6 +62,10 @@ const App = () => {
           <Route path="/admin/courses/:courseId/chapters/new" element={<AddChapter />} />
           <Route path="/admin/courses/:courseId/chapters/:chapterId" element={<AddChapter />} />
 
+          {/* Placement Test Management Routes */}
+          <Route path="/admin/question-bank" element={<QuestionBank />} />
+          <Route path="/admin/placement-tests" element={<PlacementTests />} />
+          
           {/* Thêm các Route dành riêng cho admin khác tại đây */}
         </Route>
 
@@ -75,6 +83,8 @@ const App = () => {
           <Route path="/course/:id" element={<ProductDetail />} />
           <Route path="/search-results" element={<SearchResults />} />
           <Route path="/assessment-result" element={<AssessmentResult />} />
+          <Route path="/placement-test" element={<PlacementTest />} />
+          <Route path="/placement-result" element={<PlacementTestResult />} />
         </Route>
 
         <Route element={<HomeworkLayout />}>

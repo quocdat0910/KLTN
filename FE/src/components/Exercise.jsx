@@ -62,6 +62,7 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
   const [exerciseCompleted, setExerciseCompleted] = useState(isCompleted || false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isGeneratingExplanation, setIsGeneratingExplanation] = useState(false);
 
   useEffect(() => {
     const fetchExerciseData = async () => {
@@ -190,19 +191,77 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
     setShowFeedback(false); // Ẩn feedback khi chọn lại
   };
 
-  const handleSubmitAnswer = () => {
-    if (selectedAnswer) {
+  // Hàm gọi API lấy giải thích từ AI
+  const fetchExplanation = async (questionData) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/explain', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: questionData.text,
+          options: questionData.options ? questionData.options.map(opt => opt.text) : ['Đúng', 'Sai'],
+          student_answer: selectedAnswer,
+          correct_answer: questionData.correctAnswer,
+          question_type: questionData.type || 'multiple-choice'
+        })
+      });
+
+      const data = await response.json();
+      if (data.status === 200) {
+        return data.explanation;
+      }
+      throw new Error(data.error || 'Không thể tạo giải thích');
+    } catch (error) {
+      console.error('Lỗi khi gọi API giải thích:', error);
+      return questionData.explanation || 'Không thể tải giải thích. Vui lòng thử lại sau.';
+    }
+  };
+
+  const handleSubmitAnswer = async () => {
+    if (!selectedAnswer) {
+      alert('Vui lòng chọn một đáp án.');
+      return;
+    }
+
+    try {
+      setIsGeneratingExplanation(true);
       setShowFeedback(true);
+      
+      // Lấy giải thích từ AI
+      const aiExplanation = await fetchExplanation({
+        ...currentQuestion,
+        type: exerciseData.type || 'multiple-choice' // Mặc định là multiple-choice
+      });
+      
+      // Cập nhật câu hỏi với giải thích từ AI
+      const updatedQuestions = [...exerciseData.questions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        explanation: aiExplanation
+      };
+      
+      setExerciseData(prev => ({
+        ...prev,
+        questions: updatedQuestions
+      }));
+      
       // Lưu câu trả lời của người dùng
       const newUserAnswers = [...userAnswers];
       newUserAnswers[currentQuestionIndex] = {
         questionIndex: currentQuestionIndex,
         userAnswer: selectedAnswer,
-        isCorrect: selectedAnswer === currentQuestion.correctAnswer
+        isCorrect: selectedAnswer === currentQuestion.correctAnswer,
+        explanation: aiExplanation
       };
       setUserAnswers(newUserAnswers);
-    } else {
-      alert('Vui lòng chọn một đáp án.');
+    } catch (error) {
+      console.error('Lỗi khi xử lý câu trả lời:', error);
+      setError('Có lỗi xảy ra khi tạo giải thích. Vui lòng thử lại.');
+      setShowFeedback(false);
+    } finally {
+      setIsGeneratingExplanation(false);
     }
   };
 
@@ -291,19 +350,26 @@ const Exercise = ({ exerciseId, courseId, chapterId, onComplete, isCompleted }) 
       {showFeedback && (
         <div className={`feedback-card ${isCorrect ? 'correct' : 'wrong'}`}>
           <div className="feedback-status">
-            {isCorrect ? (
+            {isGeneratingExplanation ? (
               <>
-                <span className="feedback-icon">✔</span> That's correct
+                <span className="feedback-icon">⏳</span> Đang tạo giải thích...
+              </>
+            ) : isCorrect ? (
+              <>
+                <span className="feedback-icon">✔</span> Chính xác!
               </>
             ) : (
               <>
-                <span className="feedback-icon">✖</span> Incorrect
+                <span className="feedback-icon">✖</span> Chưa chính xác
               </>
             )}
           </div>
-          <p className="feedback-explanation">
-            <span className="feedback-label">Because:</span> {currentQuestion.explanation}
-          </p>
+          {!isGeneratingExplanation && (
+            <div className="feedback-explanation">
+              <p><strong>Giải thích:</strong></p>
+              <p>{currentQuestion.explanation || 'Không có giải thích cho câu hỏi này.'}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

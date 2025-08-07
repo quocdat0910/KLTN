@@ -148,7 +148,7 @@ const Navbar = () => {
             </div>
 
             {/* Các liên kết điều hướng tĩnh */}
-            <div className="nav-link link-test" onClick={() => navigate("/practicetest")}>Thi thử</div>
+            <div className="nav-link link-test" onClick={() => navigate("/placement-test")}>Kiểm tra trình độ</div>
             <div className="nav-link link-degree" onClick={() => navigate("/aboutus")}>Giới thiệu</div>
             <div className="nav-link link-career" onClick={() => navigate("/contactus")}>Liên hệ</div>
 

@@ -1406,29 +1406,16 @@ Component2 */
 
 /* Component7 */
 .faq-wrapper {
-  width: 100%;
-  max-width: 1247px;
-  height: 387px;
-  position: relative;
-  font-family: Roboto, sans-serif;
-  margin: 100px auto 0;
-  padding: 0 20px;
-  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 40px auto;
+  background-color: #f7f9fc;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(80,120,200,0.10);
+  padding: 40px 24px 28px 24px;
+  border: 1.5px solid #e0e7ef;
 }
 
-/* Title */
-.faq-title {
-  position: absolute;
-  left: 0px;
-  top: 0;
-  color: black;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 48px;
-  letter-spacing: 0.16px;
-  word-wrap: break-word;
-  
-}
+
 
 /* Main box background */
 .faq-box {
@@ -1602,7 +1589,6 @@ Component2 */
   position: absolute;
   left: 0;
   top: 8px;
-  background: #EFEFF7;
 }
 
 .component8-image {
@@ -1646,7 +1632,7 @@ Component2 */
 }
 
 .button-primary-text {
-  color: #4548F2;
+  color: #ffffff;
   font-size: 16px;
   font-family: Roboto;
   font-weight: 600;
@@ -4165,6 +4151,401 @@ Component2 */
   }
 }
 
+/* Hiệu ứng fade-in cho các section Home */
+.animate-fade-in {
+  animation: fadeInHome 0.9s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeInHome {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Home section padding & background */
+.home-main {
+  background: #f7fbff;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+.home-hero-section,
+.home-partner-section,
+.home-benefit-section,
+.home-career-section,
+.home-courses-section,
+.home-testimonial-section,
+.home-faq-section,
+.home-cta-section {
+  padding: 48px 0 32px 0;
+}
+
+/* Testimonial (Component6) cải tiến */
+.component6-comments-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.component6-comments-list {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.component6-comment-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 24px 24px 24px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.component6-comment-card:hover {
+  box-shadow: 0 8px 32px rgba(80,120,200,0.13);
+  transform: translateY(-4px) scale(1.025);
+}
+.component6-comment-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 2.5px solid #e0e0e0;
+}
+.component6-comment-name {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #2176ae;
+}
+.component6-comment-content {
+  font-size: 15px;
+  color: #333;
+  text-align: center;
+}
+
+/* FAQ cải tiến */
+.faq-container {
+  max-width: 900px;
+  margin: 48px auto 0 auto;
+  background: #fafdff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(80,120,200,0.10);
+  padding: 40px 24px 28px 24px;
+  border: 1.5px solid #e0e7ef;
+}
+.faq-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 32px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+@media (max-width: 900px) {
+  .faq-container {
+    padding: 18px 6px 12px 6px;
+    margin-top: 24px;
+  }
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.faq-item {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: box-shadow 0.18s;
+}
+.faq-item.open {
+  box-shadow: 0 4px 16px rgba(80,120,200,0.13);
+}
+.faq-question-btn {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 18px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 10px;
+  color: #1a237e;
+  transition: background 0.18s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-arrow {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-left: 12px;
+}
+.faq-answer {
+  padding: 0 24px 18px 24px;
+  color: #333;
+  font-size: 1rem;
+  animation: fadeInHome 0.3s;
+}
+
+/* CTA button nổi bật */
+.banner-cta,
+.component8-button {
+  background: linear-gradient(90deg, #2176ae 0%, #4855e2 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 36px;
+  box-shadow: 0 2px 8px rgba(33,118,174,0.10);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  margin-top: 12px;
+}
+.banner-cta:hover,
+.component8-button:hover {
+  background: linear-gradient(90deg, #4855e2 0%, #2176ae 100%);
+  box-shadow: 0 6px 24px rgba(33,118,174,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Responsive cải tiến cho Home */
+@media (max-width: 900px) {
+  .component6-comments-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .faq-container {
+    padding: 18px 6px 12px 6px;
+  }
+}
+@media (max-width: 600px) {
+  .home-main section {
+    padding: 24px 0 16px 0;
+  }
+  .component6-comment-card {
+    width: 98vw;
+    max-width: 340px;
+    padding: 18px 8px 12px 8px;
+  }
+  .faq-title {
+    font-size: 1.2rem;
+  }
+}
+
+.aboutus-main {
+  background: #f7fbff;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+.aboutus-intro-section,
+.aboutus-partner-section,
+.aboutus-benefit-section,
+.aboutus-testimonial-section,
+.aboutus-faq-section,
+.aboutus-cta-section {
+  padding: 48px 0 32px 0;
+}
+@media (max-width: 900px) {
+  .aboutus-main section {
+    padding: 24px 0 16px 0;
+  }
+}
+
+.contactus-main {
+  background: #f7fbff;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+.contactus-section {
+  padding: 48px 0 32px 0;
+}
+@media (max-width: 900px) {
+  .contactus-section {
+    padding: 24px 0 16px 0;
+  }
+}
+
+.contactus-flexbox {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 64px;
+}
+.contactus-form-wrapper {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(80,120,200,0.08);
+  padding: 48px 32px 40px 32px;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+}
+.contactus-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.contactus-row {
+  display: flex;
+  gap: 16px;
+}
+.contactus-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contactus-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2176ae;
+  margin-bottom: 2px;
+}
+.contactus-input, .contactus-textarea {
+  border: 1px solid #d0d7e2;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f7fbff;
+  transition: border 0.18s;
+}
+.contactus-input:focus, .contactus-textarea:focus {
+  border: 1.5px solid #2176ae;
+  outline: none;
+}
+.contactus-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+.contactus-submit-btn {
+  background: linear-gradient(90deg, #2176ae 0%, #4855e2 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(33,118,174,0.10);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.contactus-submit-btn:hover {
+  background: linear-gradient(90deg, #4855e2 0%, #2176ae 100%);
+  box-shadow: 0 6px 24px rgba(33,118,174,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+@media (max-width: 700px) {
+  .contactus-form-wrapper {
+    padding: 24px 6px 20px 6px;
+  }
+  .contactus-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.contactus-bg {
+  background: rgba(229, 245, 255, 0.8);
+  min-height: 100vh;
+}
+.contactus-flexbox {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 64px;
+}
+.contactus-form-modern {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(80,120,200,0.10);
+  padding: 40px 32px 32px 32px;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 100px;
+}
+.contactus-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #003366;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+.contactus-row {
+  display: flex;
+  gap: 14px;
+}
+.contactus-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contactus-label-modern {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: #2176ae;
+  margin-bottom: 2px;
+  letter-spacing: 0.1px;
+}
+.contactus-input-modern, .contactus-textarea-modern {
+  border: 1px solid #d0d7e2;
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f7fbff;
+  transition: border 0.18s;
+}
+.contactus-input-modern:focus, .contactus-textarea-modern:focus {
+  border: 1.5px solid #2176ae;
+  outline: none;
+}
+.contactus-textarea-modern {
+  min-height: 90px;
+  resize: vertical;
+}
+.contactus-submit-btn-modern {
+  background: linear-gradient(90deg, #2176ae 0%, #4855e2 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 0;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(33,118,174,0.10);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  cursor: pointer;
+  width: 100%;
+}
+.contactus-submit-btn-modern:hover {
+  background: linear-gradient(90deg, #4855e2 0%, #2176ae 100%);
+  box-shadow: 0 6px 24px rgba(33,118,174,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+@media (max-width: 700px) {
+  .contactus-form-modern {
+    padding: 18px 4px 12px 4px;
+    max-width: 98vw;
+  }
+  .contactus-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
 
 
 
