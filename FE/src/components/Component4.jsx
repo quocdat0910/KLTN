@@ -15,10 +15,12 @@ const Component4 = ({ courseType }) => {
             try {
                 setLoading(true);
                 setError(null);
-                let url = 'http://localhost:4000/api/v1/courses';
-                if (courseType) {
-                  url += `?courseType=${encodeURIComponent(courseType)}`;
-                }
+                let baseUrl = 'http://localhost:4000/api/v1/courses';
+                const qs = new URLSearchParams();
+                if (courseType) qs.append('courseType', courseType);
+                qs.append('page', '1');
+                qs.append('limit', '1000');
+                const url = `${baseUrl}?${qs.toString()}`;
                 const coursesResponse = await axios.get(url);
                 if (coursesResponse.data && Array.isArray(coursesResponse.data.courses)) {
                     setCourses(coursesResponse.data.courses);
@@ -120,14 +122,14 @@ const Component4 = ({ courseType }) => {
                             </Link>
                         </div>
                     ))}
-                </div>
-            )}
-            {/* Nút "Hiển thị thêm 10" */}
+                           {/* Nút "Hiển thị thêm 10" */}
             {showShowMoreBtn && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
                     <button className="course-show-more-btn" onClick={handleShowMore}>
                         Hiển thị thêm 10
                     </button>
+                </div>
+            )}
                 </div>
             )}
         </div>
