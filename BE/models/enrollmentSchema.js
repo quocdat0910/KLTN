@@ -63,29 +63,44 @@ const enrollmentSchema = new mongoose.Schema(
 
 // Cập nhật Course.enrollmentCount và tạo UserProgress khi đăng ký
 enrollmentSchema.post('save', async function () {
-  const course = await mongoose.model('Course').findById(this.courseId);
-  course.enrollmentCount = await mongoose.model('Enrollment').countDocuments({
-    courseId: this.courseId,
-    status: 'active'
-  });
-  await course.save();
+  try {
+    const CourseModel = mongoose.model('Course');
+    const EnrollmentModel = mongoose.model('Enrollment');
 
-  // Khởi tạo UserProgress nếu chưa tồn tại
-  const progress = await mongoose.model('UserProgress').findOne({
-    userId: this.userId,
-    courseId: this.courseId
-  });
-  if (!progress && this.status === 'active') {
-    const newProgress = new mongoose.model('UserProgress')({
+    const course = await CourseModel.findById(this.courseId).select('_id');
+    if (course) {
+      const activeCount = await EnrollmentModel.countDocuments({
+        courseId: this.courseId,
+        status: 'active'
+      });
+      await CourseModel.updateOne(
+        { _id: this.courseId },
+        { $set: { enrollmentCount: activeCount } }
+      );
+    }
+
+    // Khởi tạo UserProgress nếu chưa tồn tại
+    const UserProgressModel = mongoose.model('UserProgress');
+    const ChapterModel = mongoose.model('Chapter');
+
+    const progress = await UserProgressModel.findOne({
       userId: this.userId,
-      courseId: this.courseId,
-      chapterProgress: []
+      courseId: this.courseId
     });
-    const chapters = await mongoose.model('Chapter').find({ courseId: this.courseId });
-    chapters.forEach((chapter) => {
-      newProgress.chapterProgress.push({ chapterId: chapter._id });
-    });
-    await newProgress.save();
+    if (!progress && this.status === 'active') {
+      const newProgress = new UserProgressModel({
+        userId: this.userId,
+        courseId: this.courseId,
+        chapterProgress: []
+      });
+      const chapters = await ChapterModel.find({ courseId: this.courseId });
+      chapters.forEach((chapter) => {
+        newProgress.chapterProgress.push({ chapterId: chapter._id });
+      });
+      await newProgress.save();
+    }
+  } catch (err) {
+    console.error('[enrollmentSchema.post(save)] error:', err.message);
   }
 });
 

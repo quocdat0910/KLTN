@@ -105,8 +105,12 @@ export const enrollCourse = async (req, res, next) => {
     user.enrolledCourses.push({ course: id, enrolledAt: new Date() });
     await user.save();
 
-    course.enrollmentCount = await Enrollment.countDocuments({ courseId: id, status: "active" });
-    await course.save();
+    // Cập nhật enrollmentCount bằng cập nhật atomic để tránh xung đột phiên bản
+    const activeCount = await Enrollment.countDocuments({ courseId: id, status: "active" });
+    await Course.updateOne(
+      { _id: id },
+      { $set: { enrollmentCount: activeCount } }
+    );
 
     const newProgress = new UserProgress({
       userId,

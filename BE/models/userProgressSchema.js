@@ -76,25 +76,27 @@ const userProgressSchema = new mongoose.Schema(
               type: Boolean,
               default: false,
             },
-            attempts: [
-              {
-                attemptNumber: { type: Number, required: true },
-                answers: [
-                  {
-                    questionIndex: Number,
-                    userAnswer: String,
-                    isCorrect: Boolean,
-                  },
-                ],
-                score: { type: Number, default: 0 },
-                submittedAt: { type: Date, default: Date.now },
-                timeSpent: { type: Number, default: 0 },
-              },
-            ],
+            timeSpent: {
+              type: Number,
+              default: 0, // Thời gian làm bài (giây)
+              min: [0, "Thời gian làm bài không được nhỏ hơn 0"],
+            },
+            attempts: {
+              type: Number,
+              default: 1,
+              min: [1, "Số lần thử phải lớn hơn hoặc bằng 1"],
+            },
             lastAttemptAt: {
               type: Date,
-              default: Date.now,
+              default: null,
             },
+            answers: [
+              {
+                questionIndex: Number,
+                userAnswer: String,
+                isCorrect: Boolean,
+              },
+            ],
           },
         ],
       },

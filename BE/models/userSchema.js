@@ -90,20 +90,28 @@ const userSchema = new mongoose.Schema(
         default: null,
       },
     },  
-    /* targetScore: {
+    targetScore: {
       ielts: {
-        type: Number,
-        min: 0,
-        max: 9,
-        default: null,
+        overall: { 
+          type: Number, 
+          min: 4.0, 
+          max: 9.0, 
+          default: null
+        },
+        // targetDate: { type: Date, default: null }, // Tạm thời khóa theo yêu cầu
+        setAt: { type: Date, default: null }
       },
       toeic: {
-        type: Number,
-        min: 0,
-        max: 990,
-        default: null,
+        overall: { 
+          type: Number, 
+          min: 250, 
+          max: 990, 
+          default: null
+        },
+        // targetDate: { type: Date, default: null }, // Tạm thời khóa theo yêu cầu
+        setAt: { type: Date, default: null }
       },
-    }, */
+    },
     studyGoals: {
       type: [String],
       enum: ["Listening", "Speaking", "Reading", "Writing", "General"],
@@ -113,6 +121,7 @@ const userSchema = new mongoose.Schema(
       {
         course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
         enrolledAt: { type: Date, default: Date.now },
+        completedAt: { type: Date, default: null },
         status: {
           type: String,
           enum: ["active", "completed", "expired"],
@@ -173,14 +182,6 @@ const userSchema = new mongoose.Schema(
         default: 'moderate'
       }
     },
-    /* aiAnalytics: {
-      strengths: { type: [String], default: [] },
-      weaknesses: { type: [String], default: [] },
-      recommendedCourses: [
-        { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-      ],
-      lastAnalyzedAt: { type: Date, default: null },
-    }, */
     createdAt: {
       type: Date,
       default: Date.now,

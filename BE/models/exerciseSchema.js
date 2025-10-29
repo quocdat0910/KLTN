@@ -78,7 +78,7 @@ const exerciseSchema = new mongoose.Schema(
           }
         },
         correctAnswer: {
-          type: String, // Số (trắc nghiệm), chuỗi (fill-in-the-blank), hoặc boolean (true-false)
+          type: mongoose.Schema.Types.Mixed, // Số (trắc nghiệm), chuỗi (fill-in-the-blank), hoặc boolean (true-false)
           required: [true, 'Đáp án đúng là bắt buộc']
         },
         points: {

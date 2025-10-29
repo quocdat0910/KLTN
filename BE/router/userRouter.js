@@ -18,9 +18,6 @@ import {
   updateUser,
   deleteUser,
   changeUserPasswordByAdmin,
-  updateAIAnalytics,
-  updateLearningPreferences,
-  getAIInsights,
 } from "../controller/userController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
@@ -69,12 +66,6 @@ router.post("/logout", protect, logout);
 router.get("/profile", protect, getUserProfile);
 router.put("/profile", protect, updateProfile);
 router.put("/change-password", protect, changePassword);
-
-// AI Analytics routes
-router.put("/ai-analytics", protect, updateAIAnalytics);
-router.put("/learning-preferences", protect, updateLearningPreferences);
-router.get("/ai-insights", protect, getAIInsights);
-
 /*
 router.get("/enrolled-courses", protect, getEnrolledCourses); Xem danh sách khóa học đã đăng ký của người dùng
 router.get("/payment-history", protect, getPaymentHistory); Xem lịch sử thanh toán của người dùng

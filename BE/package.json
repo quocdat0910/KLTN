@@ -22,6 +22,7 @@
     "express": "^5.1.0",
     "express-fileupload": "^1.5.1",
     "express-rate-limit": "^7.5.0",
+    "http-status": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.1",
     "nodemailer": "^7.0.3",

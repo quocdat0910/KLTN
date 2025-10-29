@@ -146,31 +146,7 @@ export const getCourseById = async (req, res, next) => {
       });
     }
 
-    const response = {
-      _id: course._id.toString(),
-      title: course.title,
-      shortDescription: course.shortDescription,
-      price: course.price || 0,
-      chapters: course.chapters.map((chapter) => ({
-        _id: chapter._id,
-        title: chapter.title,
-        description: chapter.description,
-        lessons: chapter.lessons
-          ? chapter.lessons.map((lesson) => ({
-              _id: lesson._id,
-              title: lesson.title,
-            }))
-          : [],
-        exercises: chapter.exercises
-          ? chapter.exercises.map((exercise) => ({
-              _id: exercise._id,
-              title: exercise.title,
-            }))
-          : [],
-      })),
-    };
-
-    res.status(200).json({ course: response });
+    res.status(200).json({ course });
   } catch (error) {
     console.error("Lỗi lấy chi tiết khóa học:", error.message);
     next(error);

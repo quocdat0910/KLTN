@@ -8,8 +8,7 @@ import {
   deleteLesson,
   publishLesson,
   addLessonResource,
-  deleteLessonResource,
-  updateLessonProgress
+  deleteLessonResource
 } from "../controller//lessonController.js"
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 

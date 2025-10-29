@@ -1,8 +1,9 @@
 import UserProgress from "../models/userProgressSchema.js";
-import User from "../models/userSchema.js";
+import Course from "../models/courseSchema.js";
+import Chapter from "../models/chapterSchema.js";
+import Lesson from "../models/lessonSchema.js";
+import Exercise from "../models/exerciseSchema.js";
 import mongoose from "mongoose";
-import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
-import ErrorHandler from "../utils/errorHandler.js";
 
 // @route GET /api/v1/progress/course/:courseId
 // @desc Get user progress for a specific course
@@ -472,70 +473,7 @@ export const getAllProgressOfUser = async (req, res, next) => {
       progresses,
     });
   } catch (error) {
-    console.error("Lỗi lấy tiến trình học:", error.message);
+    console.error("Lỗi lấy thống kê tiến độ:", error.message);
     next(error);
   }
-};
-
-// Cập nhật AI insights cho user progress
-export const updateAIInsights = catchAsyncErrors(async (req, res, next) => {
-  const { courseId } = req.params;
-  const { 
-    learningPattern, 
-    recommendedNextSteps, 
-    difficultyAdjustment, 
-    optimalStudyTime, 
-    focusAreas 
-  } = req.body;
-  const userId = req.user.id;
-
-  const updateData = {};
-  if (learningPattern) updateData['aiInsights.learningPattern'] = learningPattern;
-  if (recommendedNextSteps) updateData['aiInsights.recommendedNextSteps'] = recommendedNextSteps;
-  if (difficultyAdjustment) updateData['aiInsights.difficultyAdjustment'] = difficultyAdjustment;
-  if (optimalStudyTime) updateData['aiInsights.optimalStudyTime'] = optimalStudyTime;
-  if (focusAreas) updateData['aiInsights.focusAreas'] = focusAreas;
-  
-  updateData['aiInsights.lastAnalyzedAt'] = new Date();
-
-  const progress = await UserProgress.findOneAndUpdate(
-    { userId, courseId },
-    updateData,
-    { new: true, runValidators: true }
-  );
-
-  if (!progress) {
-    return next(new ErrorHandler('Không tìm thấy tiến độ học tập', 404));
-  }
-
-  res.status(200).json({
-    success: true,
-    data: {
-      aiInsights: progress.aiInsights
-    }
-  });
-});
-
-// Lấy AI insights cho tất cả khóa học của user
-export const getAllAIInsights = catchAsyncErrors(async (req, res, next) => {
-  const userId = req.user.id;
-
-  const progressList = await UserProgress.find({ userId })
-    .populate('courseId', 'title targetScoreRange skills')
-    .select('courseId completionPercentage totalWatchTime aiInsights');
-
-  const insights = progressList.map(progress => ({
-    courseId: progress.courseId._id,
-    courseTitle: progress.courseId.title,
-    targetScoreRange: progress.courseId.targetScoreRange,
-    skills: progress.courseId.skills,
-    completionPercentage: progress.completionPercentage,
-    totalWatchTime: progress.totalWatchTime,
-    aiInsights: progress.aiInsights
-  }));
-
-  res.status(200).json({
-    success: true,
-    data: insights
-  });
-});
+}; 
